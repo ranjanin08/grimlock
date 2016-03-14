@@ -14,7 +14,6 @@
 
 package au.com.cba.omnia.grimlock
 
-import au.com.cba.omnia.grimlock.framework._
 import au.com.cba.omnia.grimlock.framework.content._
 import au.com.cba.omnia.grimlock.framework.content.metadata._
 import au.com.cba.omnia.grimlock.framework.encoding._
@@ -22,8 +21,8 @@ import au.com.cba.omnia.grimlock.framework.position._
 
 trait TestSlice extends TestGrimlock {
   val dfmt = new java.text.SimpleDateFormat("yyyy-MM-dd")
-  val con1 = Content(ContinuousSchema(LongCodex), 1)
-  val con2 = Content(ContinuousSchema(LongCodex), 2)
+  val con1 = Content(ContinuousSchema[Long](), 1)
+  val con2 = Content(ContinuousSchema[Long](), 2)
 }
 
 trait TestSlicePosition1D extends TestSlice {
@@ -42,17 +41,6 @@ class TestOverPosition1D extends TestSlicePosition1D {
   it should "return a Position0D for the remainder" in {
     over.remainder(pos1) shouldBe pos1.remove(First)
   }
-
-  it should "return a map" in {
-    over.toMap(Cell(pos1, con1)) shouldBe Map(over.selected(pos1) -> con1)
-  }
-
-  it should "combine two maps" in {
-    over.combineMaps(pos1, over.toMap(Cell(pos1, con1)), over.toMap(Cell(pos2, con2))) shouldBe
-      Map(over.selected(pos1) -> con1, over.selected(pos2) -> con2)
-    over.combineMaps(pos1, over.toMap(Cell(pos1, con1)), over.toMap(Cell(pos1, con1))) shouldBe
-      Map(over.selected(pos1) -> con1)
-  }
 }
 
 class TestAlongPosition1D extends TestSlicePosition1D {
@@ -65,15 +53,6 @@ class TestAlongPosition1D extends TestSlicePosition1D {
 
   it should "return a Position1D for the remainder" in {
     along.remainder(pos1) shouldBe Position1D(pos1(First))
-  }
-
-  it should "throw an exception for returning a map" in {
-    a [Exception] should be thrownBy { along.toMap(Cell(pos1, con1)) }
-  }
-
-  it should "throw an exception for combining two maps" in {
-    a [Exception] should be thrownBy { along.combineMaps(pos1, Map(Position0D() -> con1), Map(Position0D() -> con2)) }
-    a [Exception] should be thrownBy { along.combineMaps(pos1, Map(Position0D() -> con1), Map(Position0D() -> con1)) }
   }
 }
 
@@ -93,22 +72,6 @@ class TestOverPosition2D extends TestSlicePosition2D {
   it should "return a Position1D for the remainder" in {
     list.foreach { case (o, d) => o.remainder(pos1) shouldBe pos1.remove(d) }
   }
-
-  it should "return a map" in {
-    list.foreach {
-      case (o, _) => o.toMap(Cell(pos1, con1)) shouldBe Map(o.selected(pos1) -> Map(o.remainder(pos1) -> con1))
-    }
-  }
-
-  it should "combine two maps" in {
-    list.foreach {
-      case (o, _) =>
-        o.combineMaps(pos1, o.toMap(Cell(pos1, con1)), o.toMap(Cell(pos2, con2))) shouldBe
-          Map(o.selected(pos1) -> Map(o.remainder(pos1) -> con1), o.selected(pos2) -> Map(o.remainder(pos2) -> con2))
-        o.combineMaps(pos1, o.toMap(Cell(pos1, con1)), o.toMap(Cell(pos1, con1))) shouldBe
-          Map(o.selected(pos1) -> Map(o.remainder(pos1) -> con1))
-    }
-  }
 }
 
 class TestAlongPosition2D extends TestSlicePosition2D {
@@ -122,27 +85,11 @@ class TestAlongPosition2D extends TestSlicePosition2D {
   it should "return a Position1D for the remainder" in {
     list.foreach { case (a, d) => a.remainder(pos1) shouldBe Position1D(pos1(d)) }
   }
-
-  it should "return a map" in {
-    list.foreach {
-      case (a, _) => a.toMap(Cell(pos1, con1)) shouldBe Map(a.selected(pos1) -> Map(a.remainder(pos1) -> con1))
-    }
-  }
-
-  it should "combine two maps" in {
-    list.foreach {
-      case (a, _) =>
-        a.combineMaps(pos1, a.toMap(Cell(pos1, con1)), a.toMap(Cell(pos2, con2))) shouldBe
-          Map(a.selected(pos1) -> Map(a.remainder(pos1) -> con1), a.selected(pos2) -> Map(a.remainder(pos2) -> con2))
-        a.combineMaps(pos1, a.toMap(Cell(pos1, con1)), a.toMap(Cell(pos1, con1))) shouldBe
-          Map(a.selected(pos1) -> Map(a.remainder(pos1) -> con1))
-    }
-  }
 }
 
 trait TestSlicePosition3D extends TestSlice {
-  val pos1 = Position3D(3, "b", DateValue(dfmt.parse("2001-01-01"), DateCodex()))
-  val pos2 = Position3D(-3, "y", DateValue(dfmt.parse("1999-01-01"), DateCodex()))
+  val pos1 = Position3D(3, "b", DateValue(dfmt.parse("2001-01-01"), DateCodec()))
+  val pos2 = Position3D(-3, "y", DateValue(dfmt.parse("1999-01-01"), DateCodec()))
 }
 
 class TestOverPosition3D extends TestSlicePosition3D {
@@ -156,22 +103,6 @@ class TestOverPosition3D extends TestSlicePosition3D {
 
   it should "return a Position2D for the remainder" in {
     list.foreach { case (o, d) => o.remainder(pos1) shouldBe pos1.remove(d) }
-  }
-
-  it should "return a map" in {
-    list.foreach {
-      case (o, _) => o.toMap(Cell(pos1, con1)) shouldBe Map(o.selected(pos1) -> Map(o.remainder(pos1) -> con1))
-    }
-  }
-
-  it should "combine two maps" in {
-    list.foreach {
-      case (o, _) =>
-        o.combineMaps(pos1, o.toMap(Cell(pos1, con1)), o.toMap(Cell(pos2, con2))) shouldBe
-          Map(o.selected(pos1) -> Map(o.remainder(pos1) -> con1), o.selected(pos2) -> Map(o.remainder(pos2) -> con2))
-        o.combineMaps(pos1, o.toMap(Cell(pos1, con1)), o.toMap(Cell(pos1, con1))) shouldBe
-          Map(o.selected(pos1) -> Map(o.remainder(pos1) -> con1))
-    }
   }
 }
 
@@ -187,27 +118,11 @@ class TestAlongPosition3D extends TestSlicePosition3D {
   it should "return a Position1D for the remainder" in {
     list.foreach { case (a, d) => a.remainder(pos1) shouldBe Position1D(pos1(d)) }
   }
-
-  it should "return a map" in {
-    list.foreach {
-      case (a, _) => a.toMap(Cell(pos1, con1)) shouldBe Map(a.selected(pos1) -> Map(a.remainder(pos1) -> con1))
-    }
-  }
-
-  it should "combine two maps" in {
-    list.foreach {
-      case (a, _) =>
-        a.combineMaps(pos1, a.toMap(Cell(pos1, con1)), a.toMap(Cell(pos2, con2))) shouldBe
-          Map(a.selected(pos1) -> Map(a.remainder(pos1) -> con1), a.selected(pos2) -> Map(a.remainder(pos2) -> con2))
-        a.combineMaps(pos1, a.toMap(Cell(pos1, con1)), a.toMap(Cell(pos1, con1))) shouldBe
-          Map(a.selected(pos1) -> Map(a.remainder(pos1) -> con1))
-    }
-  }
 }
 
 trait TestSlicePosition4D extends TestSlice {
-  val pos1 = Position4D(4, "c", DateValue(dfmt.parse("2002-01-01"), DateCodex()), "foo")
-  val pos2 = Position4D(-4, "x", DateValue(dfmt.parse("1998-01-01"), DateCodex()), "oof")
+  val pos1 = Position4D(4, "c", DateValue(dfmt.parse("2002-01-01"), DateCodec()), "foo")
+  val pos2 = Position4D(-4, "x", DateValue(dfmt.parse("1998-01-01"), DateCodec()), "oof")
 }
 
 class TestOverPosition4D extends TestSlicePosition4D {
@@ -221,22 +136,6 @@ class TestOverPosition4D extends TestSlicePosition4D {
 
   it should "return a Position3D for the remainder" in {
     list.foreach { case (o, d) => o.remainder(pos1) shouldBe pos1.remove(d) }
-  }
-
-  it should "return a map" in {
-    list.foreach {
-      case (o, _) => o.toMap(Cell(pos1, con1)) shouldBe Map(o.selected(pos1) -> Map(o.remainder(pos1) -> con1))
-    }
-  }
-
-  it should "combine two maps" in {
-    list.foreach {
-      case (o, _) =>
-        o.combineMaps(pos1, o.toMap(Cell(pos1, con1)), o.toMap(Cell(pos2, con2))) shouldBe
-          Map(o.selected(pos1) -> Map(o.remainder(pos1) -> con1), o.selected(pos2) -> Map(o.remainder(pos2) -> con2))
-        o.combineMaps(pos1, o.toMap(Cell(pos1, con1)), o.toMap(Cell(pos1, con1))) shouldBe
-          Map(o.selected(pos1) -> Map(o.remainder(pos1) -> con1))
-    }
   }
 }
 
@@ -252,27 +151,11 @@ class TestAlongPosition4D extends TestSlicePosition4D {
   it should "return a Position1D for the remainder" in {
     list.foreach { case (a, d) => a.remainder(pos1) shouldBe Position1D(pos1(d)) }
   }
-
-  it should "return a map" in {
-    list.foreach {
-      case (a, _) => a.toMap(Cell(pos1, con1)) shouldBe Map(a.selected(pos1) -> Map(a.remainder(pos1) -> con1))
-    }
-  }
-
-  it should "combine two maps" in {
-    list.foreach {
-      case (a, _) =>
-        a.combineMaps(pos1, a.toMap(Cell(pos1, con1)), a.toMap(Cell(pos2, con2))) shouldBe
-          Map(a.selected(pos1) -> Map(a.remainder(pos1) -> con1), a.selected(pos2) -> Map(a.remainder(pos2) -> con2))
-        a.combineMaps(pos1, a.toMap(Cell(pos1, con1)), a.toMap(Cell(pos1, con1))) shouldBe
-          Map(a.selected(pos1) -> Map(a.remainder(pos1) -> con1))
-    }
-  }
 }
 
 trait TestSlicePosition5D extends TestSlice {
-  val pos1 = Position5D(5, "d", DateValue(dfmt.parse("2003-01-01"), DateCodex()), "bar", 3.1415)
-  val pos2 = Position5D(-5, "w", DateValue(dfmt.parse("1997-01-01"), DateCodex()), "rab", -3.1415)
+  val pos1 = Position5D(5, "d", DateValue(dfmt.parse("2003-01-01"), DateCodec()), "bar", 3.1415)
+  val pos2 = Position5D(-5, "w", DateValue(dfmt.parse("1997-01-01"), DateCodec()), "rab", -3.1415)
 }
 
 class TestOverPosition5D extends TestSlicePosition5D {
@@ -287,22 +170,6 @@ class TestOverPosition5D extends TestSlicePosition5D {
   it should "return a Position4D for the remainder" in {
     list.foreach { case (o, d) => o.remainder(pos1) shouldBe pos1.remove(d) }
   }
-
-  it should "return a map" in {
-    list.foreach {
-      case (o, _) => o.toMap(Cell(pos1, con1)) shouldBe Map(o.selected(pos1) -> Map(o.remainder(pos1) -> con1))
-    }
-  }
-
-  it should "combine two maps" in {
-    list.foreach {
-      case (o, _) =>
-        o.combineMaps(pos1, o.toMap(Cell(pos1, con1)), o.toMap(Cell(pos2, con2))) shouldBe
-          Map(o.selected(pos1) -> Map(o.remainder(pos1) -> con1), o.selected(pos2) -> Map(o.remainder(pos2) -> con2))
-        o.combineMaps(pos1, o.toMap(Cell(pos1, con1)), o.toMap(Cell(pos1, con1))) shouldBe
-          Map(o.selected(pos1) -> Map(o.remainder(pos1) -> con1))
-    }
-  }
 }
 
 class TestAlongPosition5D extends TestSlicePosition5D {
@@ -316,22 +183,6 @@ class TestAlongPosition5D extends TestSlicePosition5D {
 
   it should "return a Position1D for the remainder" in {
     list.foreach { case (a, d) => a.remainder(pos1) shouldBe Position1D(pos1(d)) }
-  }
-
-  it should "return a map" in {
-    list.foreach {
-      case (a, _) => a.toMap(Cell(pos1, con1)) shouldBe Map(a.selected(pos1) -> Map(a.remainder(pos1) -> con1))
-    }
-  }
-
-  it should "combine two maps" in {
-    list.foreach {
-      case (a, _) =>
-        a.combineMaps(pos1, a.toMap(Cell(pos1, con1)), a.toMap(Cell(pos2, con2))) shouldBe
-          Map(a.selected(pos1) -> Map(a.remainder(pos1) -> con1), a.selected(pos2) -> Map(a.remainder(pos2) -> con2))
-        a.combineMaps(pos1, a.toMap(Cell(pos1, con1)), a.toMap(Cell(pos1, con1))) shouldBe
-          Map(a.selected(pos1) -> Map(a.remainder(pos1) -> con1))
-    }
   }
 }
 

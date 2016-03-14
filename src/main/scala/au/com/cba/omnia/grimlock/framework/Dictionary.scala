@@ -14,6 +14,11 @@
 
 package au.com.cba.omnia.grimlock.framework.content.metadata
 
+import au.com.cba.omnia.grimlock.framework.content.Content
+import au.com.cba.omnia.grimlock.framework.encoding.Codec
+
+import java.util.regex.Pattern
+
 import scala.io.Source
 
 object Dictionary {
@@ -29,24 +34,30 @@ object Dictionary {
    * @return A tuple consisting of the dictionary object and an iterator containing parse errors.
    */
   def load(source: Source, separator: String = "|", key: Int = 0, encoding: Int = 1,
-    schema: Int = 2): (Map[String, Schema], Iterator[String]) = {
+    schema: Int = 2): (Map[String, Content.Parser], Iterator[String]) = {
     val result = source
       .getLines()
       .map {
         case line =>
-          val parts = line.split(java.util.regex.Pattern.quote(separator))
+          val parts = line.split(Pattern.quote(separator))
 
           List(key, encoding, schema).exists(_ >= parts.length) match {
-            case true => Right("unable to parse: '" + line + "'")
+            case true => Left("unable to parse: '" + line + "'")
             case false =>
-              Schema.fromString(parts(encoding), parts(schema)) match {
-                case Some(s) => Left((parts(key), s))
-                case None => Right("unable to decode '" + line + "'")
+              val parser = Codec.fromShortString(parts(encoding))
+                .flatMap {
+                  case codec => Schema.fromShortString(parts(schema), codec)
+                    .map { case schema => Content.parse[codec.C](codec, schema) }
+                }
+
+              parser match {
+                case Some(p) => Right((parts(key), p))
+                case None => Left("unable to decode '" + line + "'")
               }
           }
       }
 
-    (result.collect { case Left(entry) => entry }.toMap, result.collect { case Right(error) => error })
+    (result.collect { case Right(entry) => entry }.toMap, result.collect { case Left(error) => error })
   }
 }
 

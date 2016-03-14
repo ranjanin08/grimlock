@@ -51,7 +51,8 @@ class LabelWeighting(args: Args) extends Job(args) {
   val output = "scalding"
 
   // Read labels and melt the date into the instance id to generate a 1D matrix.
-  val labels = loadText(s"${path}/exampleLabels.txt", Cell.parse2DWithSchema(ContinuousSchema(DoubleCodex)))
+  val labels = loadText(s"${path}/exampleLabels.txt",
+    Cell.parse2DWithSchema(Content.parse(DoubleCodec, ContinuousSchema[Double]())))
     .data // Keep only the data (ignoring errors).
     .melt(Second, First, ":")
 
@@ -82,7 +83,8 @@ class LabelWeighting(args: Args) extends Job(args) {
     .compact(Over(First))
 
   // Re-read labels and add the computed weight.
-  loadText(s"${path}/exampleLabels.txt", Cell.parse2DWithSchema(ContinuousSchema(DoubleCodex)))
+  loadText(s"${path}/exampleLabels.txt",
+    Cell.parse2DWithSchema(Content.parse(DoubleCodec, ContinuousSchema[Double]())))
     .data // Keep only the data (ignoring errors).
     .transformWithValue(AddWeight(), weights)
     .saveAsText(s"./demo.${output}/weighted.out")

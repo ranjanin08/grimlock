@@ -59,14 +59,14 @@ The position is, essentially, a list of N coordinates (__Value__). The content c
                   Schema         Value
 ```
 
-Lastly, the __Codex__ singleton objects can be used to parse and write the basic data types used in both coordinates and values.
+Lastly, the __Codec__ singleton objects can be used to parse and write the basic data types used in the values.
 
 ```
-  Schema       Value
-     ^ 1         ^ 1
-     |           |
-     | 1         | 1
-   Codex       Codex
+  Value
+    ^ 1
+    |
+    | 1
+  Codec
 ```
 
 ### Working with Dimensions
@@ -89,26 +89,26 @@ Grimlock supports performing operations along all directions of the matrix.  Thi
 
 ### Data Format
 
-The basic data format used by Grimlock (though others are supported) is a column-oriented pipe separated file (each row is a single cell). The first N fields are the coordinates, optionally followed by the variable type and codex (again pipe separated). If the variable type and codex are omitted from the data then they have to be provided by a __Dictionary__. The last field of each row is the value.
+The basic data format used by Grimlock (though others are supported) is a column-oriented pipe separated file (each row is a single cell). The first N fields are the coordinates, optionally followed by the variable type and codec (again pipe separated). If the variable type and codec are omitted from the data then they have to be provided by a __Dictionary__. The last field of each row is the value.
 
-In the example below the first field is a coordinate identifying an instance, the second field is a coordinate identifying a feature. The third and fourth columns are the variable type and codex respectively. The last column has the actual value.
+In the example below the first field is a coordinate identifying an instance, the second field is a coordinate identifying a feature. The third and fourth columns are the variable type and codec respectively. The last column has the actual value.
 
 ```
 > head <path to>/grimlock/src/main/scala/au/com/cba/omnia/grimlock/data/exampleInput.txt
-iid:0064402|fid:B|nominal|string|H
-iid:0064402|fid:E|continuous|long|219
-iid:0064402|fid:H|nominal|string|C
-iid:0066848|fid:A|continuous|long|371
-iid:0066848|fid:B|nominal|string|H
-iid:0066848|fid:C|continuous|long|259
-iid:0066848|fid:D|nominal|string|F
-iid:0066848|fid:E|continuous|long|830
-iid:0066848|fid:F|nominal|string|G
-iid:0066848|fid:H|nominal|string|B
+iid:0064402|fid:B|string|nominal|H
+iid:0064402|fid:E|long|continuous|219
+iid:0064402|fid:H|string|nominal|C
+iid:0066848|fid:A|long|continuous|371
+iid:0066848|fid:B|string|nominal|H
+iid:0066848|fid:C|long|continuous|259
+iid:0066848|fid:D|string|nominal|F
+iid:0066848|fid:E|long|continuous|830
+iid:0066848|fid:F|string|nominal|G
+iid:0066848|fid:H|string|nominal|B
 ...
 ```
 
-If the type and codex were omitted then the data would look as follows:
+If the type and codec were omitted then the data would look as follows:
 
 ```
 iid:0064402|fid:B|H
@@ -217,16 +217,16 @@ The returned `data` is a 2 dimensional matrix. To investigate it's content Scald
 
 ```
 scala> data.dump
-Cell(Position2D(StringValue(iid:0064402),StringValue(fid:B)),Content(NominalSchema(StringCodex),StringValue(H)))
-Cell(Position2D(StringValue(iid:0064402),StringValue(fid:E)),Content(ContinuousSchema(LongCodex),LongValue(219)))
-Cell(Position2D(StringValue(iid:0064402),StringValue(fid:H)),Content(NominalSchema(StringCodex),StringValue(C)))
-Cell(Position2D(StringValue(iid:0066848),StringValue(fid:A)),Content(ContinuousSchema(LongCodex),LongValue(371)))
-Cell(Position2D(StringValue(iid:0066848),StringValue(fid:B)),Content(NominalSchema(StringCodex),StringValue(H)))
-Cell(Position2D(StringValue(iid:0066848),StringValue(fid:C)),Content(ContinuousSchema(LongCodex),LongValue(259)))
-Cell(Position2D(StringValue(iid:0066848),StringValue(fid:D)),Content(NominalSchema(StringCodex),StringValue(F)))
-Cell(Position2D(StringValue(iid:0066848),StringValue(fid:E)),Content(ContinuousSchema(LongCodex),LongValue(830)))
-Cell(Position2D(StringValue(iid:0066848),StringValue(fid:F)),Content(NominalSchema(StringCodex),StringValue(G)))
-Cell(Position2D(StringValue(iid:0066848),StringValue(fid:H)),Content(NominalSchema(StringCodex),StringValue(B)))
+Cell(Position2D(StringValue(iid:0064402,StringCodec),StringValue(fid:B,StringCodec)),Content(NominalSchema[String](),StringValue(H,StringCodec)))
+Cell(Position2D(StringValue(iid:0064402,StringCodec),StringValue(fid:E,StringCodec)),Content(ContinuousSchema[Long](),LongValue(219,LongCodec)))
+Cell(Position2D(StringValue(iid:0064402,StringCodec),StringValue(fid:H,StringCodec)),Content(NominalSchema[String](),StringValue(C,StringCodec)))
+Cell(Position2D(StringValue(iid:0066848,StringCodec),StringValue(fid:A,StringCodec)),Content(ContinuousSchema[Long](),LongValue(371,LongCodec)))
+Cell(Position2D(StringValue(iid:0066848,StringCodec),StringValue(fid:B,StringCodec)),Content(NominalSchema[String](),StringValue(H,StringCodec)))
+Cell(Position2D(StringValue(iid:0066848,StringCodec),StringValue(fid:C,StringCodec)),Content(ContinuousSchema[Long](),LongValue(259,LongCodec)))
+Cell(Position2D(StringValue(iid:0066848,StringCodec),StringValue(fid:D,StringCodec)),Content(NominalSchema[String](),StringValue(F,StringCodec)))
+Cell(Position2D(StringValue(iid:0066848,StringCodec),StringValue(fid:E,StringCodec)),Content(ContinuousSchema[Long](),LongValue(830,LongCodec)))
+Cell(Position2D(StringValue(iid:0066848,StringCodec),StringValue(fid:F,StringCodec)),Content(NominalSchema[String](),StringValue(G,StringCodec)))
+Cell(Position2D(StringValue(iid:0066848,StringCodec),StringValue(fid:H,StringCodec)),Content(NominalSchema[String](),StringValue(B,StringCodec)))
 ...
 ```
 
@@ -234,22 +234,22 @@ The following shows a number of basic operations (get number of rows, get type o
 
 ```
 scala> data.size(First).dump
-Cell(Position1D(StringValue(First)),Content(DiscreteSchema(LongCodex),LongValue(9)))
+Cell(Position1D(StringValue(First,StringCodec)),Content(DiscreteSchema[Long](),LongValue(9,LongCodec)))
 
 scala> data.types(Over(Second)).dump
-(Position1D(StringValue(fid:A)),Numerical)
-(Position1D(StringValue(fid:B)),Categorical)
-(Position1D(StringValue(fid:C)),Numerical)
-(Position1D(StringValue(fid:D)),Categorical)
-(Position1D(StringValue(fid:E)),Numerical)
-(Position1D(StringValue(fid:F)),Categorical)
-(Position1D(StringValue(fid:G)),Numerical)
-(Position1D(StringValue(fid:H)),Categorical)
+(Position1D(StringValue(fid:A,StringCodec)),Numerical)
+(Position1D(StringValue(fid:B,StringCodec)),Categorical)
+(Position1D(StringValue(fid:C,StringCodec)),Numerical)
+(Position1D(StringValue(fid:D,StringCodec)),Categorical)
+(Position1D(StringValue(fid:E,StringCodec)),Numerical)
+(Position1D(StringValue(fid:F,StringCodec)),Categorical)
+(Position1D(StringValue(fid:G,StringCodec)),Numerical)
+(Position1D(StringValue(fid:H,StringCodec)),Categorical)
 
 scala> data.which((cell: Cell[Position2D]) => (cell.content.value gtr 995) || (cell.content.value equ "F")).dump
-Position2D(StringValue(iid:0066848),StringValue(fid:D))
-Position2D(StringValue(iid:0216406),StringValue(fid:E))
-Position2D(StringValue(iid:0444510),StringValue(fid:D))
+Position2D(StringValue(iid:0066848,StringCodec),StringValue(fid:D,StringCodec))
+Position2D(StringValue(iid:0216406,StringCodec),StringValue(fid:E,StringCodec))
+Position2D(StringValue(iid:0444510,StringCodec),StringValue(fid:D,StringCodec))
 ```
 
 Now for something a little more interesting. Let's compute the number of features for each instance and then compute the moments of the distribution of counts:
@@ -258,15 +258,15 @@ Now for something a little more interesting. Let's compute the number of feature
 scala> val counts = data.summarise(Over(First), Count[Position2D, Position1D]())
 
 scala> counts.dump
-Cell(Position1D(StringValue(iid:0064402)),Content(DiscreteSchema(LongCodex),LongValue(3)))
-Cell(Position1D(StringValue(iid:0066848)),Content(DiscreteSchema(LongCodex),LongValue(7)))
-Cell(Position1D(StringValue(iid:0216406)),Content(DiscreteSchema(LongCodex),LongValue(5)))
-Cell(Position1D(StringValue(iid:0221707)),Content(DiscreteSchema(LongCodex),LongValue(4)))
-Cell(Position1D(StringValue(iid:0262443)),Content(DiscreteSchema(LongCodex),LongValue(2)))
-Cell(Position1D(StringValue(iid:0364354)),Content(DiscreteSchema(LongCodex),LongValue(5)))
-Cell(Position1D(StringValue(iid:0375226)),Content(DiscreteSchema(LongCodex),LongValue(3)))
-Cell(Position1D(StringValue(iid:0444510)),Content(DiscreteSchema(LongCodex),LongValue(5)))
-Cell(Position1D(StringValue(iid:1004305)),Content(DiscreteSchema(LongCodex),LongValue(2)))
+Cell(Position1D(StringValue(iid:0064402,StringCodec)),Content(DiscreteSchema[Long](),LongValue(3,LongCodec)))
+Cell(Position1D(StringValue(iid:0066848,StringCodec)),Content(DiscreteSchema[Long](),LongValue(7,LongCodec)))
+Cell(Position1D(StringValue(iid:0216406,StringCodec)),Content(DiscreteSchema[Long](),LongValue(5,LongCodec)))
+Cell(Position1D(StringValue(iid:0221707,StringCodec)),Content(DiscreteSchema[Long](),LongValue(4,LongCodec)))
+Cell(Position1D(StringValue(iid:0262443,StringCodec)),Content(DiscreteSchema[Long](),LongValue(2,LongCodec)))
+Cell(Position1D(StringValue(iid:0364354,StringCodec)),Content(DiscreteSchema[Long](),LongValue(5,LongCodec)))
+Cell(Position1D(StringValue(iid:0375226,StringCodec)),Content(DiscreteSchema[Long](),LongValue(3,LongCodec)))
+Cell(Position1D(StringValue(iid:0444510,StringCodec)),Content(DiscreteSchema[Long](),LongValue(5,LongCodec)))
+Cell(Position1D(StringValue(iid:1004305,StringCodec)),Content(DiscreteSchema[Long](),LongValue(2,LongCodec)))
 
 scala> val aggregators: List[Aggregator[Position1D, Position0D, Position1D]] = List(
      | Mean().andThenRelocate(_.position.append("mean").toOption),
@@ -275,10 +275,10 @@ scala> val aggregators: List[Aggregator[Position1D, Position0D, Position1D]] = L
      | Kurtosis().andThenRelocate(_.position.append("kurtosis").toOption))
 
 scala> counts.summarise(Along(First), aggregators).dump
-Cell(Position1D(StringValue(mean)),Content(ContinuousSchema(DoubleCodex),DoubleValue(4.0)))
-Cell(Position1D(StringValue(sd)),Content(ContinuousSchema(DoubleCodex),DoubleValue(1.5634719199411433)))
-Cell(Position1D(StringValue(skewness)),Content(ContinuousSchema(DoubleCodex),DoubleValue(0.348873899490999)))
-Cell(Position1D(StringValue(kurtosis)),Content(ContinuousSchema(DoubleCodex),DoubleValue(-0.8057851239669427)))
+Cell(Position1D(StringValue(mean,StringCodec)),Content(ContinuousSchema[Double](),DoubleValue(4.0,DoubleCodec)))
+Cell(Position1D(StringValue(sd,StringCodec)),Content(ContinuousSchema[Double](),DoubleValue(1.5634719199411433,DoubleCodec)))
+Cell(Position1D(StringValue(skewness,StringCodec)),Content(ContinuousSchema[Double](),DoubleValue(0.348873899490999,DoubleCodec)))
+Cell(Position1D(StringValue(kurtosis,StringCodec)),Content(ContinuousSchema[Double](),DoubleValue(-0.8057851239669427,DoubleCodec)))
 ```
 
 For more examples see [BasicOperations.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/scalding/examples/BasicOperations.scala), [Conditional.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/scalding/examples/Conditional.scala), [DataAnalysis.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/scalding/examples/DataAnalysis.scala), [DerivedData.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/scalding/examples/DerivedData.scala), [Ensemble.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/scalding/examples/Ensemble.scala), [Event.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/scalding/examples/Event.scala), [LabelWeighting.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/scalding/examples/LabelWeighting.scala), [MutualInformation.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/scalding/examples/MutualInformation.scala), [PipelineDataPreparation.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/scalding/examples/PipelineDataPreparation.scala) or [Scoring.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/scalding/examples/Scoring.scala).
@@ -352,16 +352,16 @@ The returned `data` is a 2 dimensional matrix. To investigate it's content Spark
 
 ```
 scala> data.foreach(println)
-Cell(Position2D(StringValue(iid:0064402),StringValue(fid:B)),Content(NominalSchema(StringCodex),StringValue(H)))
-Cell(Position2D(StringValue(iid:0064402),StringValue(fid:E)),Content(ContinuousSchema(LongCodex),LongValue(219)))
-Cell(Position2D(StringValue(iid:0064402),StringValue(fid:H)),Content(NominalSchema(StringCodex),StringValue(C)))
-Cell(Position2D(StringValue(iid:0066848),StringValue(fid:A)),Content(ContinuousSchema(LongCodex),LongValue(371)))
-Cell(Position2D(StringValue(iid:0066848),StringValue(fid:B)),Content(NominalSchema(StringCodex),StringValue(H)))
-Cell(Position2D(StringValue(iid:0066848),StringValue(fid:C)),Content(ContinuousSchema(LongCodex),LongValue(259)))
-Cell(Position2D(StringValue(iid:0066848),StringValue(fid:D)),Content(NominalSchema(StringCodex),StringValue(F)))
-Cell(Position2D(StringValue(iid:0066848),StringValue(fid:E)),Content(ContinuousSchema(LongCodex),LongValue(830)))
-Cell(Position2D(StringValue(iid:0066848),StringValue(fid:F)),Content(NominalSchema(StringCodex),StringValue(G)))
-Cell(Position2D(StringValue(iid:0066848),StringValue(fid:H)),Content(NominalSchema(StringCodex),StringValue(B)))
+Cell(Position2D(StringValue(iid:0064402,StringCodec),StringValue(fid:B,StringCodec)),Content(NominalSchema[String](),StringValue(H,StringCodec)))
+Cell(Position2D(StringValue(iid:0064402,StringCodec),StringValue(fid:E,StringCodec)),Content(ContinuousSchema[Long](),LongValue(219,LongCodec)))
+Cell(Position2D(StringValue(iid:0064402,StringCodec),StringValue(fid:H,StringCodec)),Content(NominalSchema[String](),StringValue(C,StringCodec)))
+Cell(Position2D(StringValue(iid:0066848,StringCodec),StringValue(fid:A,StringCodec)),Content(ContinuousSchema[Long](),LongValue(371,LongCodec)))
+Cell(Position2D(StringValue(iid:0066848,StringCodec),StringValue(fid:B,StringCodec)),Content(NominalSchema[String](),StringValue(H,StringCodec)))
+Cell(Position2D(StringValue(iid:0066848,StringCodec),StringValue(fid:C,StringCodec)),Content(ContinuousSchema[Long](),LongValue(259,LongCodec)))
+Cell(Position2D(StringValue(iid:0066848,StringCodec),StringValue(fid:D,StringCodec)),Content(NominalSchema[String](),StringValue(F,StringCodec)))
+Cell(Position2D(StringValue(iid:0066848,StringCodec),StringValue(fid:E,StringCodec)),Content(ContinuousSchema[Long](),LongValue(830,LongCodec)))
+Cell(Position2D(StringValue(iid:0066848,StringCodec),StringValue(fid:F,StringCodec)),Content(NominalSchema[String](),StringValue(G,StringCodec)))
+Cell(Position2D(StringValue(iid:0066848,StringCodec),StringValue(fid:H,StringCodec)),Content(NominalSchema[String](),StringValue(B,StringCodec)))
 ...
 ```
 
@@ -369,22 +369,22 @@ The following shows a number of basic operations (get number of rows, get type o
 
 ```
 scala> data.size(First).foreach(println)
-Cell(Position1D(StringValue(First)),Content(DiscreteSchema(LongCodex),LongValue(9)))
+Cell(Position1D(StringValue(First,StringCodec)),Content(DiscreteSchema[Long](),LongValue(9,LongCodec)))
 
 scala> data.types(Over(Second)).foreach(println)
-(Position1D(StringValue(fid:A)),Numerical)
-(Position1D(StringValue(fid:B)),Categorical)
-(Position1D(StringValue(fid:C)),Numerical)
-(Position1D(StringValue(fid:D)),Categorical)
-(Position1D(StringValue(fid:E)),Numerical)
-(Position1D(StringValue(fid:F)),Categorical)
-(Position1D(StringValue(fid:G)),Numerical)
-(Position1D(StringValue(fid:H)),Categorical)
+(Position1D(StringValue(fid:A,StringCodec)),Numerical)
+(Position1D(StringValue(fid:B,StringCodec)),Categorical)
+(Position1D(StringValue(fid:C,StringCodec)),Numerical)
+(Position1D(StringValue(fid:D,StringCodec)),Categorical)
+(Position1D(StringValue(fid:E,StringCodec)),Numerical)
+(Position1D(StringValue(fid:F,StringCodec)),Categorical)
+(Position1D(StringValue(fid:G,StringCodec)),Numerical)
+(Position1D(StringValue(fid:H,StringCodec)),Categorical)
 
 scala> data.which((cell: Cell[Position2D]) => (cell.content.value gtr 995) || (cell.content.value equ "F")).foreach(println)
-Position2D(StringValue(iid:0066848),StringValue(fid:D))
-Position2D(StringValue(iid:0216406),StringValue(fid:E))
-Position2D(StringValue(iid:0444510),StringValue(fid:D))
+Position2D(StringValue(iid:0066848,StringCodec),StringValue(fid:D,StringCodec))
+Position2D(StringValue(iid:0216406,StringCodec),StringValue(fid:E,StringCodec))
+Position2D(StringValue(iid:0444510,StringCodec),StringValue(fid:D,StringCodec))
 ```
 
 Now for something a little more interesting. Let's compute the number of features for each instance and then compute the moments of the distribution of counts:
@@ -393,15 +393,15 @@ Now for something a little more interesting. Let's compute the number of feature
 scala> val counts = data.summarise(Over(First), Count[Position2D, Position1D]())
 
 scala> counts.foreach(println)
-Cell(Position1D(StringValue(iid:0064402)),Content(DiscreteSchema(LongCodex),LongValue(3)))
-Cell(Position1D(StringValue(iid:0066848)),Content(DiscreteSchema(LongCodex),LongValue(7)))
-Cell(Position1D(StringValue(iid:0216406)),Content(DiscreteSchema(LongCodex),LongValue(5)))
-Cell(Position1D(StringValue(iid:0221707)),Content(DiscreteSchema(LongCodex),LongValue(4)))
-Cell(Position1D(StringValue(iid:0262443)),Content(DiscreteSchema(LongCodex),LongValue(2)))
-Cell(Position1D(StringValue(iid:0364354)),Content(DiscreteSchema(LongCodex),LongValue(5)))
-Cell(Position1D(StringValue(iid:0375226)),Content(DiscreteSchema(LongCodex),LongValue(3)))
-Cell(Position1D(StringValue(iid:0444510)),Content(DiscreteSchema(LongCodex),LongValue(5)))
-Cell(Position1D(StringValue(iid:1004305)),Content(DiscreteSchema(LongCodex),LongValue(2)))
+Cell(Position1D(StringValue(iid:0064402,StringCodec)),Content(DiscreteSchema[Long](),LongValue(3,LongCodec)))
+Cell(Position1D(StringValue(iid:0066848,StringCodec)),Content(DiscreteSchema[Long](),LongValue(7,LongCodec)))
+Cell(Position1D(StringValue(iid:0216406,StringCodec)),Content(DiscreteSchema[Long](),LongValue(5,LongCodec)))
+Cell(Position1D(StringValue(iid:0221707,StringCodec)),Content(DiscreteSchema[Long](),LongValue(4,LongCodec)))
+Cell(Position1D(StringValue(iid:0262443,StringCodec)),Content(DiscreteSchema[Long](),LongValue(2,LongCodec)))
+Cell(Position1D(StringValue(iid:0364354,StringCodec)),Content(DiscreteSchema[Long](),LongValue(5,LongCodec)))
+Cell(Position1D(StringValue(iid:0375226,StringCodec)),Content(DiscreteSchema[Long](),LongValue(3,LongCodec)))
+Cell(Position1D(StringValue(iid:0444510,StringCodec)),Content(DiscreteSchema[Long](),LongValue(5,LongCodec)))
+Cell(Position1D(StringValue(iid:1004305,StringCodec)),Content(DiscreteSchema[Long](),LongValue(2,LongCodec)))
 
 scala> val aggregators: List[Aggregator[Position1D, Position0D, Position1D]] = List(
      | Mean().andThenRelocate(_.position.append("mean").toOption),
@@ -410,10 +410,10 @@ scala> val aggregators: List[Aggregator[Position1D, Position0D, Position1D]] = L
      | Kurtosis().andThenRelocate(_.position.append("kurtosis").toOption))
 
 scala> counts.summarise(Along(First), aggregators).foreach(println)
-Cell(Position1D(StringValue(mean)),Content(ContinuousSchema(DoubleCodex),DoubleValue(4.0)))
-Cell(Position1D(StringValue(sd)),Content(ContinuousSchema(DoubleCodex),DoubleValue(1.5634719199411433)))
-Cell(Position1D(StringValue(skewness)),Content(ContinuousSchema(DoubleCodex),DoubleValue(0.348873899490999)))
-Cell(Position1D(StringValue(kurtosis)),Content(ContinuousSchema(DoubleCodex),DoubleValue(-0.8057851239669427)))
+Cell(Position1D(StringValue(mean,StringCodec)),Content(ContinuousSchema[Double](),DoubleValue(4.0,DoubleCodec)))
+Cell(Position1D(StringValue(sd,StringCodec)),Content(ContinuousSchema[Double](),DoubleValue(1.5634719199411433,DoubleCodec)))
+Cell(Position1D(StringValue(skewness,StringCodec)),Content(ContinuousSchema[Double](),DoubleValue(0.348873899490999,DoubleCodec)))
+Cell(Position1D(StringValue(kurtosis,StringCodec)),Content(ContinuousSchema[Double](),DoubleValue(-0.8057851239669427,DoubleCodec)))
 ```
 
 For more examples see [BasicOperations.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/spark/examples/BasicOperations.scala), [Conditional.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/spark/examples/Conditional.scala), [DataAnalysis.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/spark/examples/DataAnalysis.scala), [DerivedData.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/spark/examples/DerivedData.scala), [Ensemble.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/spark/examples/Ensemble.scala), [Event.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/spark/examples/Event.scala), [LabelWeighting.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/spark/examples/LabelWeighting.scala), [MutualInformation.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/spark/examples/MutualInformation.scala), [PipelineDataPreparation.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/spark/examples/PipelineDataPreparation.scala) or [Scoring.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/spark/examples/Scoring.scala).

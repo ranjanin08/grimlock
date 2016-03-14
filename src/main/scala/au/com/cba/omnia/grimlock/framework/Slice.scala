@@ -14,8 +14,6 @@
 
 package au.com.cba.omnia.grimlock.framework.position
 
-import au.com.cba.omnia.grimlock.framework._
-
 /** Base trait that encapsulates dimension on which to operate. */
 sealed trait Slice[P <: Position] {
   /**
@@ -39,18 +37,9 @@ sealed trait Slice[P <: Position] {
   def selected(pos: P): S
   /** Returns the remaining coordinate(s) for the given `pos`. */
   def remainder(pos: P): R
-
-  /** Type of the content in an in-memory version of a matrix. */
-  type C
-
-  /** Convert a cell to an in-memory map. */
-  def toMap(cell: Cell[P]): Map[S, C]
-
-  /** Combine two in-memory cells. */
-  def combineMaps(pos: P, x: Map[S, C], y: Map[S, C]): Map[S, C]
 }
 
-trait Mapable[P <: Position with ReduceablePosition] { self: Slice[P] =>
+private[position] trait Mapable[P <: Position with ReduceablePosition] { self: Slice[P] =>
   protected def remove(pos: P): pos.L = pos.remove(dimension)
   protected def single(pos: P): Position1D = Position1D(pos(dimension))
 }
@@ -61,22 +50,12 @@ trait Mapable[P <: Position with ReduceablePosition] { self: Slice[P] =>
  *
  * @param dimension Dimension of the selected coordinate.
  */
-trait Over[P <: Position with ReduceablePosition with MapOverPosition] extends Slice[P] with Mapable[P] {
+trait Over[P <: Position with ReduceablePosition] extends Slice[P] with Mapable[P] {
   type S = Position1D
   type R = P#L
-  type C = P#O
 
   def selected(pos: P): S = single(pos)
   def remainder(pos: P): R = remove(pos)
-
-  def toMap(cell: Cell[P]): Map[S, C] = {
-    Map(single(cell.position) -> cell.position.over.toMapValue(remove(cell.position), cell.content))
-  }
-  def combineMaps(pos: P, x: Map[S, C], y: Map[S, C]): Map[S, C] = {
-    x ++ y.map {
-      case (k, v) => k -> pos.over.combineMapValues(x.get(k).asInstanceOf[Option[pos.O]], v.asInstanceOf[pos.O])
-    }
-  }
 }
 
 /** Companion object to `Over` trait. */
@@ -87,39 +66,26 @@ object Over {
    *
    * @param dimension Dimension of the selected coordinate.
    */
-  def apply[P <: Position with ReduceablePosition with MapOverPosition](dimension: Dimension)(
+  def apply[P <: Position with ReduceablePosition](dimension: Dimension)(
     implicit ev: PosDimDep[P, dimension.type]): Over[P] = OverImpl(dimension)
 
   /** Standard `unapply` method for pattern matching. */
-  def unapply[P <: Position with ReduceablePosition with MapOverPosition](over: Over[P]): Option[Dimension] = {
-    Some(over.dimension)
-  }
+  def unapply[P <: Position with ReduceablePosition](over: Over[P]): Option[Dimension] = Some(over.dimension)
 }
 
-private[position] case class OverImpl[P <: Position with ReduceablePosition with MapOverPosition](
-  dimension: Dimension) extends Over[P]
+private[position] case class OverImpl[P <: Position with ReduceablePosition](dimension: Dimension) extends Over[P]
 
 /**
  * Indicates that the selected coordinates are all except the one indexed by `dimension`. In other words, when a
  * groupBy is performed, it is performed using a `Position` (type `ReduceablePosition.L`) consisting of all coordinates
  * except that at index `dimension`.
  */
-trait Along[P <: Position with ReduceablePosition with MapAlongPosition] extends Slice[P] with Mapable[P] {
+trait Along[P <: Position with ReduceablePosition] extends Slice[P] with Mapable[P] {
   type S = P#L
   type R = Position1D
-  type C = P#A
 
   def selected(pos: P): S = remove(pos)
   def remainder(pos: P): R = single(pos)
-
-  def toMap(cell: Cell[P]): Map[S, C] = {
-    Map(remove(cell.position) -> cell.position.along.toMapValue(single(cell.position), cell.content))
-  }
-  def combineMaps(pos: P, x: Map[S, C], y: Map[S, C]): Map[S, C] = {
-    x ++ y.map {
-      case (k, v) => k -> pos.along.combineMapValues(x.get(k).asInstanceOf[Option[pos.A]], v.asInstanceOf[pos.A])
-    }
-  }
 }
 
 /** Companion object to `Along` trait. */
@@ -131,15 +97,12 @@ object Along {
    *
    * @param dimension Dimension of the coordinate to exclude.
    */
-  def apply[P <: Position with ReduceablePosition with MapAlongPosition](dimension: Dimension)(
+  def apply[P <: Position with ReduceablePosition](dimension: Dimension)(
     implicit ev: PosDimDep[P, dimension.type]): Along[P] = AlongImpl(dimension)
 
   /** Standard `unapply` method for pattern matching. */
-  def unapply[P <: Position with ReduceablePosition with MapAlongPosition](along: Along[P]): Option[Dimension] = {
-    Some(along.dimension)
-  }
+  def unapply[P <: Position with ReduceablePosition](along: Along[P]): Option[Dimension] = Some(along.dimension)
 }
 
-private[position] case class AlongImpl[P <: Position with ReduceablePosition with MapAlongPosition](
-  dimension: Dimension) extends Along[P]
+private[position] case class AlongImpl[P <: Position with ReduceablePosition](dimension: Dimension) extends Along[P]
 

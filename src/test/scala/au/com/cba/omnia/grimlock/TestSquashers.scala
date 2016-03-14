@@ -25,10 +25,10 @@ import au.com.cba.omnia.grimlock.library.squash._
 trait TestSquashers extends TestGrimlock {
 
   val dfmt = new java.text.SimpleDateFormat("yyyy-MM-dd")
-  val con1 = Content(ContinuousSchema(LongCodex), 123)
-  val con2 = Content(ContinuousSchema(LongCodex), 456)
-  val cell1 = Cell(Position3D(1, "b", DateValue(dfmt.parse("2001-01-01"), DateCodex())), con1)
-  val cell2 = Cell(Position3D(2, "a", DateValue(dfmt.parse("2002-01-01"), DateCodex())), con2)
+  val con1 = Content(ContinuousSchema[Long](), 123)
+  val con2 = Content(ContinuousSchema[Long](), 456)
+  val cell1 = Cell(Position3D(1, "b", DateValue(dfmt.parse("2001-01-01"), DateCodec())), con1)
+  val cell2 = Cell(Position3D(2, "a", DateValue(dfmt.parse("2002-01-01"), DateCodec())), con2)
 }
 
 class TestPreservingMaxPosition extends TestSquashers {
@@ -304,7 +304,7 @@ class TestKeepSlice extends TestSquashers {
   }
 
   it should "return the first cell for the third dimension when equal" in {
-    val squash = KeepSlice[Position3D](DateValue(dfmt.parse("2001-01-01"), DateCodex()))
+    val squash = KeepSlice[Position3D](DateValue(dfmt.parse("2001-01-01"), DateCodec()))
 
     val t1 = squash.prepare(cell1, Third)
     val t2 = squash.prepare(cell2, Third)
@@ -315,7 +315,7 @@ class TestKeepSlice extends TestSquashers {
   }
 
   it should "return the second cell for the third dimension when equal" in {
-    val squash = KeepSlice[Position3D](DateValue(dfmt.parse("2002-01-01"), DateCodex()))
+    val squash = KeepSlice[Position3D](DateValue(dfmt.parse("2002-01-01"), DateCodec()))
 
     val t1 = squash.prepare(cell1, Third)
     val t2 = squash.prepare(cell2, Third)
@@ -326,7 +326,7 @@ class TestKeepSlice extends TestSquashers {
   }
 
   it should "return the second cell for the third dimension when not equal" in {
-    val squash = KeepSlice[Position3D](DateValue(dfmt.parse("2003-01-01"), DateCodex()))
+    val squash = KeepSlice[Position3D](DateValue(dfmt.parse("2003-01-01"), DateCodec()))
 
     val t1 = squash.prepare(cell1, Third)
     val t2 = squash.prepare(cell2, Third)

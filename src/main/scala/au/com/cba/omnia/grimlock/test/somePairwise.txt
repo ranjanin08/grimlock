@@ -1,6 +1,6 @@
-a|x|continuous|long|1
-a|y|continuous|long|2
-a|z|continuous|long|4
-b|x|continuous|long|1
-b|y|continuous|long|3
-b|z|continuous|long|9
+a|x|long|continuous|1
+a|y|long|continuous|2
+a|z|long|continuous|4
+b|x|long|continuous|1
+b|y|long|continuous|3
+b|z|long|continuous|9

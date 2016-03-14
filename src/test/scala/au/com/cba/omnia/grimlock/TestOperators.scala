@@ -25,8 +25,8 @@ import au.com.cba.omnia.grimlock.library.pairwise._
 
 trait TestOperators extends TestGrimlock {
 
-   val left = Cell(Position3D("left 1", "left 2", "reml"), Content(ContinuousSchema(LongCodex), 2))
-   val right = Cell(Position3D("right 1", "right 2", "remr"), Content(ContinuousSchema(LongCodex), 4))
+   val left = Cell(Position3D("left 1", "left 2", "reml"), Content(ContinuousSchema[Long](), 2))
+   val right = Cell(Position3D("right 1", "right 2", "remr"), Content(ContinuousSchema[Long](), 4))
    val reml = Position1D("reml")
    val remr = Position1D("remr")
    val separator = "."
@@ -46,7 +46,7 @@ trait TestOperators extends TestGrimlock {
 
     Position2D(pattern.format(first, second), third)
   }
-  def getContent(value: Double): Content = Content(ContinuousSchema(DoubleCodex), value)
+  def getContent(value: Double): Content = Content(ContinuousSchema[Double](), value)
 }
 
 class TestComparer extends TestOperators {
@@ -177,7 +177,7 @@ class TestConcatenate extends TestOperators {
   }
 
   def getContent(left: Long, right: Long): Content = {
-    Content(NominalSchema(StringCodex), format.format(left.toString, right.toString))
+    Content(NominalSchema[String](), format.format(left.toString, right.toString))
   }
 }
 
@@ -224,7 +224,7 @@ case class PlusWithValue(
       val offset = ext(left.position).value.asDouble.get
 
       plus.compute(left, right).map {
-        case Cell(pos, Content(_, DoubleValue(d))) => Cell(pos, Content(ContinuousSchema(DoubleCodex), d + offset))
+        case Cell(pos, Content(_, DoubleValue(d, _))) => Cell(pos, Content(ContinuousSchema[Double](), d + offset))
       }
     }
 }
@@ -243,25 +243,25 @@ class TestWithPrepareOperator extends TestOperators {
 
   def prepare(cell: Cell[Position1D]): Content = {
     cell.content.value match {
-      case DoubleValue(2) => cell.content
-      case DoubleValue(4) => getStringContent("not.supported")
-      case DoubleValue(8) => getLongContent(8)
+      case d: DoubleValue if (d.value == 2) => cell.content
+      case d: DoubleValue if (d.value == 4) => getStringContent("not.supported")
+      case d: DoubleValue if (d.value == 8) => getLongContent(8)
     }
   }
 
   def prepareWithValue(cell: Cell[Position1D], ext: Map[Position1D, Content]): Content = {
     (cell.content.value, ext(cell.position).value) match {
-      case (DoubleValue(2), DoubleValue(d)) => getDoubleContent(2 * d)
-      case (DoubleValue(4), _) => getStringContent("not.supported")
-      case (DoubleValue(8), DoubleValue(d)) => getLongContent(d.toLong)
+      case (c: DoubleValue, d: DoubleValue) if (c.value == 2) => getDoubleContent(2 * d.value)
+      case (c: DoubleValue, _) if (c.value == 4) => getStringContent("not.supported")
+      case (c: DoubleValue, d: DoubleValue) if (c.value == 8) => getLongContent(d.value.toLong)
     }
   }
 
   val locate = (left: Cell[Position1D], right: Cell[Position1D]) => left.position.toOption
 
-  def getLongContent(value: Long): Content = Content(DiscreteSchema(LongCodex), value)
-  def getDoubleContent(value: Double): Content = Content(ContinuousSchema(DoubleCodex), value)
-  def getStringContent(value: String): Content = Content(NominalSchema(StringCodex), value)
+  def getLongContent(value: Long): Content = Content(DiscreteSchema[Long](), value)
+  def getDoubleContent(value: Double): Content = Content(ContinuousSchema[Double](), value)
+  def getStringContent(value: String): Content = Content(NominalSchema[String](), value)
 
   "An Operator" should "withPrepare correctly" in {
     val obj = Plus[Position1D, Position1D](locate).withPrepare(prepare)
@@ -299,26 +299,26 @@ class TestAndThenMutateOperator extends TestOperators {
 
   def mutate(cell: Cell[Position1D]): Content = {
     cell.content.value match {
-      case DoubleValue(10) => cell.content
-      case DoubleValue(6) => getStringContent("not.supported")
+      case d: DoubleValue if (d.value == 10) => cell.content
+      case d: DoubleValue if (d.value == 6) => getStringContent("not.supported")
 
-      case DoubleValue(13) => cell.content
-      case DoubleValue(9) => getStringContent("not.supported")
+      case d: DoubleValue if (d.value == 13) => cell.content
+      case d: DoubleValue if (d.value == 9) => getStringContent("not.supported")
     }
   }
 
   def mutateWithValue(cell: Cell[Position1D], ext: Map[Position1D, Content]): Content = {
     (cell.content.value, ext(cell.position).value) match {
-      case (DoubleValue(13), DoubleValue(d)) => getDoubleContent(2 * d)
-      case (DoubleValue(9), _) => getStringContent("not.supported")
+      case (c: DoubleValue, d: DoubleValue) if (c.value == 13) => getDoubleContent(2 * d.value)
+      case (c: DoubleValue, _) if (c.value == 9) => getStringContent("not.supported")
     }
   }
 
   val locate = (left: Cell[Position1D], right: Cell[Position1D]) => left.position.toOption
 
-  def getLongContent(value: Long): Content = Content(DiscreteSchema(LongCodex), value)
-  def getDoubleContent(value: Double): Content = Content(ContinuousSchema(DoubleCodex), value)
-  def getStringContent(value: String): Content = Content(NominalSchema(StringCodex), value)
+  def getLongContent(value: Long): Content = Content(DiscreteSchema[Long](), value)
+  def getDoubleContent(value: Double): Content = Content(ContinuousSchema[Double](), value)
+  def getStringContent(value: String): Content = Content(NominalSchema[String](), value)
 
   "An Operator" should "andThenMutate correctly" in {
     val obj = Plus[Position1D, Position1D](locate).andThenMutate(mutate)

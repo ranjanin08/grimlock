@@ -15,189 +15,185 @@
 package au.com.cba.omnia.grimlock.framework.content.metadata
 
 import au.com.cba.omnia.grimlock.framework._
-import au.com.cba.omnia.grimlock.framework.content._
 import au.com.cba.omnia.grimlock.framework.encoding._
+
+import java.util.Date
+
+import scala.reflect._
 
 /** Base trait for variable schemas. */
 trait Schema {
+  /** Type of the schema's data. */
+  type S
+
   /** The type of variable. */
   val kind: Type
-  /** The codex used to encode/decode a variable value. */
-  val codex: Codex
-  /** The name of the schema. */
-  val name: String
 
   /**
-   * Check if a value is valid according to this schema.
+   * Validates if a value confirms to this schema.
    *
    * @param value The value to validate.
-   */
-  def isValid[V <: Value](value: V): Boolean
-
-  /**
-   * Decode a string into a content.
    *
-   * @param str The string to decode
-   *
-   * @return `Some[Content]` if the string can successfull be decoded and is valid according to this schema, `None`
-   *         otherwise.
+   * @return True is the value confirms to this schema, false otherwise.
    */
-  def decode(str: String): Option[Content] = {
-    codex.decode(str) match {
-      case Some(v) if isValid(v) => Some(Content(Schema.this, v))
-      case _ => None
-    }
-  }
+  def validate(value: Value { type V = S }): Boolean
 
   /**
    * Return a consise (terse) string representation of a schema.
    *
-   * @param separator Separator to use between various fields.
+   * @param codec The codec used to encode this schema's data.
    */
-  def toShortString(separator: String): String = kind.name + enclose(params()) + separator + codex.name
-
-  override def toString(): String = {
-    val par = params()
-    val sep = if (par.isEmpty) "" else ","
-
-    name + enclose(codex.toString + sep + par)
+  def toShortString(codec: Codec { type C = S }): String = {
+    kind.toShortString + round(paramString(true, s => codec.encode(s)))
   }
 
-  protected def params(): String
+  override def toString(): String = {
+    this.getClass.getSimpleName + square(typeString()) + "(" + paramString(false, s => s.toString) + ")"
+  }
 
-  private def enclose(str: String): String = if (str.isEmpty) str else "(" + str + ")"
+  protected def paramString(short: Boolean, f: (S) => String): String = ""
+  protected def typeString(): String = ""
+
+  private def round(str: String): String = if (str.isEmpty) str else "(" + str + ")"
+  private def square(str: String): String = if (str.isEmpty) str else "[" + str + "]"
 }
 
+/** Companion object to the `Schema` trait. */
 object Schema {
   /**
-   * Convert a codex and type string to a schema.
+   * Parse a schema from a string.
    *
-   * @param codex The string name of the codex.
-   * @param kind  The string name of the variable type.
+   * @param str String from which to parse the schema.
+   * @param cdc Codec with which to decode the data.
    *
-   * @return `Some[Schema]` if an approriate schema is found, `None` otherwise.
+   * @return A `Some[Schema]` in case of success, `None` otherwise.
    */
-  def fromString(codex: String, kind: String): Option[Schema] = {
-    (kind, codex) match {
-      case (Type.Continuous.name, DoubleCodex.name) => Some(ContinuousSchema(DoubleCodex))
-      case (Type.Continuous.name, LongCodex.name) => Some(ContinuousSchema(LongCodex))
-      case (Type.Continuous.name, LongCodex.alias) => Some(ContinuousSchema(LongCodex))
-      case (Type.Discrete.name, LongCodex.name) => Some(DiscreteSchema(LongCodex))
-      case (Type.Discrete.name, LongCodex.alias) => Some(DiscreteSchema(LongCodex))
-      case (Type.Nominal.name, StringCodex.name) => Some(NominalSchema(StringCodex))
-      case (Type.Nominal.name, DoubleCodex.name) => Some(NominalSchema(DoubleCodex))
-      case (Type.Nominal.name, LongCodex.name) => Some(NominalSchema(LongCodex))
-      case (Type.Nominal.name, LongCodex.alias) => Some(NominalSchema(LongCodex))
-      case (Type.Ordinal.name, StringCodex.name) => Some(OrdinalSchema(StringCodex))
-      case (Type.Ordinal.name, DoubleCodex.name) => Some(OrdinalSchema(DoubleCodex))
-      case (Type.Ordinal.name, LongCodex.name) => Some(OrdinalSchema(LongCodex))
-      case (Type.Ordinal.name, LongCodex.alias) => Some(OrdinalSchema(LongCodex))
-      case (ContinuousSchema.pattern(l, u), DoubleCodex.name) => ContinuousSchema.fromString(l, u, DoubleCodex)
-      case (ContinuousSchema.pattern(l, u), LongCodex.name) => ContinuousSchema.fromString(l, u, LongCodex)
-      case (ContinuousSchema.pattern(l, u), LongCodex.alias) => ContinuousSchema.fromString(l, u, LongCodex)
-      case (DiscreteSchema.pattern(l, u, s), LongCodex.name) => DiscreteSchema.fromString(l, u, s, LongCodex)
-      case (DiscreteSchema.pattern(l, u, s), LongCodex.alias) => DiscreteSchema.fromString(l, u, s, LongCodex)
-      case (NominalSchema.pattern(p), StringCodex.name) => NominalSchema.fromString(p, StringCodex)
-      case (NominalSchema.pattern(p), DoubleCodex.name) => NominalSchema.fromString(p, DoubleCodex)
-      case (NominalSchema.pattern(p), LongCodex.name) => NominalSchema.fromString(p, LongCodex)
-      case (NominalSchema.pattern(p), LongCodex.alias) => NominalSchema.fromString(p, LongCodex)
-      case (OrdinalSchema.pattern(p), StringCodex.name) => OrdinalSchema.fromString(p, StringCodex)
-      case (OrdinalSchema.pattern(p), DoubleCodex.name) => OrdinalSchema.fromString(p, DoubleCodex)
-      case (OrdinalSchema.pattern(p), LongCodex.name) => OrdinalSchema.fromString(p, LongCodex)
-      case (OrdinalSchema.pattern(p), LongCodex.alias) => OrdinalSchema.fromString(p, LongCodex)
-      case (Type.Date.name, DateCodex.pattern(format)) => Some(DateSchema(DateCodex(format)))
+  def fromShortString(str: String, cdc: Codec): Option[Schema { type S = cdc.C }] = {
+    str match {
+      case ContinuousSchema.Pattern(_) => ContinuousSchema.fromShortString(str, cdc)
+      case DiscreteSchema.Pattern(_, _) => DiscreteSchema.fromShortString(str, cdc)
+      case NominalSchema.Pattern(_) => NominalSchema.fromShortString(str, cdc)
+      case OrdinalSchema.Pattern(_) => OrdinalSchema.fromShortString(str, cdc)
+      case DateSchema.Pattern(_) => DateSchema.fromShortString(str, cdc)
+      case _ => None
+    }
+  }
+}
+
+/** Trait for dealing with schema parameters. */
+private[metadata] trait SchemaParameters {
+  protected def parse(codec: Codec, value: String): Option[codec.C] = codec.decode(value).map(_.value)
+
+  protected def parseRange(codec: Codec, range: String): Option[(codec.C, codec.C)] = {
+    range.split(":") match {
+      case Array(lower, upper) =>
+        (parse(codec, lower), parse(codec, upper)) match {
+          case (Some(low), Some(upp)) => Some((low, upp))
+          case _ => None
+        }
       case _ => None
     }
   }
 
-  /**
-   * Parse a string value according to a codex.
-   *
-   * @param param Parameter to parse
-   * @param codex The codex to parse with.
-   *
-   * @return An `Option` of type `C#T`
-   */
-  def parse[C <: Codex](param: String, codex: C): Option[C#T] = codex.decode(param).map(codex.fromValue(_))
+  protected def parseSet(codec: Codec, set: String): Option[Set[codec.C]] = {
+    val values = set.split("(?<!\\\\),").map(parse(codec, _))
+
+    values.exists(_.isEmpty) match {
+      case true => None
+      case false => Some(values.map(_.get).toSet)
+    }
+  }
+
+  protected def writeRange[S](short: Boolean, range: Option[(S, S)], f: (S) => String): String = {
+    range.map { case (lower, upper) => f(lower) + (if (short) { ":" } else { "," }) + f(upper) }.getOrElse("")
+  }
+
+  protected def writeSet[S](short: Boolean, set: Set[S], f: (S) => String): String = {
+    writeList(short, set.toList, f, "Set")
+  }
+
+  protected def writeOrderedSet[S : Ordering](short: Boolean, set: Set[S], f: (S) => String): String = {
+    writeList(short, set.toList.sorted, f, "Set")
+  }
+
+  private def writeList[S](short: Boolean, list: List[S], f: (S) => String, name: String): String = {
+    if (list.isEmpty) {
+      ""
+    } else {
+      val args = list.map(f(_).replaceAll(",", "\\\\,")).mkString(",")
+
+      if (short) {
+        args
+      } else {
+        name + "(" + args + ")"
+      }
+    }
+  }
 }
 
 /** Base trait for schemas for numerical variables. */
 trait NumericalSchema[T] extends Schema {
-  /** Optional minimum value of the variable. */
-  val minimum: Option[T]
-  /** Optional maximum value of the variable. */
-  val maximum: Option[T]
+  type S = T
+
+  /* Optional range of variable */
+  val range: Option[(T, T)]
+
+  protected def validateRange(value: Value { type V = S })(implicit ev: Numeric[S]): Boolean = {
+    import ev._
+
+    range.map { case (lower, upper) => value.value >= lower && value.value <= upper }.getOrElse(true)
+  }
 }
 
 /**
  * Schema for continuous variables.
  *
- * @param codex   The codex for the value.
- * @param minimum The optional minimum value.
- * @param maximum The optional maximum value.
+ * @param range The optional range of the variable.
  *
  * @note The constructor is private to ensure a clean interface as provided by the `apply` methods of the companion
  *       object.
  */
-case class ContinuousSchema[C <: Codex] private (codex: C, minimum: Option[C#T], maximum: Option[C#T])(
-  implicit num: Numeric[C#T]) extends NumericalSchema[C#T] {
+case class ContinuousSchema[T: ClassTag] private (range: Option[(T, T)])(
+  implicit ev: Numeric[T]) extends NumericalSchema[T] with SchemaParameters {
   val kind = Type.Continuous
-  val name = "ContinuousSchema"
 
-  def isValid[V <: Value](value: V): Boolean = {
-    import num._
+  def validate(value: Value { type V = S }): Boolean = validateRange(value)
 
-    (value.codex.name == codex.name, minimum, maximum) match {
-      case (true, Some(l), Some(u)) => val v = codex.fromValue(value); (v >= l && v <= u)
-      case (true, None, None) => true
-      case _ => false
-    }
-  }
-
-  protected def params(): String = {
-    (minimum, maximum) match {
-      case (Some(l), Some(u)) => l.toString + "," + u.toString
-      case _ => ""
-    }
-  }
+  override protected def paramString(short: Boolean, f: (S) => String): String = writeRange(short, range, f)
+  override protected def typeString(): String = classTag[T].runtimeClass.getName.capitalize
 }
 
-/** Companion object to `ContinuousSchema`. */
-object ContinuousSchema {
-  /**
-   * Construct a continuous schema with unbounded range.
-   *
-   * @param codex The codex for the value.
-   */
-  def apply[C <: Codex](codex: C)(implicit num: Numeric[C#T]): ContinuousSchema[C] = ContinuousSchema(codex, None, None)
+/** Companion object to `ContinuousSchema` case class. */
+object ContinuousSchema extends SchemaParameters {
+  /** Pattern for matching short string continuous schema. */
+  val Pattern = (Type.Continuous.name + """(?:\((?:(.*?:.*))?\))?""").r
+
+  /** Construct a continuous schema with unbounded range. */
+  def apply[T: ClassTag]()(implicit ev: Numeric[T]): ContinuousSchema[T] = ContinuousSchema(None)
 
   /**
    * Construct a continuous schema with bounded range.
    *
-   * @param codex   The codex for the value.
-   * @param minimum The lower bound (minimum value).
-   * @param maximum The upper bound (maximum value).
+   * @param lower The lower bound (minimum value).
+   * @param upper The upper bound (maximum value).
    */
-  def apply[C <: Codex](codex: C, minimum: C#T, maximum: C#T)(implicit num: Numeric[C#T]): ContinuousSchema[C] = {
-    ContinuousSchema(codex, Some(minimum), Some(maximum))
+  def apply[T: ClassTag](lower: T, upper: T)(implicit ev: Numeric[T]): ContinuousSchema[T] = {
+    ContinuousSchema(Some((lower, upper)))
   }
 
-  /** Pattern for matching short string continuous value with parameters. */
-  val pattern = (Type.Continuous.name + """\((.*),(.*)\)""").r
-
   /**
-   * Parse continuous schema parameters
+   * Parse a continuous schema from string.
    *
-   * @param lower Lower bound for the schema.
-   * @param upper Upper bound for the schema.
-   * @param codex The codex to parse with.
+   * @param str The string to parse
+   * @param cdc The codec to parse with.
    *
-   * @return An `Option` of `ContinuousSchema` if all parameters parse correctly, `None` otherwise.
+   * @return A `Some[ContinuousSchema]` if successful, `None` otherwise.
    */
-  def fromString[C <: Codex](lower: String, upper: String, codex: C)(
-    implicit num: Numeric[C#T]): Option[ContinuousSchema[C]] = {
-    (Schema.parse(lower, codex), Schema.parse(upper, codex)) match {
-      case (Some(l), Some(u)) => Some(ContinuousSchema(codex, l, u))
+  def fromShortString(str: String, cdc: Codec): Option[ContinuousSchema[cdc.C]] = {
+    (cdc.tag, cdc.numeric, str) match {
+      case (Some(tag), Some(ev), Pattern(null)) => Some(ContinuousSchema()(tag, ev))
+      case (Some(tag), Some(ev), Pattern(range)) =>
+        parseRange(cdc, range).map { case (lower, upper) => ContinuousSchema(lower, upper)(tag, ev) }
       case _ => None
     }
   }
@@ -206,150 +202,113 @@ object ContinuousSchema {
 /**
  * Schema for discrete variables.
  *
- * @param codex   The codex for the value.
- * @param minimum The optional minimum value.
- * @param maximum The optional maximum value.
- * @param step    The optional step size.
+ * @param range The optional range of the variable
+ * @param step  The optional step size.
  *
  * @note The constructor is private to ensure a clean interface as provided by the `apply` methods of the companion
  *       object.
  */
-case class DiscreteSchema[C <: Codex] private (codex: C, minimum: Option[C#T], maximum: Option[C#T], step: Option[C#T])(
-  implicit int: Integral[C#T]) extends NumericalSchema[C#T] {
+case class DiscreteSchema[T: ClassTag] private (range: Option[(T, T)], step: Option[T])(
+  implicit ev: Integral[T]) extends NumericalSchema[T] with SchemaParameters {
   val kind = Type.Discrete
-  val name = "DiscreteSchema"
 
-  def isValid[V <: Value](value: V): Boolean = {
-    import int._
+  def validate(value: Value { type V = S }): Boolean = {
+    import ev._
 
-    (value.codex.name == codex.name, minimum, maximum, step) match {
-      case (true, Some(l), Some(u), Some(s)) => val v = codex.fromValue(value); (v >= l && v <= u && (v % s) == 0)
-      case (true, None, None, None) => true
-      case _ => false
-    }
+    validateRange(value) && step.map { case s => (value.value % s) == 0 }.getOrElse(true)
   }
 
-  protected def params(): String = {
-    (minimum, maximum, step) match {
-      case (Some(l), Some(u), Some(s)) => l.toString + "," + u.toString + "," + s.toString
-      case _ => ""
-    }
+  override protected def paramString(short: Boolean, f: (S) => String): String = {
+    step.map { s => writeRange(short, range, f) + "," + f(s) }.getOrElse("")
   }
+  override protected def typeString(): String = classTag[T].runtimeClass.getName.capitalize
 }
 
-/** Companion object to `DiscreteSchema`. */
-object DiscreteSchema {
-  /**
-   * Construct a discrete schema with unbounded range and step size 1.
-   *
-   * @param codex The codex for the value.
-   */
-  def apply[C <: Codex](codex: C)(implicit int: Integral[C#T]): DiscreteSchema[C] = {
-    DiscreteSchema(codex, None, None, None)
-  }
+/** Companion object to `DiscreteSchema` case class. */
+object DiscreteSchema extends SchemaParameters {
+  /** Pattern for matching short string discrete schema. */
+  val Pattern = (Type.Discrete.name + """(?:\((?:(.*?:.*?),(.*))?\))?""").r
+
+  /** Construct a discrete schema with unbounded range and step size 1. */
+  def apply[T: ClassTag]()(implicit ev: Integral[T]): DiscreteSchema[T] = DiscreteSchema(None, None)
 
   /**
    * Construct a discrete schema with bounded range and step size.
    *
-   * @param codex   The codex for the value.
-   * @param minimum The lower bound (minimum value).
-   * @param maximum The upper bound (maximum value).
-   * @param step    The step size.
+   * @param lower The lower bound (minimum value).
+   * @param upper The upper bound (maximum value).
+   * @param step  The step size.
    */
-  def apply[C <: Codex](codex: C, minimum: C#T, maximum: C#T, step: C#T)(
-    implicit int: Integral[C#T]): DiscreteSchema[C] = DiscreteSchema(codex, Some(minimum), Some(maximum), Some(step))
-
-  /** Pattern for matching short string discrete value with parameters. */
-  val pattern = (Type.Discrete.name + """\((.*),(.*),(.*)\)""").r
+  def apply[T: ClassTag](lower: T, upper: T, step: T)(implicit ev: Integral[T]): DiscreteSchema[T] = {
+    DiscreteSchema(Some((lower, upper)), Some(step))
+  }
 
   /**
-   * Parse discrete schema parameters
+   * Parse a discrete schema from string.
    *
-   * @param lower Lower bound for the schema.
-   * @param upper Upper bound for the schema.
-   * @param step  Step size for the schema.
-   * @param codex The codex to parse with.
+   * @param str The string to parse
+   * @param cdc The codec to parse with.
    *
-   * @return An `Option` of `DiscreteSchema` if all parameters parse correctly, `None` otherwise.
+   * @return A `Some[DiscreteSchema]` if successful, `None` otherwise.
    */
-  def fromString[C <: Codex](lower: String, upper: String, step: String, codex: C)(
-    implicit num: Integral[C#T]): Option[DiscreteSchema[C]] = {
-    (Schema.parse(lower, codex), Schema.parse(upper, codex), Schema.parse(step, codex)) match {
-      case (Some(l), Some(u), Some(s)) => Some(DiscreteSchema(codex, l, u, s))
+  def fromShortString(str: String, cdc: Codec): Option[DiscreteSchema[cdc.C]] = {
+    (cdc.tag, cdc.integral, str) match {
+      case (Some(tag), Some(ev), Pattern(null, null)) => Some(DiscreteSchema()(tag, ev))
+      case (Some(tag), Some(ev), Pattern(range, step)) => {
+        (parseRange(cdc, range), parse(cdc, step)) match {
+          case (Some((lower, upper)), Some(step)) => Some(DiscreteSchema(lower, upper, step)(tag, ev))
+          case _ => None
+        }
+      }
       case _ => None
     }
   }
 }
 
 /** Base trait for schemas for categorical variables. */
-trait CategoricalSchema[C <: Codex] extends Schema {
-  /** Optional values the variable can take. */
-  val domain: Option[List[C#T]]
+trait CategoricalSchema[T] extends Schema with SchemaParameters {
+  type S = T
 
-  def isValid[V <: Value](value: V): Boolean = {
-    (value.codex.name == codex.name, domain) match {
-      case (true, Some(d)) => d.contains(codex.fromValue(value))
-      case (true, None) => true
-      case _ => false
-    }
+  /** Values the variable can take. */
+  val domain: Set[S]
+
+  def validate(value: Value { type V = S }): Boolean = domain.isEmpty || domain.contains(value.value)
+
+  protected def shortName(name: String): String = {
+    if (name.contains(".")) { if (name == "java.lang.String") { "String" } else { name } } else { name.capitalize }
   }
 }
 
 /**
  * Schema for nominal variables.
  *
- * @param codex  The codex for the value.
- * @param domain The optional values of the variable.
- *
- * @note The constructor is private to ensure a clean interface as provided by the `apply` methods of the companion
- *       object.
+ * @param domain The values of the variable.
  */
-case class NominalSchema[C <: Codex] private (codex: C, domain: Option[List[C#T]]) extends CategoricalSchema[C] {
+case class NominalSchema[T: ClassTag](domain: Set[T] = Set[T]()) extends CategoricalSchema[T] {
   val kind = Type.Nominal
-  val name = "NominalSchema"
 
-  protected def params(): String = {
-    domain match {
-      case Some(d) => d.map(_.toString.replaceAll(",", "\\\\,")).mkString(",")
-      case _ => ""
-    }
-  }
+  override protected def paramString(short: Boolean, f: (S) => String): String = writeSet(short, domain, f)
+  override protected def typeString(): String = shortName(classTag[T].runtimeClass.getName)
 }
 
-/** Companion object to `NominalSchema`. */
-object NominalSchema {
-  /**
-   * Construct a nominal schema that can take on any value.
-   *
-   * @param codex The codex for the value.
-   */
-  def apply[C <: Codex](codex: C): NominalSchema[C] = NominalSchema(codex, None)
+/** Companion object to `NominalSchema` case class. */
+object NominalSchema extends SchemaParameters {
+  /** Pattern for matching short string nominal schema. */
+  val Pattern = (Type.Nominal.name + """(?:\((?:(.*?))?\))?""").r
 
   /**
-   * Construct a nominal schema.
+   * Parse a nominal schema from string.
    *
-   * @param codex  The codex for the value.
-   * @param domain A list of values the variable can take on.
+   * @param str The string to parse
+   * @param cdc The codec to parse with.
+   *
+   * @return A `Some[NominalSchema]` if successful, `None` otherwise.
    */
-  def apply[C <: Codex](codex: C, domain: List[C#T]): NominalSchema[C] = NominalSchema(codex, Some(domain))
-
-  /** Pattern for matching short string nominal value with parameters. */
-  val pattern = (Type.Nominal.name + """\((.*)\)""").r
-
-  /**
-   * Parse nominal schema parameters
-   *
-   * @param params String of comma separated values.
-   * @param codex  The codex to parse with.
-   *
-   * @return An `Option` of `NominalSchema` if all parameters parse correctly, `None` otherwise.
-   */
-  def fromString[C <: Codex](params: String, codex: C): Option[NominalSchema[C]] = {
-    val domain = params.split("(?<!\\\\),").map(Schema.parse(_, codex)).toList
-
-    domain.exists(_.isEmpty) match {
-      case true => None
-      case false => Some(NominalSchema(codex, domain.flatten))
+  def fromShortString(str: String, cdc: Codec): Option[NominalSchema[cdc.C]] = {
+    (cdc.tag, str) match {
+      case (Some(tag), Pattern(null)) => Some(NominalSchema()(tag))
+      case (Some(tag), Pattern(domain)) => parseSet(cdc, domain).map(NominalSchema(_)(tag))
+      case _ => None
     }
   }
 }
@@ -357,79 +316,116 @@ object NominalSchema {
 /**
  * Schema for ordinal variables.
  *
- * @param codex  The codex for the value.
  * @param domain The optional values of the variable.
+ */
+case class OrdinalSchema[T: ClassTag: Ordering](domain: Set[T] = Set[T]()) extends CategoricalSchema[T] {
+  val kind = Type.Ordinal
+
+  override protected def paramString(short: Boolean, f: (S) => String): String = writeOrderedSet(short, domain, f)
+  override protected def typeString(): String = shortName(classTag[T].runtimeClass.getName)
+}
+
+/** Companion object to `OrdinalSchema`. */
+object OrdinalSchema extends SchemaParameters {
+  /** Pattern for matching short string ordinal schema. */
+  val Pattern = (Type.Ordinal.name + """(?:\((?:(.*?))?\))?""").r
+
+  /**
+   * Parse a ordinal schema from string.
+   *
+   * @param str The string to parse
+   * @param cdc The codec to parse with.
+   *
+   * @return A `Some[OrdinalSchema]` if successful, `None` otherwise.
+   */
+  def fromShortString(str: String, cdc: Codec): Option[OrdinalSchema[cdc.C]] = {
+    (cdc.tag, cdc.ordering, str) match {
+      case (Some(tag), Some(ord), Pattern(null)) => Some(OrdinalSchema()(tag, ord))
+      case (Some(tag), Some(ord), Pattern(domain)) => parseSet(cdc, domain).map(OrdinalSchema(_)(tag, ord))
+      case _ => None
+    }
+  }
+}
+
+/**
+ * Schema for date variables.
+ *
+ * @param dates The optional values of the variable.
  *
  * @note The constructor is private to ensure a clean interface as provided by the `apply` methods of the companion
  *       object.
  */
-case class OrdinalSchema[C <: Codex] private (codex: C, domain: Option[List[C#T]]) extends CategoricalSchema[C] {
-  val kind = Type.Ordinal
-  val name = "OrdinalSchema"
+case class DateSchema[T: ClassTag] private (dates: Option[Either[(T, T), Set[T]]])(
+  implicit ev: T => Date) extends Schema with SchemaParameters {
+  type S = T
 
-  protected def params(): String = {
-    domain match {
-      case Some(d) => d.map(_.toString.replaceAll(",", "\\\\,")).mkString(",")
-      case _ => ""
-    }
-  }
-}
-
-/** Companion object to `OrdinalSchema`. */
-object OrdinalSchema {
-  /**
-   * Construct a ordinal schema that can take on any value.
-   *
-   * @param codex The codex for the value.
-   */
-  def apply[C <: Codex](codex: C): OrdinalSchema[C] = OrdinalSchema(codex, None)
-
-  /**
-   * Construct a ordinal schema.
-   *
-   * @param codex  The codex for the value.
-   * @param domain A list of values the variable can take on.
-   */
-  def apply[C <: Codex](codex: C, domain: List[C#T]): OrdinalSchema[C] = OrdinalSchema(codex, Some(domain))
-
-  /** Pattern for matching short string ordinal value with parameters. */
-  val pattern = (Type.Ordinal.name + """\((.*)\)""").r
-
-  /**
-   * Parse ordinal schema parameters
-   *
-   * @param params String of comma separated values.
-   * @param codex  The codex to parse with.
-   *
-   * @return An `Option` of `OrdinalSchema` if all parameters parse correctly, `None` otherwise.
-   */
-  def fromString[C <: Codex](params: String, codex: C): Option[OrdinalSchema[C]] = {
-    val domain = params.split("(?<!\\\\),").map(Schema.parse(_, codex)).toList
-
-    domain.exists(_.isEmpty) match {
-      case true => None
-      case false => Some(OrdinalSchema(codex, domain.flatten))
-    }
-  }
-}
-
-/** Schema for date variables. */
-case class DateSchema[C <: DateCodex](codex: C) extends Schema {
   val kind = Type.Date
-  val name = "DateSchema"
 
-  def isValid[V <: Value](value: V): Boolean = value.codex.name == codex.name
+  def validate(value: Value { type V = S }): Boolean = {
+    dates match {
+      case None => true
+      case Some(Left((lower, upper))) => (lower.compareTo(value.value) <= 0) && (upper.compareTo(value.value) >= 0)
+      case Some(Right(domain)) => domain.contains(value.value)
+    }
+  }
 
-  protected def params(): String = ""
+  override protected def paramString(short: Boolean, f: (S) => String): String = {
+    dates match {
+      case None => ""
+      case Some(Left(range)) => writeRange(short, Some(range), f)
+      case Some(Right(domain)) => writeSet(short, domain, f)
+    }
+  }
+  override protected def typeString(): String = classTag[T].runtimeClass.getName
+}
+
+/** Companion object to `DateSchema`. */
+object DateSchema extends SchemaParameters {
+  /** Pattern for matching short string date schema. */
+  val Pattern = (Type.Date.name + """(?:\((?:(.*?))?\))?""").r
+
+  /** Construct an unbounded date schema. */
+  def apply[T: ClassTag]()(implicit ev: T => Date): DateSchema[T] = DateSchema[T](None)
+
+  /**
+   * Construct a date schema with bounded range.
+   *
+   * @param lower The lower bound (minimum value).
+   * @param upper The upper bound (maximum value).
+   */
+  def apply[T: ClassTag](lower: T, upper: T)(implicit ev: T => Date): DateSchema[T] = {
+    DateSchema[T](Some(Left((lower, upper))))
+  }
+
+  /**
+   * Construct a date schema with a set of valid dates.
+   *
+   * @param domain The set of legal values.
+   */
+  def apply[T: ClassTag](domain: Set[T])(implicit ev: T => Date): DateSchema[T] = DateSchema[T](Some(Right(domain)))
+
+  /**
+   * Parse a date schema from string.
+   *
+   * @param str The string to parse
+   * @param cdc The codec to parse with.
+   *
+   * @return A `Some[DateSchema]` if successful, `None` otherwise.
+   */
+  def fromShortString(str: String, cdc: Codec): Option[DateSchema[cdc.C]] = {
+    (cdc.tag, cdc.date, str) match {
+      case (Some(tag), Some(ev), Pattern(null)) => Some(DateSchema()(tag, ev))
+      case (Some(tag), Some(ev), Pattern("")) => Some(DateSchema()(tag, ev))
+      case (Some(tag), Some(ev), RangePattern(range)) =>
+        parseRange(cdc, range).map { case (lower, upper) => DateSchema(lower, upper)(tag, ev) }
+      case (Some(tag), Some(ev), Pattern(domain)) => parseSet(cdc, domain).map(DateSchema(_)(tag, ev))
+      case _ => None
+    }
+  }
+
+  private val RangePattern = (Type.Date.name + """(?:\((?:(.*?:.*))?\))?""").r
 }
 
 /** Schema for structured data variables. */
-case class StructuredSchema[C <: StructuredCodex](codex: C) extends Schema {
-  val kind = Type.Structured
-  val name = "StructuredSchema"
-
-  def isValid[V <: Value](value: V): Boolean = value.codex.name == codex.name
-
-  protected def params(): String = ""
-}
+trait StructuredSchema extends Schema
 

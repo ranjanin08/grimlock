@@ -62,7 +62,7 @@ case class Gradient(dim: Dimension) extends Window[Position3D, Position2D, Posit
   def present(pos: Position2D, out: O): TraversableOnce[Cell[Position3D]] = {
     out._1.map {
       case grad => Cell(pos.append(out._3.toShortString(separator) + ".to." +
-        out._2.toShortString(separator)), Content(ContinuousSchema(DoubleCodex), grad))
+        out._2.toShortString(separator)), Content(ContinuousSchema[Double](), grad))
     }
   }
 }
@@ -83,7 +83,7 @@ class DerivedData(args: Args) extends Job(args) {
   // 4/ Melt third dimension (gradients) into second dimension. The result is a 2D matrix (instance x
   //    feature.from.gradient)
   // 5/ Persist 2D gradient features.
-  loadText(s"${path}/exampleDerived.txt", Cell.parse3D(third = DateCodex()))
+  loadText(s"${path}/exampleDerived.txt", Cell.parse3D(third = DateCodec()))
     .data
     .slide(Along(Third), Gradient(Third))
     .melt(Third, Second, ".from.")

@@ -19,20 +19,26 @@ import java.util.Date
 import scala.util.matching.Regex
 
 /** Hetrogeneous comparison results. */
-private[encoding] trait CompareResult
-private[encoding] case object GreaterEqual extends CompareResult
-private[encoding] case object Greater extends CompareResult
-private[encoding] case object Equal extends CompareResult
-private[encoding] case object Less extends CompareResult
-private[encoding] case object LessEqual extends CompareResult
+sealed private trait CompareResult
+private case object GreaterEqual extends CompareResult
+private case object Greater extends CompareResult
+private case object Equal extends CompareResult
+private case object Less extends CompareResult
+private case object LessEqual extends CompareResult
 
 /** Base trait for representing strutured data. */
 trait Structured
 
 /** Base trait for variable values. */
 trait Value {
-  /** The codex used to encode/decode this value. */
-  val codex: Codex
+  /** Type of  the value. */
+  type V
+
+  /** The encapsulated value. */
+  val value: V
+
+  /** The codec used to encode/decode this value. */
+  val codec: Codec { type C = V }
 
   /**
    * Check for equality with `that`.
@@ -99,22 +105,27 @@ trait Value {
 
   /** Return value as `java.util.Date`. */
   def asDate: Option[Date] = None
+
   /** Return value as `String`. */
   def asString: Option[String] = None
+
   /** Return value as `Double`. */
   def asDouble: Option[Double] = None
+
   /** Return value as `Long`. */
   def asLong: Option[Long] = None
+
   /** Return value as `Boolean`. */
   def asBoolean: Option[Boolean] = None
+
   /** Return value as event. */
   def asStructured: Option[Structured] = None
 
   /** Return a consise (terse) string representation of a value. */
-  def toShortString: String = codex.encode(this)
+  def toShortString: String = codec.encode(value)
 
   private def evaluate(that: Valueable, op: CompareResult): Boolean = {
-    codex.compare(this, that()) match {
+    codec.compare(this, that()) match {
       case Some(0) => (op == Equal) || (op == GreaterEqual) || (op == LessEqual)
       case Some(x) if (x > 0) => (op == Greater) || (op == GreaterEqual)
       case Some(x) if (x < 0) => (op == Less) || (op == LessEqual)
@@ -123,42 +134,65 @@ trait Value {
   }
 }
 
+/** Compantion object to the `Value` trait. */
 object Value {
   /** Define an ordering between 2 values. Only use with values of the same type. */
   val Ordering: Ordering[Value] = new Ordering[Value] {
     def compare(x: Value, y: Value): Int = {
-      x.codex.compare(x, y).getOrElse(throw new Exception("unable to compare different values."))
+      x.codec.compare(x, y).getOrElse(throw new Exception("unable to compare different values."))
     }
   }
+
+  /**
+   * Parse a value from string.
+   *
+   * @param str The string to parse.
+   * @param cdc The codec to decode with.
+   *
+   * @return A `Some[Value]` if successful, `None` otherwise.
+   */
+  def fromShortString(str: String, cdc: Codec): Option[Value { type V = cdc.C }] = cdc.decode(str)
 }
 
 /**
  * Value for when the data is of type `java.util.Date`
  *
  * @param value A `java.util.Date`.
- * @param codex The codex used for encoding/decoding `value`.
+ * @param codec The codec used for encoding/decoding `value`.
  */
-case class DateValue(value: Date, codex: DateCodex) extends Value {
+case class DateValue(value: Date, codec: Codec { type C = Date } = DateCodec()) extends Value {
+  type V = Date
+
   override def asDate = Some(value)
+}
+
+/** Companion object to `DateValue` case class. */
+object DateValue {
+  /** Convenience constructure that returns a `DateValue` from a date and format string. */
+  def apply(value: Date, format: String): DateValue = DateValue(value, DateCodec(format))
 }
 
 /**
  * Value for when the data is of type `String`.
  *
  * @param value A `String`.
+ * @param codec The codec used for encoding/decoding `value`.
  */
-case class StringValue(value: String) extends Value {
-  val codex = StringCodex
-  override def asString = Some(value.toString)
+case class StringValue(value: String, codec: Codec { type C = String } = StringCodec) extends Value {
+  type V = String
+
+  override def asString = Some(value)
 }
 
 /**
  * Value for when the data is of type `Double`.
  *
  * @param value A `Double`.
+ * @param codec The codec used for encoding/decoding `value`.
  */
-case class DoubleValue(value: Double) extends Value {
-  val codex = DoubleCodex
+case class DoubleValue(value: Double, codec: Codec { type C = Double } = DoubleCodec) extends Value {
+  type V = Double
+
   override def asDouble = Some(value)
 }
 
@@ -166,9 +200,11 @@ case class DoubleValue(value: Double) extends Value {
  * Value for when the data is of type `Long`.
  *
  * @param value A `Long`.
+ * @param codec The codec used for encoding/decoding `value`.
  */
-case class LongValue(value: Long) extends Value {
-  val codex = LongCodex
+case class LongValue(value: Long, codec: Codec { type C = Long } = LongCodec) extends Value {
+  type V = Long
+
   override def asDouble = Some(value)
   override def asLong = Some(value)
 }
@@ -177,9 +213,11 @@ case class LongValue(value: Long) extends Value {
  * Value for when the data is of type `Boolean`.
  *
  * @param value A `Boolean`.
+ * @param codec The codec used for encoding/decoding `value`.
  */
-case class BooleanValue(value: Boolean) extends Value {
-  val codex = BooleanCodex
+case class BooleanValue(value: Boolean, codec: Codec { type C = Boolean } = BooleanCodec) extends Value {
+  type V = Boolean
+
   override def asDouble = Some(if (value) 1 else 0)
   override def asLong = Some(if (value) 1 else 0)
   override def asBoolean = Some(value)
@@ -189,36 +227,77 @@ case class BooleanValue(value: Boolean) extends Value {
  * Value for when the data is an event type.
  *
  * @param value An event.
- * @param codex The codex used for encoding/decoding `value`.
+ * @param codec The codec used for encoding/decoding `value`.
  */
-case class StructuredValue[T <: Structured](value: T, codex: StructuredCodex) extends Value {
+case class StructuredValue[U <: Structured, C <: StructuredCodec { type C = U }](value: U, codec: C) extends Value {
+  type V = U
+
   override def asStructured = Some(value)
 }
 
 /** Trait for transforming a type `T` into a `Value`. */
 trait Valueable extends java.io.Serializable {
-  /** Returns a `Value` for this type `T`. */
-  def apply(): Value
+  /** Type of the actual value. */
+  type T
+
+  /** Return a `Value` for this type `T`. */
+  def apply(): Value { type V = T }
 }
 
-/** Companion object for the `Valueable` trait. */
+/** Companion object to the `Valuable` trait. */
 object Valueable {
   /** Converts a `Value` to a `Value`; that is, it's a pass through. */
-  implicit def VV[T <: Value](t: T): Valueable = new Valueable { def apply(): Value = t }
+  implicit def VV[T <: Value](t: T): Valueable { type T = t.V } = {
+    new Valueable {
+      type T = t.V
+
+      def apply(): Value { type V = T } = t
+    }
+  }
 
   /** Converts a `String` to a `Value`. */
-  implicit def SV(t: String): Valueable = new Valueable { def apply(): Value = StringValue(t) }
+  implicit def SV(t: String): Valueable { type T = String } = {
+    new Valueable {
+      type T = String
+
+      def apply(): Value { type V = T } = StringValue(t)
+    }
+  }
 
   /** Converts a `Double` to a `Value`. */
-  implicit def DV(t: Double): Valueable = new Valueable { def apply(): Value = DoubleValue(t) }
+  implicit def DV(t: Double): Valueable { type T = Double } = {
+    new Valueable {
+      type T = Double
+
+      def apply(): Value { type V = T } = DoubleValue(t)
+    }
+  }
 
   /** Converts a `Long` to a `Value`. */
-  implicit def LV(t: Long): Valueable = new Valueable { def apply(): Value = LongValue(t) }
+  implicit def LV(t: Long): Valueable { type T = Long } = {
+    new Valueable {
+      type T = Long
+
+      def apply(): Value { type V = T } = LongValue(t)
+    }
+  }
 
   /** Converts a `Int` to a `Value`. */
-  implicit def IV(t: Int): Valueable = new Valueable { def apply(): Value = LongValue(t) }
+  implicit def IV(t: Int): Valueable { type T = Long } = {
+    new Valueable {
+      type T = Long
+
+      def apply(): Value { type V = T } = LongValue(t)
+    }
+  }
 
   /** Converts a `Boolean` to a `Value`. */
-  implicit def BV(t: Boolean): Valueable = new Valueable { def apply(): Value = BooleanValue(t) }
+  implicit def BV(t: Boolean): Valueable { type T = Boolean } = {
+    new Valueable {
+      type T = Boolean
+
+      def apply(): Value { type V = T } = BooleanValue(t)
+    }
+  }
 }
 

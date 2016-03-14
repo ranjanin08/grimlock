@@ -17,12 +17,11 @@ package au.com.cba.omnia.grimlock
 import au.com.cba.omnia.grimlock.framework._
 import au.com.cba.omnia.grimlock.framework.content._
 import au.com.cba.omnia.grimlock.framework.content.metadata._
-import au.com.cba.omnia.grimlock.framework.encoding._
 import au.com.cba.omnia.grimlock.framework.position._
 
 class TestRenameDimension extends TestGrimlock {
 
-  val cell = Cell(Position1D("foo"), Content(ContinuousSchema(DoubleCodex), 1))
+  val cell = Cell(Position1D("foo"), Content(ContinuousSchema[Double](), 1.0))
 
   "A RenameDimension" should "extract" in {
     val loc = Locate.RenameDimension[Position1D](First, "%1$s.postfix")
@@ -32,7 +31,7 @@ class TestRenameDimension extends TestGrimlock {
 
 class TestRenameDimensionWithContent extends TestGrimlock {
 
-  val cell = Cell(Position1D("foo"), Content(ContinuousSchema(DoubleCodex), 1))
+  val cell = Cell(Position1D("foo"), Content(ContinuousSchema[Double](), 1.0))
 
   "A RenameDimensionWithContent" should "extract" in {
     val loc = Locate.RenameDimensionWithContent[Position1D](First, "%2$s<-%1$s")
@@ -42,7 +41,7 @@ class TestRenameDimensionWithContent extends TestGrimlock {
 
 class TestAppendValue extends TestGrimlock {
 
-  val cell = Cell(Position1D("foo"), Content(ContinuousSchema(DoubleCodex), 1))
+  val cell = Cell(Position1D("foo"), Content(ContinuousSchema[Double](), 1.0))
 
   "A AppendValue" should "extract" in {
     Locate.AppendValue[Position1D](42)(cell) shouldBe (Some(Position2D("foo", 42)))
@@ -51,8 +50,8 @@ class TestAppendValue extends TestGrimlock {
 
 class TestPrependPairwiseSelectedStringToRemainder extends TestGrimlock {
 
-  val left = Cell(Position3D("left", "abc", 123), Content(ContinuousSchema(DoubleCodex), 1))
-  val right = Cell(Position3D("right", "def", 456), Content(ContinuousSchema(DoubleCodex), 2))
+  val left = Cell(Position3D("left", "abc", 123), Content(ContinuousSchema[Double](), 1.0))
+  val right = Cell(Position3D("right", "def", 456), Content(ContinuousSchema[Double](), 2.0))
 
   "A PrependPairwiseSelectedToRemainder" should "extract with all" in {
     Locate.PrependPairwiseSelectedStringToRemainder[Position3D](Over(First), "%1$s-%2$s", false)(left, right) shouldBe
@@ -116,7 +115,7 @@ class TestAppendDoubleString extends TestGrimlock {
 class TestAppendContentString extends TestGrimlock {
 
   val pos = Position1D("foo")
-  val con = Content(DiscreteSchema(LongCodex), 42)
+  val con = Content(DiscreteSchema[Long](), 42)
 
   "A AppendContentString" should "extract" in {
     Locate.AppendContentString[Position1D]()(pos, con) shouldBe (Some(Position2D("foo", "42")))
@@ -126,7 +125,7 @@ class TestAppendContentString extends TestGrimlock {
 class TestAppendDimensionAndContentString extends TestGrimlock {
 
   val pos = Position1D("foo")
-  val con = Content(DiscreteSchema(LongCodex), 42)
+  val con = Content(DiscreteSchema[Long](), 42)
 
   "A AppendDimensionAndContentString" should "extract" in {
     val loc = Locate.AppendDimensionAndContentString[Position1D](First, "%2$s!=%1$s")

@@ -26,38 +26,38 @@ import au.com.cba.omnia.grimlock.framework.{
 import au.com.cba.omnia.grimlock.framework.content._
 import au.com.cba.omnia.grimlock.framework.content.metadata._
 import au.com.cba.omnia.grimlock.framework.distribution.{ ApproximateDistribution => FwApproximateDistribution, _ }
-import au.com.cba.omnia.grimlock.framework.encoding._
 import au.com.cba.omnia.grimlock.framework.position._
-import au.com.cba.omnia.grimlock.framework.utility._
 
 import au.com.cba.omnia.grimlock.scalding._
 
 import scala.reflect.ClassTag
 
-trait ApproximateDistribution[P <: Position] extends FwApproximateDistribution[P] { self: Matrix[P] =>
+import shapeless.=:!=
+
+trait ApproximateDistribution[P <: Position with CompactablePosition] extends FwApproximateDistribution[P] {
+  self: Matrix[P] =>
 
   import ScaldingImplicits._
 
-  type HistogramTuners = TP2
-  def histogram[S <: Position with ExpandablePosition, Q <: Position, T <: Tuner](slice: Slice[P],
+  type HistogramTuners[T] = TP2[T]
+  def histogram[S <: Position with ExpandablePosition, Q <: Position, T <: Tuner : HistogramTuners](slice: Slice[P],
     name: Locate.FromSelectedAndContent[S, Q], filter: Boolean, tuner: T = Default())(
-      implicit ev1: PosExpDep[slice.S, Q], ev2: slice.S =:= S, ev3: ClassTag[Q],
-        ev4: HistogramTuners#V[T]): U[Cell[Q]] = {
+      implicit ev1: PosExpDep[slice.S, Q], ev2: slice.S =:= S, ev3: ClassTag[Q]): U[Cell[Q]] = {
     data
       .filter { case c => (!filter || c.content.schema.kind.isSpecialisationOf(Type.Categorical)) }
       .flatMap { case c => name(slice.selected(c.position), c.content) }
       .asKeys
       .tuneReducers(tuner.parameters)
       .size
-      .map { case (p, s) => Cell(p, Content(DiscreteSchema(LongCodex), s)) }
+      .map { case (p, s) => Cell(p, Content(DiscreteSchema[Long](), s)) }
   }
 
-  type QuantileTuners = TP2
-  def quantile[S <: Position with ExpandablePosition, Q <: Position, W, T <: Tuner](slice: Slice[P],
+  type QuantileTuners[T] = TP2[T]
+  def quantile[S <: Position with ExpandablePosition, Q <: Position, W, T <: Tuner : QuantileTuners](slice: Slice[P],
     probs: List[Double], quantiser: Quantile.Quantiser, name: Locate.FromSelectedAndOutput[S, Double, Q],
       count: Extract[P, W, Long], value: E[W], filter: Boolean, nan: Boolean, tuner: T = Default())(
-        implicit ev1: slice.S =:= S, ev2: PosExpDep[slice.S, Q], ev3: slice.R =!= Position0D, ev4: ClassTag[slice.S],
-          ev5: QuantileTuners#V[T]): U[Cell[Q]] = {
+        implicit ev1: slice.S =:= S, ev2: PosExpDep[slice.S, Q], ev3: slice.R =:!= Position0D,
+          ev4: ClassTag[slice.S]): U[Cell[Q]] = {
     val q = QuantileImpl[P, S, Q, W](probs, count, quantiser, name, nan)
 
     val filtered = filter match {

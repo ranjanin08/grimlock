@@ -17,7 +17,6 @@ package au.com.cba.omnia.grimlock.library.transform
 import au.com.cba.omnia.grimlock.framework._
 import au.com.cba.omnia.grimlock.framework.content._
 import au.com.cba.omnia.grimlock.framework.content.metadata._
-import au.com.cba.omnia.grimlock.framework.encoding._
 import au.com.cba.omnia.grimlock.framework.environment._
 import au.com.cba.omnia.grimlock.framework.position._
 import au.com.cba.omnia.grimlock.framework.transform._
@@ -28,7 +27,7 @@ private[transform] object Transform {
 
   def presentDouble[P <: Position](cell: Cell[P], f: (Double) => Double): TraversableOnce[Cell[P]] = {
     (checkType(cell, Numerical), cell.content.value.asDouble) match {
-      case (true, Some(d)) => Some(Cell(cell.position, Content(ContinuousSchema(DoubleCodex), f(d))))
+      case (true, Some(d)) => Some(Cell(cell.position, Content(ContinuousSchema[Double](), f(d))))
       case _ => None
     }
   }
@@ -37,7 +36,7 @@ private[transform] object Transform {
     transform: (Double, Double) => Double, inverse: Boolean = false): TraversableOnce[Cell[P]] = {
     (checkType(cell, Numerical), cell.content.value.asDouble, value.extract(cell, ext)) match {
       case (true, Some(l), Some(r)) => Some(Cell(cell.position,
-        Content(ContinuousSchema(DoubleCodex), if (inverse) transform(r, l) else transform(l, r))))
+        Content(ContinuousSchema[Double](), if (inverse) transform(r, l) else transform(l, r))))
       case _ => None
     }
   }
@@ -47,7 +46,7 @@ private[transform] object Transform {
     (checkType(cell, Numerical), cell.content.value.asDouble, first.extract(cell, ext),
       second.extract(cell, ext)) match {
         case (true, Some(v), Some(f), Some(s)) => Some(Cell(cell.position,
-          Content(ContinuousSchema(DoubleCodex), transform(v, f, s))))
+          Content(ContinuousSchema[Double](), transform(v, f, s))))
         case _ => None
       }
   }
@@ -55,9 +54,7 @@ private[transform] object Transform {
 
 /** Create indicator variables. */
 case class Indicator[P <: Position]() extends Transformer[P, P] {
-  def present(cell: Cell[P]): TraversableOnce[Cell[P]] = {
-    Some(Cell(cell.position, Content(DiscreteSchema(LongCodex), 1)))
-  }
+  def present(cell: Cell[P]): TraversableOnce[Cell[P]] = Some(Cell(cell.position, Content(DiscreteSchema[Long](), 1)))
 }
 
 /**
@@ -70,7 +67,7 @@ case class Indicator[P <: Position]() extends Transformer[P, P] {
 case class Binarise[P <: Position](pos: Locate.FromCell[P, P]) extends Transformer[P, P] {
   def present(cell: Cell[P]): TraversableOnce[Cell[P]] = {
     Transform.checkType(cell, Categorical) match {
-      case true => pos(cell).map(Cell(_, Content(DiscreteSchema(LongCodex), 1)))
+      case true => pos(cell).map(Cell(_, Content(DiscreteSchema[Long](), 1)))
       case false => None
     }
   }
@@ -296,8 +293,8 @@ case class Cut[P <: Position, W](bins: Extract[P, W, List[Double]]) extends Tran
       case (true, Some(v), Some(b)) =>
         val bstr = b.sliding(2).map("(" + _.mkString(",") + "]").toList
 
-        Some(Cell(cell.position,
-          Content(OrdinalSchema[Codex.StringCodex](StringCodex, bstr), bstr(b.lastIndexWhere(_ < v)))))
+        // TODO: Add correct Ordering to bstr
+        Some(Cell(cell.position, Content(OrdinalSchema[String](bstr.toSet), bstr(b.lastIndexWhere(_ < v)))))
       case _ => None
     }
   }
@@ -466,7 +463,7 @@ trait CutRules extends UserData {
  */
 case class Compare[P <: Position](comparer: (Cell[P]) => Boolean) extends Transformer[P, P] {
   def present(cell: Cell[P]): TraversableOnce[Cell[P]] = {
-    Some(Cell(cell.position, Content(NominalSchema(BooleanCodex), comparer(cell))))
+    Some(Cell(cell.position, Content(NominalSchema[Boolean](), comparer(cell))))
   }
 }
 

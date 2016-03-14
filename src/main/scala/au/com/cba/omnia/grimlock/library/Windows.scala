@@ -17,7 +17,6 @@ package au.com.cba.omnia.grimlock.library.window
 import au.com.cba.omnia.grimlock.framework._
 import au.com.cba.omnia.grimlock.framework.content._
 import au.com.cba.omnia.grimlock.framework.content.metadata._
-import au.com.cba.omnia.grimlock.framework.encoding._
 import au.com.cba.omnia.grimlock.framework.position._
 import au.com.cba.omnia.grimlock.framework.window._
 
@@ -32,7 +31,7 @@ trait MovingAverage[P <: Position, S <: Position with ExpandablePosition, R <: P
   def prepare(cell: Cell[P]): I = cell.content.value.asDouble.getOrElse(Double.NaN)
 
   def present(pos: S, out: O): TraversableOnce[Cell[Q]] = {
-    position(pos, out._1).map(Cell(_, Content(ContinuousSchema(DoubleCodex), out._2)))
+    position(pos, out._1).map(Cell(_, Content(ContinuousSchema[Double](), out._2)))
   }
 }
 
@@ -139,7 +138,7 @@ case class CumulativeSum[P <: Position, S <: Position with ExpandablePosition, R
   type T = Option[Double]
   type O = (R, Double)
 
-  val schema = ContinuousSchema(DoubleCodex)
+  val schema = ContinuousSchema[Double]()
 
   def prepare(cell: Cell[P]): I = {
     (strict, cell.content.value.asDouble) match {
@@ -195,7 +194,7 @@ case class BinOp[P <: Position, S <: Position with ExpandablePosition, R <: Posi
   }
 
   def present(pos: S, out: O): TraversableOnce[Cell[Q]] = {
-    position(pos, out._3, out._2).map(Cell(_, Content(ContinuousSchema(DoubleCodex), out._1)))
+    position(pos, out._3, out._2).map(Cell(_, Content(ContinuousSchema[Double](), out._1)))
   }
 
   private def getResult(rem: R, value: Double, result: Double, prev: R): (T, TraversableOnce[O]) = {

@@ -25,9 +25,9 @@ import au.com.cba.omnia.grimlock.library.aggregate._
 import scala.collection.immutable.TreeMap
 
 trait TestAggregators extends TestGrimlock {
-  def getLongContent(value: Long): Content = Content(DiscreteSchema(LongCodex), value)
-  def getDoubleContent(value: Double): Content = Content(ContinuousSchema(DoubleCodex), value)
-  def getStringContent(value: String): Content = Content(NominalSchema(StringCodex), value)
+  def getLongContent(value: Long): Content = Content(DiscreteSchema[Long](), value)
+  def getDoubleContent(value: Double): Content = Content(ContinuousSchema[Double](), value)
+  def getStringContent(value: String): Content = Content(NominalSchema[String](), value)
 }
 
 class TestCount extends TestAggregators {
@@ -3349,17 +3349,17 @@ class TestWithPrepareAggregator extends TestAggregators {
 
   def prepare(cell: Cell[Position1D]): Content = {
     cell.content.value match {
-      case LongValue(_) => cell.content
-      case DoubleValue(_) => getStringContent("not.supported")
-      case StringValue(s) => getLongContent(s.length)
+      case l: LongValue => cell.content
+      case d: DoubleValue => getStringContent("not.supported")
+      case s: StringValue => getLongContent(s.value.length)
     }
   }
 
   def prepareWithValue(cell: Cell[Position1D], ext: Map[Position1D, Content]): Content = {
     (cell.content.value, ext(cell.position).value) match {
-      case (LongValue(l), DoubleValue(d)) => getLongContent(l * d.toLong)
-      case (DoubleValue(_), _) => getStringContent("not.supported")
-      case (StringValue(s), DoubleValue(d)) => getLongContent(s.length)
+      case (l: LongValue, d: DoubleValue) => getLongContent(l.value * d.value.toLong)
+      case (d: DoubleValue, _) => getStringContent("not.supported")
+      case (s: StringValue, _) => getLongContent(s.value.length)
     }
   }
 
@@ -3400,17 +3400,17 @@ class TestAndThenMutateAggregator extends TestAggregators {
 
   def mutate(cell: Cell[Position1D]): Content = {
     cell.position match {
-      case Position1D(StringValue("x")) => cell.content
-      case Position1D(StringValue("y")) => getStringContent("not.supported")
-      case Position1D(StringValue("z")) => getLongContent(123)
+      case Position1D(StringValue("x", _)) => cell.content
+      case Position1D(StringValue("y", _)) => getStringContent("not.supported")
+      case Position1D(StringValue("z", _)) => getLongContent(123)
     }
   }
 
   def mutateWithValue(cell: Cell[Position1D], ext: Map[Position1D, Content]): Content = {
     (cell.position, ext(cell.position).value) match {
-      case (Position1D(StringValue("x")), DoubleValue(d)) => getStringContent("x" * d.toInt)
-      case (Position1D(StringValue("y")), _) => getStringContent("not.supported")
-      case (Position1D(StringValue("z")), DoubleValue(d)) => getLongContent(d.toLong)
+      case (Position1D(StringValue("x", _)), DoubleValue(d, _)) => getStringContent("x" * d.toInt)
+      case (Position1D(StringValue("y", _)), _) => getStringContent("not.supported")
+      case (Position1D(StringValue("z", _)), DoubleValue(d, _)) => getLongContent(d.toLong)
     }
   }
 

@@ -17,7 +17,7 @@ package au.com.cba.omnia.grimlock.scalding.partition
 import au.com.cba.omnia.grimlock.framework.{ Cell, Default, NoParameters, Reducers, Tuner, Sequence2 }
 import au.com.cba.omnia.grimlock.framework.partition.{ Partition, Partitions => FwPartitions }
 import au.com.cba.omnia.grimlock.framework.position._
-import au.com.cba.omnia.grimlock.framework.utility.OneOf._
+import au.com.cba.omnia.grimlock.framework.utility.UnionTypes._
 
 import au.com.cba.omnia.grimlock.scalding._
 
@@ -34,9 +34,9 @@ case class Partitions[P <: Position, I: Ordering](data: TypedPipe[(I, Cell[P])])
   with Persist[(I, Cell[P])] {
   def add(id: I, partition: U[Cell[P]]): U[(I, Cell[P])] = data ++ (partition.map { case c => (id, c) })
 
-  type ForAllTuners = OneOf2[Default[Execution], Default[Sequence2[Reducers, Execution]]]
-  def forAll[Q <: Position, T <: Tuner](fn: (I, U[Cell[P]]) => U[Cell[Q]], exclude: List[I], tuner: T)(
-    implicit ev1: ClassTag[I], ev2: ForAllTuners#V[T]): U[(I, Cell[Q])] = {
+  type ForAllTuners[T] = T In OneOf[Default[Execution]]#Or[Default[Sequence2[Reducers, Execution]]]
+  def forAll[Q <: Position, T <: Tuner : ForAllTuners](fn: (I, U[Cell[P]]) => U[Cell[Q]], exclude: List[I], tuner: T)(
+    implicit ev1: ClassTag[I]): U[(I, Cell[Q])] = {
     val (context, identifiers) = tuner.parameters match {
       case Execution(ctx) => (ctx, ids(Default()))
       case Sequence2(r @ Reducers(_), Execution(ctx)) => (ctx, ids(Default(r)))
@@ -60,8 +60,8 @@ case class Partitions[P <: Position, I: Ordering](data: TypedPipe[(I, Cell[P])])
 
   def get(id: I): U[Cell[P]] = data.collect { case (i, c) if (id == i) => c }
 
-  type IdsTuners = OneOf2[Default[NoParameters], Default[Reducers]]
-  def ids[T <: Tuner](tuner: T = Default())(implicit ev1: ClassTag[I], ev2: IdsTuners#V[T]): U[I] = {
+  type IdsTuners[T] = T In OneOf[Default[NoParameters]]#Or[Default[Reducers]]
+  def ids[T <: Tuner : IdsTuners](tuner: T = Default())(implicit ev1: ClassTag[I]): U[I] = {
     val keys = Grouped(data.map { case (i, _) => (i, ()) })
 
     tuner.parameters match {

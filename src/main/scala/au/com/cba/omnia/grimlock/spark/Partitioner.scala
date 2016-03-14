@@ -17,7 +17,7 @@ package au.com.cba.omnia.grimlock.spark.partition
 import au.com.cba.omnia.grimlock.framework.{ Cell, Default, NoParameters, Reducers, Tuner }
 import au.com.cba.omnia.grimlock.framework.partition.{ Partition, Partitions => FwPartitions }
 import au.com.cba.omnia.grimlock.framework.position._
-import au.com.cba.omnia.grimlock.framework.utility.OneOf._
+import au.com.cba.omnia.grimlock.framework.utility.UnionTypes._
 
 import au.com.cba.omnia.grimlock.spark._
 
@@ -37,9 +37,9 @@ case class Partitions[P <: Position, I: Ordering](data: RDD[(I, Cell[P])]) exten
 
   def add(id: I, partition: U[Cell[P]]): U[(I, Cell[P])] = data ++ (partition.map { case c => (id, c) })
 
-  type ForAllTuners = OneOf2[Default[NoParameters], Default[Reducers]]
-  def forAll[Q <: Position, T <: Tuner](fn: (I, U[Cell[P]]) => U[Cell[Q]], exclude: List[I], tuner: T = Default())(
-    implicit ev1: ClassTag[I], ev2: ForAllTuners#V[T]): U[(I, Cell[Q])] = {
+  type ForAllTuners[T] = T In OneOf[Default[NoParameters]]#Or[Default[Reducers]]
+  def forAll[Q <: Position, T <: Tuner : ForAllTuners](fn: (I, U[Cell[P]]) => U[Cell[Q]], exclude: List[I],
+    tuner: T = Default())(implicit ev1: ClassTag[I]): U[(I, Cell[Q])] = {
     forEach(ids(tuner).toLocalIterator.toList.filter(!exclude.contains(_)), fn)
   }
 
@@ -51,8 +51,8 @@ case class Partitions[P <: Position, I: Ordering](data: RDD[(I, Cell[P])]) exten
 
   def get(id: I): U[Cell[P]] = data.collect { case (i, c) if (id == i) => c }
 
-  type IdsTuners = OneOf2[Default[NoParameters], Default[Reducers]]
-  def ids[T <: Tuner](tuner: T = Default())(implicit ev1: ClassTag[I], ev2: IdsTuners#V[T]): U[I] = {
+  type IdsTuners[T] = T In OneOf[Default[NoParameters]]#Or[Default[Reducers]]
+  def ids[T <: Tuner : IdsTuners](tuner: T = Default())(implicit ev1: ClassTag[I]): U[I] = {
     data.keys.tunedDistinct(tuner.parameters)
   }
 

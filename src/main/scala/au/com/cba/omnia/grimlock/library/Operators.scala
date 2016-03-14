@@ -17,7 +17,6 @@ package au.com.cba.omnia.grimlock.library.pairwise
 import au.com.cba.omnia.grimlock.framework._
 import au.com.cba.omnia.grimlock.framework.content._
 import au.com.cba.omnia.grimlock.framework.content.metadata._
-import au.com.cba.omnia.grimlock.framework.encoding._
 import au.com.cba.omnia.grimlock.framework.pairwise._
 import au.com.cba.omnia.grimlock.framework.position._
 
@@ -38,7 +37,7 @@ trait DoubleOperator[P <: Position, Q <: Position] extends Operator[P, Q] {
   def compute(left: Cell[P], right: Cell[P]): TraversableOnce[Cell[Q]] = {
     (pos(left, right), left.content.value.asDouble, right.content.value.asDouble) match {
       case (Some(p), Some(l), Some(r)) => Some[Cell[Q]](Cell(p,
-        Content(ContinuousSchema(DoubleCodex), if (inverse) compute(r, l) else compute(l, r))))
+        Content(ContinuousSchema[Double](), if (inverse) compute(r, l) else compute(l, r))))
       case _ => None
     }
   }
@@ -81,7 +80,7 @@ case class Concatenate[P <: Position, Q <: Position](pos: Locate.FromPairwiseCel
   value: String = "%1$s,%2$s") extends Operator[P, Q] {
   def compute(left: Cell[P], right: Cell[P]): TraversableOnce[Cell[Q]] = {
     pos(left, right) match {
-      case Some(p) => Some[Cell[Q]](Cell(p, Content(NominalSchema(StringCodex),
+      case Some(p) => Some[Cell[Q]](Cell(p, Content(NominalSchema[String](),
         value.format(left.content.value.toShortString, right.content.value.toShortString))))
       case None => None
     }

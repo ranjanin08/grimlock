@@ -17,18 +17,18 @@ package au.com.cba.omnia.grimlock.framework.distribution
 import au.com.cba.omnia.grimlock.framework._
 import au.com.cba.omnia.grimlock.framework.content._
 import au.com.cba.omnia.grimlock.framework.content.metadata._
-import au.com.cba.omnia.grimlock.framework.encoding._
 import au.com.cba.omnia.grimlock.framework.position._
-import au.com.cba.omnia.grimlock.framework.utility._
 
 import scala.math.BigDecimal
 import scala.reflect.ClassTag
 
+import shapeless.=:!=
+
 /** Trait for computing approximate distributions from a matrix. */
-trait ApproximateDistribution[P <: Position] { self: Matrix[P] =>
+trait ApproximateDistribution[P <: Position with CompactablePosition] { self: Matrix[P] =>
 
   /** Specifies tuners permitted on a call to `histogram`. */
-  type HistogramTuners <: OneOf
+  type HistogramTuners[_]
 
   /**
    * Compute histogram.
@@ -37,17 +37,16 @@ trait ApproximateDistribution[P <: Position] { self: Matrix[P] =>
    * @param position  Function for extracting the position of the histogram.
    * @param filter    Indicator if numerical values shoud be filtered or not.
    * @param tuner     The tuner for the job.
-   *
-   * @return A `U[Cell[Q]]' with the histogram.
+    * @return A `U[Cell[Q]]' with the histogram.
    *
    * @note The histogram is computed on the positions returned by `position`.
    */
-  def histogram[S <: Position with ExpandablePosition, Q <: Position, T <: Tuner](slice: Slice[P],
+  def histogram[S <: Position with ExpandablePosition, Q <: Position, T <: Tuner : HistogramTuners](slice: Slice[P],
     position: Locate.FromSelectedAndContent[S, Q], filter: Boolean = true, tuner: T)(
-      implicit ev1: PosExpDep[slice.S, Q], ev2: slice.S =:= S, ev3: ClassTag[Q], ev4: HistogramTuners#V[T]): U[Cell[Q]]
+      implicit ev1: PosExpDep[slice.S, Q], ev2: slice.S =:= S, ev3: ClassTag[Q]): U[Cell[Q]]
 
   /** Specifies tuners permitted on a call to `quantile`. */
-  type QuantileTuners <: OneOf
+  type QuantileTuners[_]
 
   /**
    * Compute sample quantiles.
@@ -61,16 +60,15 @@ trait ApproximateDistribution[P <: Position] { self: Matrix[P] =>
    * @param filter    Indicator if categorical values should be filtered or not.
    * @param nan       Indicator if NaN quantiles should be output or not.
    * @param tuner     The tuner for the job.
-   *
-   * @return A `U[Cell[Q]]' with the quantiles.
+    * @return A `U[Cell[Q]]' with the quantiles.
    *
    * @note Non numeric values result in `NaN` quantiles, while missing counts result in no quantiles.
    */
-  def quantile[S <: Position with ExpandablePosition, Q <: Position, W, T <: Tuner](slice: Slice[P],
+  def quantile[S <: Position with ExpandablePosition, Q <: Position, W, T <: Tuner : QuantileTuners](slice: Slice[P],
     probs: List[Double], quantiser: Quantile.Quantiser, name: Locate.FromSelectedAndOutput[S, Double, Q],
       count: Extract[P, W, Long], value: E[W], filter: Boolean = true, nan: Boolean = false, tuner: T)(
-        implicit ev1: slice.S =:= S, ev2: PosExpDep[slice.S, Q], ev3: slice.R =!= Position0D, ev4: ClassTag[slice.S],
-          ev5: QuantileTuners#V[T]): U[Cell[Q]]
+        implicit ev1: slice.S =:= S, ev2: PosExpDep[slice.S, Q], ev3: slice.R =:!= Position0D,
+          ev4: ClassTag[slice.S]): U[Cell[Q]]
 }
 
 private[grimlock] case class QuantileImpl[P <: Position, S <: Position with ExpandablePosition, Q <: Position, W](
@@ -124,7 +122,7 @@ private[grimlock] case class QuantileImpl[P <: Position, S <: Position with Expa
 
   def present(pos: S, out: O): Option[Cell[Q]] = {
     if (!out._2.isNaN || nan) {
-      position(pos, out._1).map(Cell(_, Content(ContinuousSchema(DoubleCodex), round(out._2))))
+      position(pos, out._1).map(Cell(_, Content(ContinuousSchema[Double](), round(out._2))))
     } else {
       None
     }

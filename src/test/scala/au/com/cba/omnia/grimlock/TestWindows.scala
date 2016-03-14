@@ -25,7 +25,7 @@ import au.com.cba.omnia.grimlock.library.window._
 
 trait TestBatchMovingAverage extends TestGrimlock {
   // test prepare&initilise
-  val cell = Cell(Position3D("foo", "bar", "baz"), Content(ContinuousSchema(LongCodex), 1))
+  val cell = Cell(Position3D("foo", "bar", "baz"), Content(ContinuousSchema[Long](), 1))
   val rem = Position2D("bar", "baz")
   val in = 1.0
   val first = (rem, in)
@@ -35,7 +35,7 @@ trait TestBatchMovingAverage extends TestGrimlock {
   val sel = Position1D("sales")
 
   def createCell(year: String, value: Double) = {
-    List(Cell(Position2D("sales", year), Content(ContinuousSchema(DoubleCodex), value)))
+    List(Cell(Position2D("sales", year), Content(ContinuousSchema[Double](), value)))
   }
 }
 
@@ -257,7 +257,7 @@ class TestWeightedMovingAverage extends TestBatchMovingAverage {
 
 trait TestOnlineMovingAverage extends TestGrimlock {
   // test prepare&initilise
-  val cell = Cell(Position3D("foo", "bar", "baz"), Content(ContinuousSchema(LongCodex), 1))
+  val cell = Cell(Position3D("foo", "bar", "baz"), Content(ContinuousSchema[Long](), 1))
   val rem = Position2D("bar", "baz")
   val in = 1.0
   val first = ((1.0, 1), List((rem, in)))
@@ -266,7 +266,7 @@ trait TestOnlineMovingAverage extends TestGrimlock {
   val sel = Position0D()
 
   def createCell(str: String, value: Double) = {
-    List(Cell(Position1D(str), Content(ContinuousSchema(DoubleCodex), value)))
+    List(Cell(Position1D(str), Content(ContinuousSchema[Double](), value)))
   }
 }
 
@@ -354,8 +354,8 @@ class TestExponentialMovingAverage extends TestOnlineMovingAverage {
 
 trait TestWindow extends TestGrimlock {
 
-  val cell1 = Cell(Position3D("foo", "bar", "baz"), Content(ContinuousSchema(LongCodex), 1))
-  val cell2 = Cell(Position3D("foo", "bar", "baz"), Content(NominalSchema(StringCodex), "abc"))
+  val cell1 = Cell(Position3D("foo", "bar", "baz"), Content(ContinuousSchema[Long](), 1))
+  val cell2 = Cell(Position3D("foo", "bar", "baz"), Content(NominalSchema[String](), "abc"))
   val sel = Position1D("foo")
   val rem = Position2D("bar", "baz")
   val in1 = Some(1.0)
@@ -366,7 +366,7 @@ trait TestWindow extends TestGrimlock {
 class TestCumulativeSum extends TestWindow {
 
   def createCell(value: Double) = {
-    List(Cell(Position2D("foo", "bar|baz"), Content(ContinuousSchema(DoubleCodex), value)))
+    List(Cell(Position2D("foo", "bar|baz"), Content(ContinuousSchema[Double](), value)))
   }
 
   "A CumulativeSum" should "prepare correctly" in {
@@ -470,7 +470,7 @@ class TestCumulativeSum extends TestWindow {
 class TestBinOp extends TestWindow {
 
   def createCell(value: Double) = {
-    List(Cell(Position2D("foo", "p(bar|baz, bar|baz)"), Content(ContinuousSchema(DoubleCodex), value)))
+    List(Cell(Position2D("foo", "p(bar|baz, bar|baz)"), Content(ContinuousSchema[Double](), value)))
   }
 
   "A BinOp" should "prepare correctly" in {
@@ -651,11 +651,11 @@ class TestCombinationWindow extends TestGrimlock {
     cells shouldBe createCell("2008", 6.6, 6.733333333333333)
   }
 
-  def createContent(value: Long): Content = Content(ContinuousSchema(LongCodex), value)
+  def createContent(value: Long): Content = Content(ContinuousSchema[Long](), value)
   def createCell(year: String, value1: Double, value2: Double) = {
     List(
-      Cell(Position2D("sales", year + ".simple"), Content(ContinuousSchema(DoubleCodex), value1)),
-      Cell(Position2D("sales", year + ".weighted"), Content(ContinuousSchema(DoubleCodex), value2)))
+      Cell(Position2D("sales", year + ".simple"), Content(ContinuousSchema[Double](), value1)),
+      Cell(Position2D("sales", year + ".weighted"), Content(ContinuousSchema[Double](), value2)))
   }
 }
 
@@ -677,7 +677,7 @@ case class DeltaWithValue() extends WindowWithValue[Position1D, Position1D, Posi
   }
 
   def presentWithValue(pos: Position1D, out: O, ext: V): TraversableOnce[Cell[Position1D]] = {
-    Some(Cell(pos, Content(ContinuousSchema(DoubleCodex), ext(pos).value.asDouble.get * out)))
+    Some(Cell(pos, Content(ContinuousSchema[Double](), ext(pos).value.asDouble.get * out)))
   }
 }
 
@@ -693,25 +693,25 @@ class TestWithPrepareWindow extends TestGrimlock {
 
   def prepare(cell: Cell[Position1D]): Content = {
     cell.content.value match {
-      case LongValue(_) => cell.content
-      case DoubleValue(_) => getStringContent("not.supported")
-      case StringValue(s) => getLongContent(s.length)
+      case l: LongValue => cell.content
+      case d: DoubleValue => getStringContent("not.supported")
+      case s: StringValue => getLongContent(s.value.length)
     }
   }
 
   def prepareWithValue(cell: Cell[Position1D], ext: Map[Position1D, Content]): Content = {
     (cell.content.value, ext(cell.position).value) match {
-      case (LongValue(l), DoubleValue(d)) => getLongContent(l * d.toLong)
-      case (DoubleValue(_), _) => getStringContent("not.supported")
-      case (StringValue(s), DoubleValue(d)) => getLongContent(s.length)
+      case (l: LongValue, d: DoubleValue) => getLongContent(l.value * d.value.toLong)
+      case (d: DoubleValue, _) => getStringContent("not.supported")
+      case (s: StringValue, _) => getLongContent(s.value.length)
     }
   }
 
   val locate = (sel: Position1D, rem: Position0D) => sel.toOption
 
-  def getLongContent(value: Long): Content = Content(DiscreteSchema(LongCodex), value)
-  def getDoubleContent(value: Double): Content = Content(ContinuousSchema(DoubleCodex), value)
-  def getStringContent(value: String): Content = Content(NominalSchema(StringCodex), value)
+  def getLongContent(value: Long): Content = Content(DiscreteSchema[Long](), value)
+  def getDoubleContent(value: Double): Content = Content(ContinuousSchema[Double](), value)
+  def getStringContent(value: String): Content = Content(NominalSchema[String](), value)
 
   "A Window" should "withPrepare prepare correctly" in {
     val obj = CumulativeMovingAverage[Position1D, Position1D, Position0D, Position1D](locate).withPrepare(prepare)
@@ -750,25 +750,25 @@ class TestAndThenMutateWindow extends TestGrimlock {
 
   def mutate(cell: Cell[Position1D]): Content = {
     cell.position match {
-      case Position1D(StringValue("x")) => cell.content
-      case Position1D(StringValue("y")) => getStringContent("not.supported")
-      case Position1D(StringValue("z")) => getLongContent(42)
+      case Position1D(StringValue("x", _)) => cell.content
+      case Position1D(StringValue("y", _)) => getStringContent("not.supported")
+      case Position1D(StringValue("z", _)) => getLongContent(42)
     }
   }
 
   def mutateWithValue(cell: Cell[Position1D], ext: Map[Position1D, Content]): Content = {
     (cell.position, ext(cell.position).value) match {
-      case (Position1D(StringValue("x")), DoubleValue(d)) => cell.content
-      case (Position1D(StringValue("y")), _) => getStringContent("not.supported")
-      case (Position1D(StringValue("z")), DoubleValue(d)) => getLongContent(42)
+      case (Position1D(StringValue("x", _)), DoubleValue(d, _)) => cell.content
+      case (Position1D(StringValue("y", _)), _) => getStringContent("not.supported")
+      case (Position1D(StringValue("z", _)), DoubleValue(d, _)) => getLongContent(42)
     }
   }
 
   val locate = (sel: Position1D, rem: Position0D) => sel.toOption
 
-  def getLongContent(value: Long): Content = Content(DiscreteSchema(LongCodex), value)
-  def getDoubleContent(value: Double): Content = Content(ContinuousSchema(DoubleCodex), value)
-  def getStringContent(value: String): Content = Content(NominalSchema(StringCodex), value)
+  def getLongContent(value: Long): Content = Content(DiscreteSchema[Long](), value)
+  def getDoubleContent(value: Double): Content = Content(ContinuousSchema[Double](), value)
+  def getStringContent(value: String): Content = Content(NominalSchema[String](), value)
 
   "A Window" should "andThenMutate prepare correctly" in {
     val obj = CumulativeMovingAverage[Position1D, Position1D, Position0D, Position1D](locate).andThenMutate(mutate)

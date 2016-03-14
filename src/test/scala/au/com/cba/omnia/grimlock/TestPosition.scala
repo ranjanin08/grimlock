@@ -105,25 +105,11 @@ class TestPosition1D extends TestGrimlock {
     a [IndexOutOfBoundsException] shouldBe thrownBy { pos.update(Fifth, 123) }
   }
 
-  val con1 = Content(ContinuousSchema(LongCodex), 1)
-  val con2 = Content(ContinuousSchema(LongCodex), 2)
+  val con1 = Content(ContinuousSchema[Long](), 1)
+  val con2 = Content(ContinuousSchema[Long](), 2)
 
-  it should "return a over map" in {
-    pos.over.toMapValue(Position0D(), con1) shouldBe con1
-  }
-
-  it should "combine two over maps" in {
-    pos.over.combineMapValues(Some(con1), con2) shouldBe con2
-    pos.over.combineMapValues(None, con2) shouldBe con2
-  }
-
-  it should "throw an exception for an along map" in {
-    a [Exception] shouldBe thrownBy { pos.along.toMapValue(pos, con1) }
-  }
-
-  it should "throw an exception on combine two along maps" in {
-    a [Exception] shouldBe thrownBy { pos.along.combineMapValues(Some(con1), con2) }
-    a [Exception] shouldBe thrownBy { pos.along.combineMapValues(None, con2) }
+  it should "return a map" in {
+    pos.toMapValue(Position0D(), con1) shouldBe con1
   }
 
   it should "remove" in {
@@ -221,29 +207,11 @@ class TestPosition2D extends TestGrimlock {
     a [IndexOutOfBoundsException] shouldBe thrownBy { pos.permute(List(First, Second, Third)) }
   }
 
-  val con1 = Content(ContinuousSchema(LongCodex), 1)
-  val con2 = Content(ContinuousSchema(LongCodex), 2)
+  val con1 = Content(ContinuousSchema[Long](), 1)
+  val con2 = Content(ContinuousSchema[Long](), 2)
 
-  it should "return a over map" in {
-    pos.over.toMapValue(Position1D("xyz"), con1) shouldBe Map(Position1D("xyz") -> con1)
-  }
-
-  it should "combine two over maps" in {
-    pos.over.combineMapValues(Some(Map(Position1D("xyz") -> con1, Position1D("abc") -> con2)),
-      Map(Position1D("xyz") -> con2, Position1D("klm") -> con1)) shouldBe
-        Map(Position1D("xyz") -> con2, Position1D("abc") -> con2, Position1D("klm") -> con1)
-    pos.over.combineMapValues(None, Map(Position1D("xyz") -> con2)) shouldBe Map(Position1D("xyz") -> con2)
-  }
-
-  it should "return an along map" in {
-    pos.along.toMapValue(Position1D("xyz"), con1) shouldBe Map(Position1D("xyz") -> con1)
-  }
-
-  it should "combine two along maps" in {
-    pos.along.combineMapValues(Some(Map(Position1D("xyz") -> con1, Position1D("abc") -> con2)),
-      Map(Position1D("xyz") -> con2, Position1D("klm") -> con1)) shouldBe
-        Map(Position1D("xyz") -> con2, Position1D("abc") -> con2, Position1D("klm") -> con1)
-    pos.along.combineMapValues(None, Map(Position1D("xyz") -> con2)) shouldBe Map(Position1D("xyz") -> con2)
+  it should "return a map" in {
+    pos.toMapValue(Position1D("xyz"), con1) shouldBe Map(Position1D("xyz") -> con1)
   }
 
   it should "remove" in {
@@ -357,29 +325,11 @@ class TestPosition3D extends TestGrimlock {
     a [IndexOutOfBoundsException] shouldBe thrownBy { pos.permute(List(First, Second, Third, Fourth)) }
   }
 
-  val con1 = Content(ContinuousSchema(LongCodex), 1)
-  val con2 = Content(ContinuousSchema(LongCodex), 2)
+  val con1 = Content(ContinuousSchema[Long](), 1)
+  val con2 = Content(ContinuousSchema[Long](), 2)
 
-  it should "return a over map" in {
-    pos.over.toMapValue(Position2D("xyz", 456), con1) shouldBe Map(Position2D("xyz", 456) -> con1)
-  }
-
-  it should "combine two over maps" in {
-    pos.over.combineMapValues(Some(Map(Position2D("xyz", 456) -> con1, Position2D("abc", 123) -> con2)),
-      Map(Position2D("xyz", 456) -> con2, Position2D("klm", 321) -> con1)) shouldBe
-        Map(Position2D("xyz", 456) -> con2, Position2D("abc", 123) -> con2, Position2D("klm", 321) -> con1)
-    pos.over.combineMapValues(None, Map(Position2D("xyz", 456) -> con2)) shouldBe Map(Position2D("xyz", 456) -> con2)
-  }
-
-  it should "return an along map" in {
-    pos.along.toMapValue(Position1D("xyz"), con1) shouldBe Map(Position1D("xyz") -> con1)
-  }
-
-  it should "combine two along maps" in {
-    pos.along.combineMapValues(Some(Map(Position1D("xyz") -> con1, Position1D("abc") -> con2)),
-      Map(Position1D("xyz") -> con2, Position1D("klm") -> con1)) shouldBe
-        Map(Position1D("xyz") -> con2, Position1D("abc") -> con2, Position1D("klm") -> con1)
-    pos.along.combineMapValues(None, Map(Position1D("xyz") -> con2)) shouldBe Map(Position1D("xyz") -> con2)
+  it should "return a map" in {
+    pos.toMapValue(Position2D("xyz", 456), con1) shouldBe Map(Position2D("xyz", 456) -> con1)
   }
 
   it should "remove" in {
@@ -526,31 +476,11 @@ class TestPosition4D extends TestGrimlock {
     a [IndexOutOfBoundsException] shouldBe thrownBy { pos.permute(List(First, Second, Third, Fourth, Fifth)) }
   }
 
-  val con1 = Content(ContinuousSchema(LongCodex), 1)
-  val con2 = Content(ContinuousSchema(LongCodex), 2)
+  val con1 = Content(ContinuousSchema[Long](), 1)
+  val con2 = Content(ContinuousSchema[Long](), 2)
 
-  it should "return a over map" in {
-    pos.over.toMapValue(Position3D("xyz", 456, "abc"), con1) shouldBe Map(Position3D("xyz", 456, "abc") -> con1)
-  }
-
-  it should "combine two over maps" in {
-    pos.over.combineMapValues(Some(Map(Position3D("xyz", 456, 123) -> con1, Position3D("abc", 123, "zyx") -> con2)),
-      Map(Position3D("xyz", 456, 123) -> con2, Position3D("klm", 321, "abc") -> con1)) shouldBe
-        Map(Position3D("xyz", 456, 123) -> con2, Position3D("abc", 123, "zyx") -> con2,
-          Position3D("klm", 321, "abc") -> con1)
-    pos.over.combineMapValues(None, Map(Position3D("xyz", 456, 123) -> con2)) shouldBe
-      Map(Position3D("xyz", 456, 123) -> con2)
-  }
-
-  it should "return an along map" in {
-    pos.along.toMapValue(Position1D("xyz"), con1) shouldBe Map(Position1D("xyz") -> con1)
-  }
-
-  it should "combine two along maps" in {
-    pos.along.combineMapValues(Some(Map(Position1D("xyz") -> con1, Position1D("abc") -> con2)),
-      Map(Position1D("xyz") -> con2, Position1D("klm") -> con1)) shouldBe
-        Map(Position1D("xyz") -> con2, Position1D("abc") -> con2, Position1D("klm") -> con1)
-    pos.along.combineMapValues(None, Map(Position1D("xyz") -> con2)) shouldBe Map(Position1D("xyz") -> con2)
+  it should "return a map" in {
+    pos.toMapValue(Position3D("xyz", 456, "abc"), con1) shouldBe Map(Position3D("xyz", 456, "abc") -> con1)
   }
 
   it should "remove" in {
@@ -788,32 +718,11 @@ class TestPosition5D extends TestGrimlock {
     pos.permute(List(Fifth, Fourth, Third, Second, First)) shouldBe Position5D("baz", 456, "bar", 123, "foo")
   }
 
-  val con1 = Content(ContinuousSchema(LongCodex), 1)
-  val con2 = Content(ContinuousSchema(LongCodex), 2)
+  val con1 = Content(ContinuousSchema[Long](), 1)
+  val con2 = Content(ContinuousSchema[Long](), 2)
 
-  it should "return a over map" in {
-    pos.over.toMapValue(Position4D("xyz", 456, "abc", 123), con1) shouldBe
-      Map(Position4D("xyz", 456, "abc", 123) -> con1)
-  }
-
-  it should "combine two over maps" in {
-    pos.over.combineMapValues(Some(Map(Position4D("xyz", 456, 123, "abc") -> con1,
-      Position4D("abc", 123, "zyx", 789) -> con2)), Map(Position4D("xyz", 456, 123, "abc") -> con2,
-        Position4D("klm", 321, "abc", 654) -> con1)) shouldBe Map(Position4D("xyz", 456, 123, "abc") -> con2,
-          Position4D("abc", 123, "zyx", 789) -> con2, Position4D("klm", 321, "abc", 654) -> con1)
-    pos.over.combineMapValues(None, Map(Position4D("xyz", 456, 123, "abc") -> con2)) shouldBe
-      Map(Position4D("xyz", 456, 123, "abc") -> con2)
-  }
-
-  it should "return an along map" in {
-    pos.along.toMapValue(Position1D("xyz"), con1) shouldBe Map(Position1D("xyz") -> con1)
-  }
-
-  it should "combine two along maps" in {
-    pos.along.combineMapValues(Some(Map(Position1D("xyz") -> con1, Position1D("abc") -> con2)),
-      Map(Position1D("xyz") -> con2, Position1D("klm") -> con1)) shouldBe
-        Map(Position1D("xyz") -> con2, Position1D("abc") -> con2, Position1D("klm") -> con1)
-    pos.along.combineMapValues(None, Map(Position1D("xyz") -> con2)) shouldBe Map(Position1D("xyz") -> con2)
+  it should "return a map" in {
+    pos.toMapValue(Position4D("xyz", 456, "abc", 123), con1) shouldBe Map(Position4D("xyz", 456, "abc", 123) -> con1)
   }
 
   it should "remove" in {

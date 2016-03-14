@@ -44,22 +44,44 @@ case class ExampleEvent(
 object ExampleEvent {
   // Function to read a file with event data.
   def load(file: String)(implicit ctx: Context): RDD[Cell[Position1D]] = {
-    val es = StructuredSchema(ExampleEventCodex)
     ctx.context.textFile(file)
-      .flatMap { case s => es.decode(s).map { case e => Cell(Position1D(es.codex.fromValue(e.value).eventId), e) } }
+      .flatMap {
+        case line => ExampleEventCodec.decode(line).map {
+          case ev => Cell(Position1D(ev.value.eventId), Content(ExampleEventSchema, ev))
+        }
+      }
   }
 }
 
-// Define a codex for dealing with the example event. Note that comparison, for this example, is simply comparison
+// Define a schema that specifies what legal values are for the example event. For this example, all events are valid.
+case object ExampleEventSchema extends StructuredSchema {
+  type S = ExampleEvent
+
+  val kind = Type.Structured
+
+  def validate(value: Value { type V = S }): Boolean = true
+}
+
+// Define a codec for dealing with the example event. Note that comparison, for this example, is simply comparison
 // on the event id.
-case object ExampleEventCodex extends StructuredCodex {
-  val name = "example.event"
+case object ExampleEventCodec extends StructuredCodec {
+  type C = ExampleEvent
 
-  type T = ExampleEvent
-  type V = StructuredValue[T]
+  def decode(str: String): Option[Value { type V = C }]  = {
+    val dfmt = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+    val parts = str.split("#")
 
-  def toValue(value: T): V = StructuredValue(value, this)
-  def fromValue(value: Value): T = value.asInstanceOf[V].value
+    Some(StructuredValue(ExampleEvent(parts(0), parts(1), dfmt.parse(parts(2)), parts(3).toLong,
+      parts(4).split(",").toList, parts(5)), this))
+  }
+
+  def encode(value: C): String = {
+    val dfmt = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+
+    value.eventId + "#" + value.eventType + "#" + dfmt.format(value.startTime) + "#" + value.duration.toString +
+      value.instances.mkString(",") + "#" + value.details
+  }
+
   def compare(x: Value, y: Value): Option[Int] = {
     (x.asStructured, y.asStructured) match {
       case (Some(ExampleEvent(l, _, _, _, _, _)), Some(ExampleEvent(r, _, _, _, _, _))) => Some(l.compare(r))
@@ -67,18 +89,7 @@ case object ExampleEventCodex extends StructuredCodex {
     }
   }
 
-  protected def fromString(str: String): T = {
-    val dfmt = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-    val parts = str.split("#")
-
-    ExampleEvent(parts(0), parts(1), dfmt.parse(parts(2)), parts(3).toLong, parts(4).split(",").toList, parts(5))
-  }
-  protected def toString(value: T): String = {
-    val dfmt = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-
-    value.eventId + "#" + value.eventType + "#" + dfmt.format(value.startTime) + "#" + value.duration.toString +
-      value.instances.mkString(",") + "#" + value.details
-  }
+  def toShortString() = "exampleevent"
 }
 
 // Transformer for denormalising events; that is, create a separate cell in the matrix for each (event, instance) pair.
@@ -119,7 +130,7 @@ case class WordCounts(minLength: Long = Long.MinValue, ngrams: Int = 1, separato
         terms
           .groupBy(identity)
           .map {
-            case (k, v) => Cell(cell.position.append(k), Content(DiscreteSchema(LongCodex), v.size))
+            case (k, v) => Cell(cell.position.append(k), Content(DiscreteSchema[Long](), v.size))
           }
           .toList
       case _ => None
