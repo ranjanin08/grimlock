@@ -45,13 +45,13 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <span class="name">StructuredValue</span><span class="tparams">[<span name="T">T &lt;: <a href="Structured.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Structured">Structured</a></span>]</span><span class="params">(<span name="value">value: <span class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.StructuredValue.T">T</span></span>, <span name="codex">codex: <a href="StructuredCodex.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.StructuredCodex">StructuredCodex</a></span>)</span><span class="result"> extends <a href="Value.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Value">Value</a> with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Product" class="extype" target="_top">Product</a> with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
+        <span class="name">StructuredValue</span><span class="tparams">[<span name="U">U &lt;: <a href="Structured.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Structured">Structured</a></span>, <span name="C">C &lt;: <a href="StructuredCodec.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.StructuredCodec">StructuredCodec</a> { type C = U }</span>]</span><span class="params">(<span name="value">value: <span class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.StructuredValue.U">U</span></span>, <span name="codec">codec: <span class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.StructuredValue.C">C</span></span>)</span><span class="result"> extends <a href="Value.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Value">Value</a> with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Product" class="extype" target="_top">Product</a> with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
       </span>
       </h4>
       
           <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Value for when the data is an event type.
-</p></div><dl class="paramcmts block"><dt class="param">value</dt><dd class="cmt"><p>An event.</p></dd><dt class="param">codex</dt><dd class="cmt"><p>The codex used for encoding/decoding <code>value</code>.
-</p></dd></dl><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/Dirty(72daa4f61ade8c38d7188d1b901925b09f6525b7)//src/main/scala/au/com/cba/omnia/grimlock/framework/Value.scala" target="_blank">Value.scala</a></dd></dl><div class="toggleContainer block">
+</p></div><dl class="paramcmts block"><dt class="param">value</dt><dd class="cmt"><p>An event.</p></dd><dt class="param">codec</dt><dd class="cmt"><p>The codec used for encoding/decoding <code>value</code>.
+</p></dd></dl><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/Dirty(113e59a12795eaf3455b65f6885e7a46e6bb64b3)//src/main/scala/au/com/cba/omnia/grimlock/framework/Value.scala" target="_blank">Value.scala</a></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a>, <span class="extype" name="java.io.Serializable">Serializable</span>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Product" class="extype" target="_top">Product</a>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Equals" class="extype" target="_top">Equals</a>, <a href="Value.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Value">Value</a>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Any" class="extype" target="_top">Any</a></div>
         </div></div>
@@ -92,27 +92,47 @@
         <div id="constructors" class="members">
               <h3>Instance Constructors</h3>
               <ol><li name="au.com.cba.omnia.grimlock.framework.encoding.StructuredValue#&lt;init&gt;" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="&lt;init&gt;(value:T,codex:au.com.cba.omnia.grimlock.framework.encoding.StructuredCodex):au.com.cba.omnia.grimlock.framework.encoding.StructuredValue[T]"></a>
-      <a id="&lt;init&gt;:StructuredValue[T]"></a>
+      <a id="&lt;init&gt;(value:U,codec:C):au.com.cba.omnia.grimlock.framework.encoding.StructuredValue[U,C]"></a>
+      <a id="&lt;init&gt;:StructuredValue[U,C]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">new</span>
       </span>
       <span class="symbol">
-        <span class="name">StructuredValue</span><span class="params">(<span name="value">value: <span class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.StructuredValue.T">T</span></span>, <span name="codex">codex: <a href="StructuredCodex.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.StructuredCodex">StructuredCodex</a></span>)</span>
+        <span class="name">StructuredValue</span><span class="params">(<span name="value">value: <span class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.StructuredValue.U">U</span></span>, <span name="codec">codec: <span class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.StructuredValue.C">C</span></span>)</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.encoding.StructuredValue@&lt;init&gt;(value:T,codex:au.com.cba.omnia.grimlock.framework.encoding.StructuredCodex):au.com.cba.omnia.grimlock.framework.encoding.StructuredValue[T]" title="Permalink" target="_top">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.encoding.StructuredValue@&lt;init&gt;(value:U,codec:C):au.com.cba.omnia.grimlock.framework.encoding.StructuredValue[U,C]" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" />
       </a>
     </span>
-      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="param">value</dt><dd class="cmt"><p>An event.</p></dd><dt class="param">codex</dt><dd class="cmt"><p>The codex used for encoding/decoding <code>value</code>.
+      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="param">value</dt><dd class="cmt"><p>An event.</p></dd><dt class="param">codec</dt><dd class="cmt"><p>The codec used for encoding/decoding <code>value</code>.
 </p></dd></dl></div>
     </li></ol>
             </div>
 
-        
+        <div id="types" class="types members">
+              <h3>Type Members</h3>
+              <ol><li name="au.com.cba.omnia.grimlock.framework.encoding.StructuredValue.V" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="V=U"></a>
+      <a id="V:V"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">type</span>
+      </span>
+      <span class="symbol">
+        <span class="name">V</span><span class="result"> = <span class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.StructuredValue.U">U</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.encoding.StructuredValue@V=U" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Type of  the value.</p><div class="fullcomment"><div class="comment cmt"><p>Type of  the value.</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.StructuredValue">StructuredValue</a> → <a href="Value.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Value">Value</a></dd></dl></div>
+    </li></ol>
+            </div>
 
         
 
@@ -272,18 +292,18 @@
     </span>
       <p class="shortcomment cmt">Return value as <code>String</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Return value as <code>String</code>.</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="Value.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Value">Value</a></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.framework.encoding.StructuredValue#asStructured" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="asStructured:Some[T]"></a>
-      <a id="asStructured:Some[T]"></a>
+      <a id="asStructured:Some[U]"></a>
+      <a id="asStructured:Some[U]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">asStructured</span><span class="result">: <span class="extype" name="scala.Some">Some</span>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.StructuredValue.T">T</span>]</span>
+        <span class="name">asStructured</span><span class="result">: <span class="extype" name="scala.Some">Some</span>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.StructuredValue.U">U</span>]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.encoding.StructuredValue@asStructured:Some[T]" title="Permalink" target="_top">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.encoding.StructuredValue@asStructured:Some[U]" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" />
       </a>
     </span>
@@ -311,23 +331,23 @@
     </span>)</span>
               
         </dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.framework.encoding.StructuredValue#codex" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="codex:au.com.cba.omnia.grimlock.framework.encoding.StructuredCodex"></a>
-      <a id="codex:StructuredCodex"></a>
+    </li><li name="au.com.cba.omnia.grimlock.framework.encoding.StructuredValue#codec" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="codec:C"></a>
+      <a id="codec:C"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">codex</span><span class="result">: <a href="StructuredCodex.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.StructuredCodex">StructuredCodex</a></span>
+        <span class="name">codec</span><span class="result">: <span class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.StructuredValue.C">C</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.encoding.StructuredValue@codex:au.com.cba.omnia.grimlock.framework.encoding.StructuredCodex" title="Permalink" target="_top">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.encoding.StructuredValue@codec:C" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" />
       </a>
     </span>
-      <p class="shortcomment cmt">The codex used for encoding/decoding <code>value</code>.</p><div class="fullcomment"><div class="comment cmt"><p>The codex used for encoding/decoding <code>value</code>.
+      <p class="shortcomment cmt">The codec used for encoding/decoding <code>value</code>.</p><div class="fullcomment"><div class="comment cmt"><p>The codec used for encoding/decoding <code>value</code>.
 </p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.StructuredValue">StructuredValue</a> → <a href="Value.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Value">Value</a></dd></dl></div>
     </li><li name="scala.AnyRef#eq" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="eq(x$1:AnyRef):Boolean"></a>
@@ -626,23 +646,23 @@
       </a>
     </span>
       <p class="shortcomment cmt">Return a consise (terse) string representation of a value.</p><div class="fullcomment"><div class="comment cmt"><p>Return a consise (terse) string representation of a value.</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="Value.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Value">Value</a></dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.framework.encoding.StructuredValue#value" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="value:T"></a>
-      <a id="value:T"></a>
+    </li><li name="au.com.cba.omnia.grimlock.framework.encoding.StructuredValue#value" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="value:U"></a>
+      <a id="value:U"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">value</span><span class="result">: <span class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.StructuredValue.T">T</span></span>
+        <span class="name">value</span><span class="result">: <span class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.StructuredValue.U">U</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.encoding.StructuredValue@value:T" title="Permalink" target="_top">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.encoding.StructuredValue@value:U" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" />
       </a>
     </span>
-      <p class="shortcomment cmt">An event.</p>
+      <p class="shortcomment cmt">An event.</p><div class="fullcomment"><div class="comment cmt"><p>An event.</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.StructuredValue">StructuredValue</a> → <a href="Value.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Value">Value</a></dd></dl></div>
     </li><li name="scala.AnyRef#wait" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="wait():Unit"></a>
       <a id="wait():Unit"></a>

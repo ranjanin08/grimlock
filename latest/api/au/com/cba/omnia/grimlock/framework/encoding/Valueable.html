@@ -51,7 +51,7 @@
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Trait for transforming a type <code>T</code> into a <code>Value</code>.</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/Dirty(72daa4f61ade8c38d7188d1b901925b09f6525b7)//src/main/scala/au/com/cba/omnia/grimlock/framework/Value.scala" target="_blank">Value.scala</a></dd></dl><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Trait for transforming a type <code>T</code> into a <code>Value</code>.</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/Dirty(113e59a12795eaf3455b65f6885e7a46e6bb64b3)//src/main/scala/au/com/cba/omnia/grimlock/framework/Value.scala" target="_blank">Value.scala</a></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><span class="extype" name="java.io.Serializable">Serializable</span>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Any" class="extype" target="_top">Any</a></div>
         </div></div>
@@ -91,27 +91,47 @@
         <div id="allMembers">
         
 
-        
+        <div id="types" class="types members">
+              <h3>Type Members</h3>
+              <ol><li name="au.com.cba.omnia.grimlock.framework.encoding.Valueable.T" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="T"></a>
+      <a id="T:T"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">abstract </span>
+        <span class="kind">type</span>
+      </span>
+      <span class="symbol">
+        <span class="name">T</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.encoding.Valueable@T" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Type of the actual value.</p>
+    </li></ol>
+            </div>
 
         <div id="values" class="values members">
               <h3>Abstract Value Members</h3>
               <ol><li name="au.com.cba.omnia.grimlock.framework.encoding.Valueable#apply" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
-      <a id="apply():au.com.cba.omnia.grimlock.framework.encoding.Value"></a>
-      <a id="apply():Value"></a>
+      <a id="apply():au.com.cba.omnia.grimlock.framework.encoding.Value{typeV=Valueable.this.T}"></a>
+      <a id="apply():Value{typeV=Valueable.this.T}"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier">abstract </span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">apply</span><span class="params">()</span><span class="result">: <a href="Value.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Value">Value</a></span>
+        <span class="name">apply</span><span class="params">()</span><span class="result">: <a href="Value.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Value">Value</a> { type V = Valueable.this.T }</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.encoding.Valueable@apply():au.com.cba.omnia.grimlock.framework.encoding.Value" title="Permalink" target="_top">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.encoding.Valueable@apply():au.com.cba.omnia.grimlock.framework.encoding.Value{typeV=Valueable.this.T}" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" />
       </a>
     </span>
-      <p class="shortcomment cmt">Returns a <code>Value</code> for this type <code>T</code>.</p>
+      <p class="shortcomment cmt">Return a <code>Value</code> for this type <code>T</code>.</p>
     </li></ol>
             </div>
 

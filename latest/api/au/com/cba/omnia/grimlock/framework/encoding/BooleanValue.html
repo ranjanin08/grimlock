@@ -45,13 +45,13 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <span class="name">BooleanValue</span><span class="params">(<span name="value">value: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>)</span><span class="result"> extends <a href="Value.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Value">Value</a> with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Product" class="extype" target="_top">Product</a> with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
+        <span class="name">BooleanValue</span><span class="params">(<span name="value">value: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>, <span name="codec">codec: <a href="Codec.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Codec">Codec</a> { type C = Boolean } = <span class="symbol"><span class="name"><a href="BooleanCodec$.html">BooleanCodec</a></span></span></span>)</span><span class="result"> extends <a href="Value.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Value">Value</a> with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Product" class="extype" target="_top">Product</a> with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
       </span>
       </h4>
       
           <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Value for when the data is of type <code>Boolean</code>.
-</p></div><dl class="paramcmts block"><dt class="param">value</dt><dd class="cmt"><p>A <code>Boolean</code>.
-</p></dd></dl><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/Dirty(72daa4f61ade8c38d7188d1b901925b09f6525b7)//src/main/scala/au/com/cba/omnia/grimlock/framework/Value.scala" target="_blank">Value.scala</a></dd></dl><div class="toggleContainer block">
+</p></div><dl class="paramcmts block"><dt class="param">value</dt><dd class="cmt"><p>A <code>Boolean</code>.</p></dd><dt class="param">codec</dt><dd class="cmt"><p>The codec used for encoding/decoding <code>value</code>.
+</p></dd></dl><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/Dirty(113e59a12795eaf3455b65f6885e7a46e6bb64b3)//src/main/scala/au/com/cba/omnia/grimlock/framework/Value.scala" target="_blank">Value.scala</a></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a>, <span class="extype" name="java.io.Serializable">Serializable</span>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Product" class="extype" target="_top">Product</a>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Equals" class="extype" target="_top">Equals</a>, <a href="Value.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Value">Value</a>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Any" class="extype" target="_top">Any</a></div>
         </div></div>
@@ -92,7 +92,7 @@
         <div id="constructors" class="members">
               <h3>Instance Constructors</h3>
               <ol><li name="au.com.cba.omnia.grimlock.framework.encoding.BooleanValue#&lt;init&gt;" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="&lt;init&gt;(value:Boolean):au.com.cba.omnia.grimlock.framework.encoding.BooleanValue"></a>
+      <a id="&lt;init&gt;(value:Boolean,codec:au.com.cba.omnia.grimlock.framework.encoding.Codec{typeC=Boolean}):au.com.cba.omnia.grimlock.framework.encoding.BooleanValue"></a>
       <a id="&lt;init&gt;:BooleanValue"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -100,19 +100,39 @@
         <span class="kind">new</span>
       </span>
       <span class="symbol">
-        <span class="name">BooleanValue</span><span class="params">(<span name="value">value: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>)</span>
+        <span class="name">BooleanValue</span><span class="params">(<span name="value">value: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>, <span name="codec">codec: <a href="Codec.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Codec">Codec</a> { type C = Boolean } = <span class="symbol"><span class="name"><a href="BooleanCodec$.html">BooleanCodec</a></span></span></span>)</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.encoding.BooleanValue@&lt;init&gt;(value:Boolean):au.com.cba.omnia.grimlock.framework.encoding.BooleanValue" title="Permalink" target="_top">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.encoding.BooleanValue@&lt;init&gt;(value:Boolean,codec:au.com.cba.omnia.grimlock.framework.encoding.Codec{typeC=Boolean}):au.com.cba.omnia.grimlock.framework.encoding.BooleanValue" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" />
       </a>
     </span>
-      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="param">value</dt><dd class="cmt"><p>A <code>Boolean</code>.
+      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="param">value</dt><dd class="cmt"><p>A <code>Boolean</code>.</p></dd><dt class="param">codec</dt><dd class="cmt"><p>The codec used for encoding/decoding <code>value</code>.
 </p></dd></dl></div>
     </li></ol>
             </div>
 
-        
+        <div id="types" class="types members">
+              <h3>Type Members</h3>
+              <ol><li name="au.com.cba.omnia.grimlock.framework.encoding.BooleanValue.V" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="V=Boolean"></a>
+      <a id="V:V"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">type</span>
+      </span>
+      <span class="symbol">
+        <span class="name">V</span><span class="result"> = <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.encoding.BooleanValue@V=Boolean" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Type of  the value.</p><div class="fullcomment"><div class="comment cmt"><p>Type of  the value.</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.BooleanValue">BooleanValue</a> → <a href="Value.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Value">Value</a></dd></dl></div>
+    </li></ol>
+            </div>
 
         
 
@@ -311,23 +331,24 @@
     </span>)</span>
               
         </dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.framework.encoding.BooleanValue#codex" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="codex:au.com.cba.omnia.grimlock.framework.encoding.BooleanCodex.type"></a>
-      <a id="codex:BooleanCodex.type"></a>
+    </li><li name="au.com.cba.omnia.grimlock.framework.encoding.BooleanValue#codec" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="codec:au.com.cba.omnia.grimlock.framework.encoding.Codec{typeC=Boolean}"></a>
+      <a id="codec:Codec{typeC=Boolean}"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">codex</span><span class="result">: <a href="BooleanCodex$.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.BooleanCodex">BooleanCodex</a>.type</span>
+        <span class="name">codec</span><span class="result">: <a href="Codec.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Codec">Codec</a> { type C = Boolean }</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.encoding.BooleanValue@codex:au.com.cba.omnia.grimlock.framework.encoding.BooleanCodex.type" title="Permalink" target="_top">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.encoding.BooleanValue@codec:au.com.cba.omnia.grimlock.framework.encoding.Codec{typeC=Boolean}" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" />
       </a>
     </span>
-      <p class="shortcomment cmt">The codex used to encode/decode this value.</p><div class="fullcomment"><div class="comment cmt"><p>The codex used to encode/decode this value.</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.BooleanValue">BooleanValue</a> → <a href="Value.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Value">Value</a></dd></dl></div>
+      <p class="shortcomment cmt">The codec used for encoding/decoding <code>value</code>.</p><div class="fullcomment"><div class="comment cmt"><p>The codec used for encoding/decoding <code>value</code>.
+</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.BooleanValue">BooleanValue</a> → <a href="Value.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Value">Value</a></dd></dl></div>
     </li><li name="scala.AnyRef#eq" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="eq(x$1:AnyRef):Boolean"></a>
       <a id="eq(AnyRef):Boolean"></a>
@@ -625,7 +646,7 @@
       </a>
     </span>
       <p class="shortcomment cmt">Return a consise (terse) string representation of a value.</p><div class="fullcomment"><div class="comment cmt"><p>Return a consise (terse) string representation of a value.</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="Value.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Value">Value</a></dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.framework.encoding.BooleanValue#value" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+    </li><li name="au.com.cba.omnia.grimlock.framework.encoding.BooleanValue#value" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="value:Boolean"></a>
       <a id="value:Boolean"></a>
       <h4 class="signature">
@@ -641,7 +662,7 @@
         <img src="../../../../../../../lib/permalink.png" />
       </a>
     </span>
-      <p class="shortcomment cmt">A <code>Boolean</code>.</p>
+      <p class="shortcomment cmt">A <code>Boolean</code>.</p><div class="fullcomment"><div class="comment cmt"><p>A <code>Boolean</code>.</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.BooleanValue">BooleanValue</a> → <a href="Value.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Value">Value</a></dd></dl></div>
     </li><li name="scala.AnyRef#wait" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="wait():Unit"></a>
       <a id="wait():Unit"></a>

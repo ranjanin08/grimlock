@@ -47,13 +47,13 @@
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <span class="name">DiscreteSchema</span><span class="result"> extends <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
+        <span class="name">DiscreteSchema</span><span class="result"> extends <span class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.SchemaParameters">SchemaParameters</span> with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Companion object to <code>DiscreteSchema</code>.</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/Dirty(72daa4f61ade8c38d7188d1b901925b09f6525b7)//src/main/scala/au/com/cba/omnia/grimlock/framework/Schema.scala" target="_blank">Schema.scala</a></dd></dl><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Companion object to <code>DiscreteSchema</code> case class.</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/Dirty(113e59a12795eaf3455b65f6885e7a46e6bb64b3)//src/main/scala/au/com/cba/omnia/grimlock/framework/Schema.scala" target="_blank">Schema.scala</a></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
-          <div class="superTypes hiddenContent"><a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a>, <span class="extype" name="java.io.Serializable">Serializable</span>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Any" class="extype" target="_top">Any</a></div>
+          <div class="superTypes hiddenContent"><a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a>, <span class="extype" name="java.io.Serializable">Serializable</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.SchemaParameters">SchemaParameters</span>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Any" class="extype" target="_top">Any</a></div>
         </div></div>
         
 
@@ -71,7 +71,7 @@
                 <span class="filtertype">Inherited<br />
                 </span>
                 <ol id="linearization">
-                  <li class="in" name="au.com.cba.omnia.grimlock.framework.content.metadata.DiscreteSchema"><span>DiscreteSchema</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                  <li class="in" name="au.com.cba.omnia.grimlock.framework.content.metadata.DiscreteSchema"><span>DiscreteSchema</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="au.com.cba.omnia.grimlock.framework.content.metadata.SchemaParameters"><span>SchemaParameters</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
                 </ol>
               </div><div id="ancestors">
             <span class="filtertype"></span>
@@ -148,44 +148,59 @@
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
+    </li><li name="au.com.cba.omnia.grimlock.framework.content.metadata.DiscreteSchema#Pattern" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="Pattern:scala.util.matching.Regex"></a>
+      <a id="Pattern:Regex"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">Pattern</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.util.matching.Regex" class="extype" target="_top">Regex</a></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.content.metadata.DiscreteSchema$@Pattern:scala.util.matching.Regex" title="Permalink" target="_top">
+        <img src="../../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Pattern for matching short string discrete schema.</p>
     </li><li name="au.com.cba.omnia.grimlock.framework.content.metadata.DiscreteSchema#apply" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="apply[C&lt;:au.com.cba.omnia.grimlock.framework.encoding.Codex](codex:C,minimum:C#T,maximum:C#T,step:C#T)(implicitint:Integral[C#T]):au.com.cba.omnia.grimlock.framework.content.metadata.DiscreteSchema[C]"></a>
-      <a id="apply[C&lt;:Codex](C,DiscreteSchema.apply.C.T,DiscreteSchema.apply.C.T,DiscreteSchema.apply.C.T)(Integral[DiscreteSchema.apply.C.T]):DiscreteSchema[C]"></a>
+      <a id="apply[T](lower:T,upper:T,step:T)(implicitevidence$7:scala.reflect.ClassTag[T],implicitev:Integral[T]):au.com.cba.omnia.grimlock.framework.content.metadata.DiscreteSchema[T]"></a>
+      <a id="apply[T](T,T,T)(ClassTag[T],Integral[T]):DiscreteSchema[T]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">apply</span><span class="tparams">[<span name="C">C &lt;: <a href="../../encoding/Codex.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Codex">Codex</a></span>]</span><span class="params">(<span name="codex">codex: <span class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.DiscreteSchema.apply.C">C</span></span>, <span name="minimum">minimum: <span class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Codex.T">DiscreteSchema.apply.C.T</span></span>, <span name="maximum">maximum: <span class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Codex.T">DiscreteSchema.apply.C.T</span></span>, <span name="step">step: <span class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Codex.T">DiscreteSchema.apply.C.T</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="int">int: <span class="extype" name="scala.Integral">Integral</span>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Codex.T">DiscreteSchema.apply.C.T</span>]</span>)</span><span class="result">: <a href="DiscreteSchema.html" class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.DiscreteSchema">DiscreteSchema</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.DiscreteSchema.apply.C">C</span>]</span>
+        <span class="name">apply</span><span class="tparams">[<span name="T">T</span>]</span><span class="params">(<span name="lower">lower: <span class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.DiscreteSchema.apply.T">T</span></span>, <span name="upper">upper: <span class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.DiscreteSchema.apply.T">T</span></span>, <span name="step">step: <span class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.DiscreteSchema.apply.T">T</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="arg0">arg0: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.reflect.ClassTag" class="extype" target="_top">ClassTag</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.DiscreteSchema.apply.T">T</span>]</span>, <span name="ev">ev: <span class="extype" name="scala.Integral">Integral</span>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.DiscreteSchema.apply.T">T</span>]</span>)</span><span class="result">: <a href="DiscreteSchema.html" class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.DiscreteSchema">DiscreteSchema</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.DiscreteSchema.apply.T">T</span>]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.content.metadata.DiscreteSchema$@apply[C&lt;:au.com.cba.omnia.grimlock.framework.encoding.Codex](codex:C,minimum:C#T,maximum:C#T,step:C#T)(implicitint:Integral[C#T]):au.com.cba.omnia.grimlock.framework.content.metadata.DiscreteSchema[C]" title="Permalink" target="_top">
+      <a href="../../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.content.metadata.DiscreteSchema$@apply[T](lower:T,upper:T,step:T)(implicitevidence$7:scala.reflect.ClassTag[T],implicitev:Integral[T]):au.com.cba.omnia.grimlock.framework.content.metadata.DiscreteSchema[T]" title="Permalink" target="_top">
         <img src="../../../../../../../../lib/permalink.png" />
       </a>
     </span>
       <p class="shortcomment cmt">Construct a discrete schema with bounded range and step size.</p><div class="fullcomment"><div class="comment cmt"><p>Construct a discrete schema with bounded range and step size.
-</p></div><dl class="paramcmts block"><dt class="param">codex</dt><dd class="cmt"><p>The codex for the value.</p></dd><dt class="param">minimum</dt><dd class="cmt"><p>The lower bound (minimum value).</p></dd><dt class="param">maximum</dt><dd class="cmt"><p>The upper bound (maximum value).</p></dd><dt class="param">step</dt><dd class="cmt"><p>The step size.
+</p></div><dl class="paramcmts block"><dt class="param">lower</dt><dd class="cmt"><p>The lower bound (minimum value).</p></dd><dt class="param">upper</dt><dd class="cmt"><p>The upper bound (maximum value).</p></dd><dt class="param">step</dt><dd class="cmt"><p>The step size.
 </p></dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.framework.content.metadata.DiscreteSchema#apply" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="apply[C&lt;:au.com.cba.omnia.grimlock.framework.encoding.Codex](codex:C)(implicitint:Integral[C#T]):au.com.cba.omnia.grimlock.framework.content.metadata.DiscreteSchema[C]"></a>
-      <a id="apply[C&lt;:Codex](C)(Integral[DiscreteSchema.apply.C.T]):DiscreteSchema[C]"></a>
+    </li><li name="au.com.cba.omnia.grimlock.framework.content.metadata.DiscreteSchema#apply" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="apply[T]()(implicitevidence$6:scala.reflect.ClassTag[T],implicitev:Integral[T]):au.com.cba.omnia.grimlock.framework.content.metadata.DiscreteSchema[T]"></a>
+      <a id="apply[T]()(ClassTag[T],Integral[T]):DiscreteSchema[T]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">apply</span><span class="tparams">[<span name="C">C &lt;: <a href="../../encoding/Codex.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Codex">Codex</a></span>]</span><span class="params">(<span name="codex">codex: <span class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.DiscreteSchema.apply.C">C</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="int">int: <span class="extype" name="scala.Integral">Integral</span>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Codex.T">DiscreteSchema.apply.C.T</span>]</span>)</span><span class="result">: <a href="DiscreteSchema.html" class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.DiscreteSchema">DiscreteSchema</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.DiscreteSchema.apply.C">C</span>]</span>
+        <span class="name">apply</span><span class="tparams">[<span name="T">T</span>]</span><span class="params">()</span><span class="params">(<span class="implicit">implicit </span><span name="arg0">arg0: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.reflect.ClassTag" class="extype" target="_top">ClassTag</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.DiscreteSchema.apply.T">T</span>]</span>, <span name="ev">ev: <span class="extype" name="scala.Integral">Integral</span>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.DiscreteSchema.apply.T">T</span>]</span>)</span><span class="result">: <a href="DiscreteSchema.html" class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.DiscreteSchema">DiscreteSchema</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.DiscreteSchema.apply.T">T</span>]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.content.metadata.DiscreteSchema$@apply[C&lt;:au.com.cba.omnia.grimlock.framework.encoding.Codex](codex:C)(implicitint:Integral[C#T]):au.com.cba.omnia.grimlock.framework.content.metadata.DiscreteSchema[C]" title="Permalink" target="_top">
+      <a href="../../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.content.metadata.DiscreteSchema$@apply[T]()(implicitevidence$6:scala.reflect.ClassTag[T],implicitev:Integral[T]):au.com.cba.omnia.grimlock.framework.content.metadata.DiscreteSchema[T]" title="Permalink" target="_top">
         <img src="../../../../../../../../lib/permalink.png" />
       </a>
     </span>
-      <p class="shortcomment cmt">Construct a discrete schema with unbounded range and step size 1.</p><div class="fullcomment"><div class="comment cmt"><p>Construct a discrete schema with unbounded range and step size 1.
-</p></div><dl class="paramcmts block"><dt class="param">codex</dt><dd class="cmt"><p>The codex for the value.
-</p></dd></dl></div>
+      <p class="shortcomment cmt">Construct a discrete schema with unbounded range and step size 1.</p>
     </li><li name="scala.Any#asInstanceOf" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="asInstanceOf[T0]:T0"></a>
       <a id="asInstanceOf[T0]:T0"></a>
@@ -283,26 +298,25 @@
     </span>)</span>
               
         </dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.framework.content.metadata.DiscreteSchema#fromString" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="fromString[C&lt;:au.com.cba.omnia.grimlock.framework.encoding.Codex](lower:String,upper:String,step:String,codex:C)(implicitnum:Integral[C#T]):Option[au.com.cba.omnia.grimlock.framework.content.metadata.DiscreteSchema[C]]"></a>
-      <a id="fromString[C&lt;:Codex](String,String,String,C)(Integral[DiscreteSchema.fromString.C.T]):Option[DiscreteSchema[C]]"></a>
+    </li><li name="au.com.cba.omnia.grimlock.framework.content.metadata.DiscreteSchema#fromShortString" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="fromShortString(str:String,cdc:au.com.cba.omnia.grimlock.framework.encoding.Codec):Option[au.com.cba.omnia.grimlock.framework.content.metadata.DiscreteSchema[cdc.C]]"></a>
+      <a id="fromShortString(String,Codec):Option[DiscreteSchema[C]]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">fromString</span><span class="tparams">[<span name="C">C &lt;: <a href="../../encoding/Codex.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Codex">Codex</a></span>]</span><span class="params">(<span name="lower">lower: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="upper">upper: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="step">step: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="codex">codex: <span class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.DiscreteSchema.fromString.C">C</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="num">num: <span class="extype" name="scala.Integral">Integral</span>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Codex.T">DiscreteSchema.fromString.C.T</span>]</span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Option" class="extype" target="_top">Option</a>[<a href="DiscreteSchema.html" class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.DiscreteSchema">DiscreteSchema</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.DiscreteSchema.fromString.C">C</span>]]</span>
+        <span class="name">fromShortString</span><span class="params">(<span name="str">str: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="cdc">cdc: <a href="../../encoding/Codec.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Codec">Codec</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Option" class="extype" target="_top">Option</a>[<a href="DiscreteSchema.html" class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.DiscreteSchema">DiscreteSchema</a>[<a href="../../encoding/Codec.html#C" class="extmbr" name="au.com.cba.omnia.grimlock.framework.encoding.Codec.C">C</a>]]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.content.metadata.DiscreteSchema$@fromString[C&lt;:au.com.cba.omnia.grimlock.framework.encoding.Codex](lower:String,upper:String,step:String,codex:C)(implicitnum:Integral[C#T]):Option[au.com.cba.omnia.grimlock.framework.content.metadata.DiscreteSchema[C]]" title="Permalink" target="_top">
+      <a href="../../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.content.metadata.DiscreteSchema$@fromShortString(str:String,cdc:au.com.cba.omnia.grimlock.framework.encoding.Codec):Option[au.com.cba.omnia.grimlock.framework.content.metadata.DiscreteSchema[cdc.C]]" title="Permalink" target="_top">
         <img src="../../../../../../../../lib/permalink.png" />
       </a>
     </span>
-      <p class="shortcomment cmt">Parse discrete schema parameters
-</p><div class="fullcomment"><div class="comment cmt"><p>Parse discrete schema parameters
-</p></div><dl class="paramcmts block"><dt class="param">lower</dt><dd class="cmt"><p>Lower bound for the schema.</p></dd><dt class="param">upper</dt><dd class="cmt"><p>Upper bound for the schema.</p></dd><dt class="param">step</dt><dd class="cmt"><p>Step size for the schema.</p></dd><dt class="param">codex</dt><dd class="cmt"><p>The codex to parse with.
-</p></dd><dt>returns</dt><dd class="cmt"><p>An <code>Option</code> of <code>DiscreteSchema</code> if all parameters parse correctly, <code>None</code> otherwise.
+      <p class="shortcomment cmt">Parse a discrete schema from string.</p><div class="fullcomment"><div class="comment cmt"><p>Parse a discrete schema from string.
+</p></div><dl class="paramcmts block"><dt class="param">str</dt><dd class="cmt"><p>The string to parse</p></dd><dt class="param">cdc</dt><dd class="cmt"><p>The codec to parse with.
+</p></dd><dt>returns</dt><dd class="cmt"><p>A <code>Some[DiscreteSchema]</code> if successful, <code>None</code> otherwise.
 </p></dd></dl></div>
     </li><li name="scala.AnyRef#getClass" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="getClass():Class[_]"></a>
@@ -406,23 +420,57 @@
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.framework.content.metadata.DiscreteSchema#pattern" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="pattern:scala.util.matching.Regex"></a>
-      <a id="pattern:Regex"></a>
+    </li><li name="au.com.cba.omnia.grimlock.framework.content.metadata.SchemaParameters#parse" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="parse(codec:au.com.cba.omnia.grimlock.framework.encoding.Codec,value:String):Option[codec.C]"></a>
+      <a id="parse(Codec,String):Option[C]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
-        <span class="kind">val</span>
+        <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">pattern</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.util.matching.Regex" class="extype" target="_top">Regex</a></span>
+        <span class="name">parse</span><span class="params">(<span name="codec">codec: <a href="../../encoding/Codec.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Codec">Codec</a></span>, <span name="value">value: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Option" class="extype" target="_top">Option</a>[<a href="../../encoding/Codec.html#C" class="extmbr" name="au.com.cba.omnia.grimlock.framework.encoding.Codec.C">C</a>]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.content.metadata.DiscreteSchema$@pattern:scala.util.matching.Regex" title="Permalink" target="_top">
+      <a href="../../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.content.metadata.DiscreteSchema$@parse(codec:au.com.cba.omnia.grimlock.framework.encoding.Codec,value:String):Option[codec.C]" title="Permalink" target="_top">
         <img src="../../../../../../../../lib/permalink.png" />
       </a>
     </span>
-      <p class="shortcomment cmt">Pattern for matching short string discrete value with parameters.</p>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd>SchemaParameters</dd></dl></div>
+    </li><li name="au.com.cba.omnia.grimlock.framework.content.metadata.SchemaParameters#parseRange" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="parseRange(codec:au.com.cba.omnia.grimlock.framework.encoding.Codec,range:String):Option[(codec.C,codec.C)]"></a>
+      <a id="parseRange(Codec,String):Option[(C,C)]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">parseRange</span><span class="params">(<span name="codec">codec: <a href="../../encoding/Codec.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Codec">Codec</a></span>, <span name="range">range: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Option" class="extype" target="_top">Option</a>[(<a href="../../encoding/Codec.html#C" class="extmbr" name="au.com.cba.omnia.grimlock.framework.encoding.Codec.C">C</a>, <a href="../../encoding/Codec.html#C" class="extmbr" name="au.com.cba.omnia.grimlock.framework.encoding.Codec.C">C</a>)]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.content.metadata.DiscreteSchema$@parseRange(codec:au.com.cba.omnia.grimlock.framework.encoding.Codec,range:String):Option[(codec.C,codec.C)]" title="Permalink" target="_top">
+        <img src="../../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd>SchemaParameters</dd></dl></div>
+    </li><li name="au.com.cba.omnia.grimlock.framework.content.metadata.SchemaParameters#parseSet" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="parseSet(codec:au.com.cba.omnia.grimlock.framework.encoding.Codec,set:String):Option[Set[codec.C]]"></a>
+      <a id="parseSet(Codec,String):Option[Set[C]]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">parseSet</span><span class="params">(<span name="codec">codec: <a href="../../encoding/Codec.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Codec">Codec</a></span>, <span name="set">set: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Option" class="extype" target="_top">Option</a>[<span class="extype" name="scala.Predef.Set">Set</span>[<a href="../../encoding/Codec.html#C" class="extmbr" name="au.com.cba.omnia.grimlock.framework.encoding.Codec.C">C</a>]]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.content.metadata.DiscreteSchema$@parseSet(codec:au.com.cba.omnia.grimlock.framework.encoding.Codec,set:String):Option[Set[codec.C]]" title="Permalink" target="_top">
+        <img src="../../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd>SchemaParameters</dd></dl></div>
     </li><li name="scala.AnyRef#synchronized" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="synchronized[T0](x$1:=&gt;T0):T0"></a>
       <a id="synchronized[T0](⇒T0):T0"></a>
@@ -526,6 +574,57 @@
     </span>)</span>
               
         </dd></dl></div>
+    </li><li name="au.com.cba.omnia.grimlock.framework.content.metadata.SchemaParameters#writeOrderedSet" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="writeOrderedSet[S](short:Boolean,set:Set[S],f:S=&gt;String)(implicitevidence$1:Ordering[S]):String"></a>
+      <a id="writeOrderedSet[S](Boolean,Set[S],(S)⇒String)(Ordering[S]):String"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">writeOrderedSet</span><span class="tparams">[<span name="S">S</span>]</span><span class="params">(<span name="short">short: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>, <span name="set">set: <span class="extype" name="scala.Predef.Set">Set</span>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.SchemaParameters.writeOrderedSet.S">S</span>]</span>, <span name="f">f: (<span class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.SchemaParameters.writeOrderedSet.S">S</span>) ⇒ <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="arg0">arg0: <span class="extype" name="scala.Ordering">Ordering</span>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.SchemaParameters.writeOrderedSet.S">S</span>]</span>)</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.content.metadata.DiscreteSchema$@writeOrderedSet[S](short:Boolean,set:Set[S],f:S=&gt;String)(implicitevidence$1:Ordering[S]):String" title="Permalink" target="_top">
+        <img src="../../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd>SchemaParameters</dd></dl></div>
+    </li><li name="au.com.cba.omnia.grimlock.framework.content.metadata.SchemaParameters#writeRange" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="writeRange[S](short:Boolean,range:Option[(S,S)],f:S=&gt;String):String"></a>
+      <a id="writeRange[S](Boolean,Option[(S,S)],(S)⇒String):String"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">writeRange</span><span class="tparams">[<span name="S">S</span>]</span><span class="params">(<span name="short">short: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>, <span name="range">range: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Option" class="extype" target="_top">Option</a>[(<span class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.SchemaParameters.writeRange.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.SchemaParameters.writeRange.S">S</span>)]</span>, <span name="f">f: (<span class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.SchemaParameters.writeRange.S">S</span>) ⇒ <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.content.metadata.DiscreteSchema$@writeRange[S](short:Boolean,range:Option[(S,S)],f:S=&gt;String):String" title="Permalink" target="_top">
+        <img src="../../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd>SchemaParameters</dd></dl></div>
+    </li><li name="au.com.cba.omnia.grimlock.framework.content.metadata.SchemaParameters#writeSet" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="writeSet[S](short:Boolean,set:Set[S],f:S=&gt;String):String"></a>
+      <a id="writeSet[S](Boolean,Set[S],(S)⇒String):String"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">writeSet</span><span class="tparams">[<span name="S">S</span>]</span><span class="params">(<span name="short">short: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>, <span name="set">set: <span class="extype" name="scala.Predef.Set">Set</span>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.SchemaParameters.writeSet.S">S</span>]</span>, <span name="f">f: (<span class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.SchemaParameters.writeSet.S">S</span>) ⇒ <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.content.metadata.DiscreteSchema$@writeSet[S](short:Boolean,set:Set[S],f:S=&gt;String):String" title="Permalink" target="_top">
+        <img src="../../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd>SchemaParameters</dd></dl></div>
     </li></ol>
             </div>
 
@@ -539,6 +638,8 @@
               <h3>Inherited from <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></h3>
             </div><div class="parent" name="java.io.Serializable">
               <h3>Inherited from <span class="extype" name="java.io.Serializable">Serializable</span></h3>
+            </div><div class="parent" name="au.com.cba.omnia.grimlock.framework.content.metadata.SchemaParameters">
+              <h3>Inherited from <span class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.SchemaParameters">SchemaParameters</span></h3>
             </div><div class="parent" name="scala.AnyRef">
               <h3>Inherited from <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a></h3>
             </div><div class="parent" name="scala.Any">

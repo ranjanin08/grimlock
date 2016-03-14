@@ -51,7 +51,7 @@
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/Dirty(72daa4f61ade8c38d7188d1b901925b09f6525b7)//src/main/scala/au/com/cba/omnia/grimlock/framework/Schema.scala" target="_blank">Schema.scala</a></dd></dl><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Companion object to the <code>Schema</code> trait.</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/Dirty(113e59a12795eaf3455b65f6885e7a46e6bb64b3)//src/main/scala/au/com/cba/omnia/grimlock/framework/Schema.scala" target="_blank">Schema.scala</a></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Any" class="extype" target="_top">Any</a></div>
         </div></div>
@@ -245,25 +245,25 @@
     </span>)</span>
               
         </dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.framework.content.metadata.Schema#fromString" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="fromString(codex:String,kind:String):Option[au.com.cba.omnia.grimlock.framework.content.metadata.Schema]"></a>
-      <a id="fromString(String,String):Option[Schema]"></a>
+    </li><li name="au.com.cba.omnia.grimlock.framework.content.metadata.Schema#fromShortString" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="fromShortString(str:String,cdc:au.com.cba.omnia.grimlock.framework.encoding.Codec):Option[au.com.cba.omnia.grimlock.framework.content.metadata.Schema{typeS=cdc.C}]"></a>
+      <a id="fromShortString(String,Codec):Option[Schema{typeS=cdc.C}]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">fromString</span><span class="params">(<span name="codex">codex: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="kind">kind: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Option" class="extype" target="_top">Option</a>[<a href="Schema.html" class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.Schema">Schema</a>]</span>
+        <span class="name">fromShortString</span><span class="params">(<span name="str">str: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="cdc">cdc: <a href="../../encoding/Codec.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Codec">Codec</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Option" class="extype" target="_top">Option</a>[<a href="Schema.html" class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.Schema">Schema</a> { type S = cdc.C }]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.content.metadata.Schema$@fromString(codex:String,kind:String):Option[au.com.cba.omnia.grimlock.framework.content.metadata.Schema]" title="Permalink" target="_top">
+      <a href="../../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.content.metadata.Schema$@fromShortString(str:String,cdc:au.com.cba.omnia.grimlock.framework.encoding.Codec):Option[au.com.cba.omnia.grimlock.framework.content.metadata.Schema{typeS=cdc.C}]" title="Permalink" target="_top">
         <img src="../../../../../../../../lib/permalink.png" />
       </a>
     </span>
-      <p class="shortcomment cmt">Convert a codex and type string to a schema.</p><div class="fullcomment"><div class="comment cmt"><p>Convert a codex and type string to a schema.
-</p></div><dl class="paramcmts block"><dt class="param">codex</dt><dd class="cmt"><p>The string name of the codex.</p></dd><dt class="param">kind</dt><dd class="cmt"><p>The string name of the variable type.
-</p></dd><dt>returns</dt><dd class="cmt"><p><code>Some[Schema]</code> if an approriate schema is found, <code>None</code> otherwise.
+      <p class="shortcomment cmt">Parse a schema from a string.</p><div class="fullcomment"><div class="comment cmt"><p>Parse a schema from a string.
+</p></div><dl class="paramcmts block"><dt class="param">str</dt><dd class="cmt"><p>String from which to parse the schema.</p></dd><dt class="param">cdc</dt><dd class="cmt"><p>Codec with which to decode the data.
+</p></dd><dt>returns</dt><dd class="cmt"><p>A <code>Some[Schema]</code> in case of success, <code>None</code> otherwise.
 </p></dd></dl></div>
     </li><li name="scala.AnyRef#getClass" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="getClass():Class[_]"></a>
@@ -367,26 +367,6 @@
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.framework.content.metadata.Schema#parse" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="parse[C&lt;:au.com.cba.omnia.grimlock.framework.encoding.Codex](param:String,codex:C):Option[C#T]"></a>
-      <a id="parse[C&lt;:Codex](String,C):Option[Schema.parse.C.T]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">parse</span><span class="tparams">[<span name="C">C &lt;: <a href="../../encoding/Codex.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Codex">Codex</a></span>]</span><span class="params">(<span name="param">param: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="codex">codex: <span class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.Schema.parse.C">C</span></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Option" class="extype" target="_top">Option</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Codex.T">Schema.parse.C.T</span>]</span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.content.metadata.Schema$@parse[C&lt;:au.com.cba.omnia.grimlock.framework.encoding.Codex](param:String,codex:C):Option[C#T]" title="Permalink" target="_top">
-        <img src="../../../../../../../../lib/permalink.png" />
-      </a>
-    </span>
-      <p class="shortcomment cmt">Parse a string value according to a codex.</p><div class="fullcomment"><div class="comment cmt"><p>Parse a string value according to a codex.
-</p></div><dl class="paramcmts block"><dt class="param">param</dt><dd class="cmt"><p>Parameter to parse</p></dd><dt class="param">codex</dt><dd class="cmt"><p>The codex to parse with.
-</p></dd><dt>returns</dt><dd class="cmt"><p>An <code>Option</code> of type <code>C#T</code>
-</p></dd></dl></div>
     </li><li name="scala.AnyRef#synchronized" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="synchronized[T0](x$1:=&gt;T0):T0"></a>
       <a id="synchronized[T0](⇒T0):T0"></a>

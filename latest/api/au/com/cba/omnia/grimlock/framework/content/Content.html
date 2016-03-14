@@ -51,7 +51,7 @@
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Contents of a cell in a matrix.</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/Dirty(72daa4f61ade8c38d7188d1b901925b09f6525b7)//src/main/scala/au/com/cba/omnia/grimlock/framework/Content.scala" target="_blank">Content.scala</a></dd></dl><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Contents of a cell in a matrix.</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/Dirty(113e59a12795eaf3455b65f6885e7a46e6bb64b3)//src/main/scala/au/com/cba/omnia/grimlock/framework/Content.scala" target="_blank">Content.scala</a></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Any" class="extype" target="_top">Any</a></div>
         </div></div>
@@ -91,40 +91,60 @@
         <div id="allMembers">
         
 
-        
+        <div id="types" class="types members">
+              <h3>Type Members</h3>
+              <ol><li name="au.com.cba.omnia.grimlock.framework.content.Content.T" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="T"></a>
+      <a id="T:T"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">abstract </span>
+        <span class="kind">type</span>
+      </span>
+      <span class="symbol">
+        <span class="name">T</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.content.Content@T" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Type of the data.</p>
+    </li></ol>
+            </div>
 
         <div id="values" class="values members">
               <h3>Abstract Value Members</h3>
               <ol><li name="au.com.cba.omnia.grimlock.framework.content.Content#schema" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
-      <a id="schema:au.com.cba.omnia.grimlock.framework.content.metadata.Schema"></a>
-      <a id="schema:Schema"></a>
+      <a id="schema:au.com.cba.omnia.grimlock.framework.content.metadata.Schema{typeS=Content.this.T}"></a>
+      <a id="schema:Schema{typeS=Content.this.T}"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier">abstract </span>
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">schema</span><span class="result">: <a href="metadata/Schema.html" class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.Schema">Schema</a></span>
+        <span class="name">schema</span><span class="result">: <a href="metadata/Schema.html" class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.Schema">Schema</a> { type S = Content.this.T }</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.content.Content@schema:au.com.cba.omnia.grimlock.framework.content.metadata.Schema" title="Permalink" target="_top">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.content.Content@schema:au.com.cba.omnia.grimlock.framework.content.metadata.Schema{typeS=Content.this.T}" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" />
       </a>
     </span>
       <p class="shortcomment cmt">Schema (description) of the value.</p>
     </li><li name="au.com.cba.omnia.grimlock.framework.content.Content#value" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
-      <a id="value:au.com.cba.omnia.grimlock.framework.encoding.Value"></a>
-      <a id="value:Value"></a>
+      <a id="value:au.com.cba.omnia.grimlock.framework.encoding.Value{typeV=Content.this.T}"></a>
+      <a id="value:Value{typeV=Content.this.T}"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier">abstract </span>
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">value</span><span class="result">: <a href="../encoding/Value.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Value">Value</a></span>
+        <span class="name">value</span><span class="result">: <a href="../encoding/Value.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Value">Value</a> { type V = Content.this.T }</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.content.Content@value:au.com.cba.omnia.grimlock.framework.encoding.Value" title="Permalink" target="_top">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.content.Content@value:au.com.cba.omnia.grimlock.framework.encoding.Value{typeV=Content.this.T}" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" />
       </a>
     </span>
@@ -333,6 +353,23 @@
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
+    </li><li name="au.com.cba.omnia.grimlock.framework.content.Content#isValid" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="isValid():Boolean"></a>
+      <a id="isValid():Boolean"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">isValid</span><span class="params">()</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.content.Content@isValid():Boolean" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Check if the content is valid according to its schema.</p>
     </li><li name="scala.AnyRef#ne" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="ne(x$1:AnyRef):Boolean"></a>
       <a id="ne(AnyRef):Boolean"></a>
@@ -418,8 +455,7 @@
       </a>
     </span>
       <p class="shortcomment cmt">Converts the content to a consise (terse) string.</p><div class="fullcomment"><div class="comment cmt"><p>Converts the content to a consise (terse) string.
-</p></div><dl class="paramcmts block"><dt class="param">separator</dt><dd class="cmt"><p>The separator to use between the fields.
-</p></dd><dt>returns</dt><dd class="cmt"><p>Short string representation.
+</p></div><dl class="paramcmts block"><dt class="param">separator</dt><dd class="cmt"><p>The separator to use between the fields.</p></dd><dt>returns</dt><dd class="cmt"><p>Short string representation.
 </p></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.framework.content.Content#toShortString" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="toShortString():String"></a>

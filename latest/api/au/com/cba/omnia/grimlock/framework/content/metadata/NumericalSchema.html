@@ -49,7 +49,7 @@
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Base trait for schemas for numerical variables.</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/Dirty(72daa4f61ade8c38d7188d1b901925b09f6525b7)//src/main/scala/au/com/cba/omnia/grimlock/framework/Schema.scala" target="_blank">Schema.scala</a></dd></dl><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Base trait for schemas for numerical variables.</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/Dirty(113e59a12795eaf3455b65f6885e7a46e6bb64b3)//src/main/scala/au/com/cba/omnia/grimlock/framework/Schema.scala" target="_blank">Schema.scala</a></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><a href="Schema.html" class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.Schema">Schema</a>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Any" class="extype" target="_top">Any</a></div>
         </div><div class="toggleContainer block">
@@ -92,47 +92,31 @@
         <div id="allMembers">
         
 
-        
+        <div id="types" class="types members">
+              <h3>Type Members</h3>
+              <ol><li name="au.com.cba.omnia.grimlock.framework.content.metadata.NumericalSchema.S" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="S=T"></a>
+      <a id="S:S"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">type</span>
+      </span>
+      <span class="symbol">
+        <span class="name">S</span><span class="result"> = <span class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.NumericalSchema.T">T</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.content.metadata.NumericalSchema@S=T" title="Permalink" target="_top">
+        <img src="../../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Type of the schema's data.</p><div class="fullcomment"><div class="comment cmt"><p>Type of the schema's data.</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.NumericalSchema">NumericalSchema</a> → <a href="Schema.html" class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.Schema">Schema</a></dd></dl></div>
+    </li></ol>
+            </div>
 
         <div id="values" class="values members">
               <h3>Abstract Value Members</h3>
-              <ol><li name="au.com.cba.omnia.grimlock.framework.content.metadata.Schema#codex" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
-      <a id="codex:au.com.cba.omnia.grimlock.framework.encoding.Codex"></a>
-      <a id="codex:Codex"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier">abstract </span>
-        <span class="kind">val</span>
-      </span>
-      <span class="symbol">
-        <span class="name">codex</span><span class="result">: <a href="../../encoding/Codex.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Codex">Codex</a></span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.content.metadata.NumericalSchema@codex:au.com.cba.omnia.grimlock.framework.encoding.Codex" title="Permalink" target="_top">
-        <img src="../../../../../../../../lib/permalink.png" />
-      </a>
-    </span>
-      <p class="shortcomment cmt">The codex used to encode/decode a variable value.</p><div class="fullcomment"><div class="comment cmt"><p>The codex used to encode/decode a variable value.</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="Schema.html" class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.Schema">Schema</a></dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.framework.content.metadata.Schema#isValid" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
-      <a id="isValid[V&lt;:au.com.cba.omnia.grimlock.framework.encoding.Value](value:V):Boolean"></a>
-      <a id="isValid[V&lt;:Value](V):Boolean"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier">abstract </span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">isValid</span><span class="tparams">[<span name="V">V &lt;: <a href="../../encoding/Value.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Value">Value</a></span>]</span><span class="params">(<span name="value">value: <span class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.Schema.isValid.V">V</span></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.content.metadata.NumericalSchema@isValid[V&lt;:au.com.cba.omnia.grimlock.framework.encoding.Value](value:V):Boolean" title="Permalink" target="_top">
-        <img src="../../../../../../../../lib/permalink.png" />
-      </a>
-    </span>
-      <p class="shortcomment cmt">Check if a value is valid according to this schema.</p><div class="fullcomment"><div class="comment cmt"><p>Check if a value is valid according to this schema.
-</p></div><dl class="paramcmts block"><dt class="param">value</dt><dd class="cmt"><p>The value to validate.
-</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="Schema.html" class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.Schema">Schema</a></dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.framework.content.metadata.Schema#kind" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
+              <ol><li name="au.com.cba.omnia.grimlock.framework.content.metadata.Schema#kind" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
       <a id="kind:au.com.cba.omnia.grimlock.framework.Type"></a>
       <a id="kind:Type"></a>
       <h4 class="signature">
@@ -149,74 +133,43 @@
       </a>
     </span>
       <p class="shortcomment cmt">The type of variable.</p><div class="fullcomment"><div class="comment cmt"><p>The type of variable.</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="Schema.html" class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.Schema">Schema</a></dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.framework.content.metadata.NumericalSchema#maximum" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
-      <a id="maximum:Option[T]"></a>
-      <a id="maximum:Option[T]"></a>
+    </li><li name="au.com.cba.omnia.grimlock.framework.content.metadata.NumericalSchema#range" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="range:Option[(T,T)]"></a>
+      <a id="range:Option[(T,T)]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier">abstract </span>
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">maximum</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Option" class="extype" target="_top">Option</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.NumericalSchema.T">T</span>]</span>
+        <span class="name">range</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Option" class="extype" target="_top">Option</a>[(<span class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.NumericalSchema.T">T</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.NumericalSchema.T">T</span>)]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.content.metadata.NumericalSchema@maximum:Option[T]" title="Permalink" target="_top">
+      <a href="../../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.content.metadata.NumericalSchema@range:Option[(T,T)]" title="Permalink" target="_top">
         <img src="../../../../../../../../lib/permalink.png" />
       </a>
     </span>
-      <p class="shortcomment cmt">Optional maximum value of the variable.</p>
-    </li><li name="au.com.cba.omnia.grimlock.framework.content.metadata.NumericalSchema#minimum" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
-      <a id="minimum:Option[T]"></a>
-      <a id="minimum:Option[T]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier">abstract </span>
-        <span class="kind">val</span>
-      </span>
-      <span class="symbol">
-        <span class="name">minimum</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Option" class="extype" target="_top">Option</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.NumericalSchema.T">T</span>]</span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.content.metadata.NumericalSchema@minimum:Option[T]" title="Permalink" target="_top">
-        <img src="../../../../../../../../lib/permalink.png" />
-      </a>
-    </span>
-      <p class="shortcomment cmt">Optional minimum value of the variable.</p>
-    </li><li name="au.com.cba.omnia.grimlock.framework.content.metadata.Schema#name" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
-      <a id="name:String"></a>
-      <a id="name:String"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier">abstract </span>
-        <span class="kind">val</span>
-      </span>
-      <span class="symbol">
-        <span class="name">name</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.content.metadata.NumericalSchema@name:String" title="Permalink" target="_top">
-        <img src="../../../../../../../../lib/permalink.png" />
-      </a>
-    </span>
-      <p class="shortcomment cmt">The name of the schema.</p><div class="fullcomment"><div class="comment cmt"><p>The name of the schema.</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="Schema.html" class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.Schema">Schema</a></dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.framework.content.metadata.Schema#params" visbl="prt" data-isabs="true" fullComment="yes" group="Ungrouped">
-      <a id="params():String"></a>
-      <a id="params():String"></a>
+      
+    </li><li name="au.com.cba.omnia.grimlock.framework.content.metadata.Schema#validate" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
+      <a id="validate(value:au.com.cba.omnia.grimlock.framework.encoding.Value{typeV=Schema.this.S}):Boolean"></a>
+      <a id="validate(Value{typeV=NumericalSchema.this.S}):Boolean"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier">abstract </span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">params</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
+        <span class="name">validate</span><span class="params">(<span name="value">value: <a href="../../encoding/Value.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Value">Value</a> { type V = NumericalSchema.this.S }</span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.content.metadata.NumericalSchema@params():String" title="Permalink" target="_top">
+      <a href="../../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.content.metadata.NumericalSchema@validate(value:au.com.cba.omnia.grimlock.framework.encoding.Value{typeV=Schema.this.S}):Boolean" title="Permalink" target="_top">
         <img src="../../../../../../../../lib/permalink.png" />
       </a>
     </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="Schema.html" class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.Schema">Schema</a></dd></dl></div>
+      <p class="shortcomment cmt">Validates if a value confirms to this schema.</p><div class="fullcomment"><div class="comment cmt"><p>Validates if a value confirms to this schema.
+</p></div><dl class="paramcmts block"><dt class="param">value</dt><dd class="cmt"><p>The value to validate.
+</p></dd><dt>returns</dt><dd class="cmt"><p>True is the value confirms to this schema, false otherwise.
+</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="Schema.html" class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.Schema">Schema</a></dd></dl></div>
     </li></ol>
             </div>
 
@@ -313,27 +266,6 @@
     </span>)</span>
               
         </dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.framework.content.metadata.Schema#decode" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="decode(str:String):Option[au.com.cba.omnia.grimlock.framework.content.Content]"></a>
-      <a id="decode(String):Option[Content]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">decode</span><span class="params">(<span name="str">str: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Option" class="extype" target="_top">Option</a>[<a href="../Content.html" class="extype" name="au.com.cba.omnia.grimlock.framework.content.Content">Content</a>]</span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.content.metadata.NumericalSchema@decode(str:String):Option[au.com.cba.omnia.grimlock.framework.content.Content]" title="Permalink" target="_top">
-        <img src="../../../../../../../../lib/permalink.png" />
-      </a>
-    </span>
-      <p class="shortcomment cmt">Decode a string into a content.</p><div class="fullcomment"><div class="comment cmt"><p>Decode a string into a content.
-</p></div><dl class="paramcmts block"><dt class="param">str</dt><dd class="cmt"><p>The string to decode
-</p></dd><dt>returns</dt><dd class="cmt"><p><code>Some[Content]</code> if the string can successfull be decoded and is valid according to this schema, <code>None</code>
-        otherwise.
-</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="Schema.html" class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.Schema">Schema</a></dd></dl></div>
     </li><li name="scala.AnyRef#eq" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="eq(x$1:AnyRef):Boolean"></a>
       <a id="eq(AnyRef):Boolean"></a>
@@ -493,6 +425,23 @@
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
+    </li><li name="au.com.cba.omnia.grimlock.framework.content.metadata.Schema#paramString" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="paramString(short:Boolean,f:Schema.this.S=&gt;String):String"></a>
+      <a id="paramString(Boolean,(S)⇒String):String"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">paramString</span><span class="params">(<span name="short">short: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>, <span name="f">f: (<a href="#S=T" class="extmbr" name="au.com.cba.omnia.grimlock.framework.content.metadata.NumericalSchema.S">S</a>) ⇒ <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.content.metadata.NumericalSchema@paramString(short:Boolean,f:Schema.this.S=&gt;String):String" title="Permalink" target="_top">
+        <img src="../../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="Schema.html" class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.Schema">Schema</a></dd></dl></div>
     </li><li name="scala.AnyRef#synchronized" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="synchronized[T0](x$1:=&gt;T0):T0"></a>
       <a id="synchronized[T0](⇒T0):T0"></a>
@@ -511,23 +460,23 @@
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.framework.content.metadata.Schema#toShortString" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="toShortString(separator:String):String"></a>
-      <a id="toShortString(String):String"></a>
+      <a id="toShortString(codec:au.com.cba.omnia.grimlock.framework.encoding.Codec{typeC=Schema.this.S}):String"></a>
+      <a id="toShortString(Codec{typeC=NumericalSchema.this.S}):String"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">toShortString</span><span class="params">(<span name="separator">separator: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
+        <span class="name">toShortString</span><span class="params">(<span name="codec">codec: <a href="../../encoding/Codec.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Codec">Codec</a> { type C = NumericalSchema.this.S }</span>)</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.content.metadata.NumericalSchema@toShortString(separator:String):String" title="Permalink" target="_top">
+      <a href="../../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.content.metadata.NumericalSchema@toShortString(codec:au.com.cba.omnia.grimlock.framework.encoding.Codec{typeC=Schema.this.S}):String" title="Permalink" target="_top">
         <img src="../../../../../../../../lib/permalink.png" />
       </a>
     </span>
       <p class="shortcomment cmt">Return a consise (terse) string representation of a schema.</p><div class="fullcomment"><div class="comment cmt"><p>Return a consise (terse) string representation of a schema.
-</p></div><dl class="paramcmts block"><dt class="param">separator</dt><dd class="cmt"><p>Separator to use between various fields.
+</p></div><dl class="paramcmts block"><dt class="param">codec</dt><dd class="cmt"><p>The codec used to encode this schema's data.
 </p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="Schema.html" class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.Schema">Schema</a></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.framework.content.metadata.Schema#toString" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="toString():String"></a>
@@ -546,6 +495,40 @@
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="Schema.html" class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.Schema">Schema</a> → AnyRef → Any</dd></dl></div>
+    </li><li name="au.com.cba.omnia.grimlock.framework.content.metadata.Schema#typeString" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="typeString():String"></a>
+      <a id="typeString():String"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">typeString</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.content.metadata.NumericalSchema@typeString():String" title="Permalink" target="_top">
+        <img src="../../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="Schema.html" class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.Schema">Schema</a></dd></dl></div>
+    </li><li name="au.com.cba.omnia.grimlock.framework.content.metadata.NumericalSchema#validateRange" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="validateRange(value:au.com.cba.omnia.grimlock.framework.encoding.Value{typeV=NumericalSchema.this.S})(implicitev:Numeric[NumericalSchema.this.S]):Boolean"></a>
+      <a id="validateRange(Value{typeV=NumericalSchema.this.S})(Numeric[S]):Boolean"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">validateRange</span><span class="params">(<span name="value">value: <a href="../../encoding/Value.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Value">Value</a> { type V = NumericalSchema.this.S }</span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: <span class="extype" name="scala.Numeric">Numeric</span>[<a href="#S=T" class="extmbr" name="au.com.cba.omnia.grimlock.framework.content.metadata.NumericalSchema.S">S</a>]</span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.content.metadata.NumericalSchema@validateRange(value:au.com.cba.omnia.grimlock.framework.encoding.Value{typeV=NumericalSchema.this.S})(implicitev:Numeric[NumericalSchema.this.S]):Boolean" title="Permalink" target="_top">
+        <img src="../../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd></dl></div>
     </li><li name="scala.AnyRef#wait" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="wait():Unit"></a>
       <a id="wait():Unit"></a>

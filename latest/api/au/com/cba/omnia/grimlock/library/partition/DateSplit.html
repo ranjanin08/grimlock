@@ -45,13 +45,13 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <span class="name">DateSplit</span><span class="tparams">[<span name="P">P &lt;: <a href="../../framework/position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="S">S</span>]</span><span class="params">(<span name="dim">dim: <a href="../../framework/position/Dimension.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Dimension">Dimension</a></span>, <span name="ranges">ranges: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="au.com.cba.omnia.grimlock.library.partition.DateSplit.S">S</span>, (<span class="extype" name="java.util.Date">Date</span>, <span class="extype" name="java.util.Date">Date</span>)]</span>, <span name="codex">codex: <a href="../../framework/encoding/DateCodex.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.DateCodex">DateCodex</a></span>)</span><span class="result"> extends <a href="../../framework/partition/Partitioner.html" class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitioner">Partitioner</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.partition.DateSplit.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.partition.DateSplit.S">S</span>] with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Product" class="extype" target="_top">Product</a> with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
+        <span class="name">DateSplit</span><span class="tparams">[<span name="P">P &lt;: <a href="../../framework/position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="S">S</span>]</span><span class="params">(<span name="dim">dim: <a href="../../framework/position/Dimension.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Dimension">Dimension</a></span>, <span name="ranges">ranges: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="au.com.cba.omnia.grimlock.library.partition.DateSplit.S">S</span>, (<span class="extype" name="java.util.Date">Date</span>, <span class="extype" name="java.util.Date">Date</span>)]</span>, <span name="codec">codec: <a href="../../framework/encoding/DateCodec.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.DateCodec">DateCodec</a></span>)</span><span class="result"> extends <a href="../../framework/partition/Partitioner.html" class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitioner">Partitioner</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.partition.DateSplit.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.partition.DateSplit.S">S</span>] with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Product" class="extype" target="_top">Product</a> with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
       </span>
       </h4>
       
           <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Partition based on the date of a coordinate.
-</p></div><dl class="paramcmts block"><dt class="param">dim</dt><dd class="cmt"><p>The dimension to partition on.</p></dd><dt class="param">ranges</dt><dd class="cmt"><p>A <code>Map</code> holding the partitions and date ranges for each partition.</p></dd><dt class="param">codex</dt><dd class="cmt"><p>The date codex used for comparison.
-</p></dd></dl><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/Dirty(72daa4f61ade8c38d7188d1b901925b09f6525b7)//src/main/scala/au/com/cba/omnia/grimlock/library/Partitioners.scala" target="_blank">Partitioners.scala</a></dd><dt>Note</dt><dd><span class="cmt"><p>A position falls in a range if it is (strictly) greater than the lower value (first value in tuple) and less
+</p></div><dl class="paramcmts block"><dt class="param">dim</dt><dd class="cmt"><p>The dimension to partition on.</p></dd><dt class="param">ranges</dt><dd class="cmt"><p>A <code>Map</code> holding the partitions and date ranges for each partition.</p></dd><dt class="param">codec</dt><dd class="cmt"><p>The date codec used for comparison.
+</p></dd></dl><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/Dirty(113e59a12795eaf3455b65f6885e7a46e6bb64b3)//src/main/scala/au/com/cba/omnia/grimlock/library/Partitioners.scala" target="_blank">Partitioners.scala</a></dd><dt>Note</dt><dd><span class="cmt"><p>A position falls in a range if it is (strictly) greater than the lower value (first value in tuple) and less
       or equal to the upper value (second value in tuple).
 </p></span></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
@@ -94,7 +94,7 @@
         <div id="constructors" class="members">
               <h3>Instance Constructors</h3>
               <ol><li name="au.com.cba.omnia.grimlock.library.partition.DateSplit#&lt;init&gt;" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="&lt;init&gt;(dim:au.com.cba.omnia.grimlock.framework.position.Dimension,ranges:Map[S,(java.util.Date,java.util.Date)],codex:au.com.cba.omnia.grimlock.framework.encoding.DateCodex):au.com.cba.omnia.grimlock.library.partition.DateSplit[P,S]"></a>
+      <a id="&lt;init&gt;(dim:au.com.cba.omnia.grimlock.framework.position.Dimension,ranges:Map[S,(java.util.Date,java.util.Date)],codec:au.com.cba.omnia.grimlock.framework.encoding.DateCodec):au.com.cba.omnia.grimlock.library.partition.DateSplit[P,S]"></a>
       <a id="&lt;init&gt;:DateSplit[P,S]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -102,14 +102,14 @@
         <span class="kind">new</span>
       </span>
       <span class="symbol">
-        <span class="name">DateSplit</span><span class="params">(<span name="dim">dim: <a href="../../framework/position/Dimension.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Dimension">Dimension</a></span>, <span name="ranges">ranges: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="au.com.cba.omnia.grimlock.library.partition.DateSplit.S">S</span>, (<span class="extype" name="java.util.Date">Date</span>, <span class="extype" name="java.util.Date">Date</span>)]</span>, <span name="codex">codex: <a href="../../framework/encoding/DateCodex.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.DateCodex">DateCodex</a></span>)</span>
+        <span class="name">DateSplit</span><span class="params">(<span name="dim">dim: <a href="../../framework/position/Dimension.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Dimension">Dimension</a></span>, <span name="ranges">ranges: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="au.com.cba.omnia.grimlock.library.partition.DateSplit.S">S</span>, (<span class="extype" name="java.util.Date">Date</span>, <span class="extype" name="java.util.Date">Date</span>)]</span>, <span name="codec">codec: <a href="../../framework/encoding/DateCodec.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.DateCodec">DateCodec</a></span>)</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.partition.DateSplit@&lt;init&gt;(dim:au.com.cba.omnia.grimlock.framework.position.Dimension,ranges:Map[S,(java.util.Date,java.util.Date)],codex:au.com.cba.omnia.grimlock.framework.encoding.DateCodex):au.com.cba.omnia.grimlock.library.partition.DateSplit[P,S]" title="Permalink" target="_top">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.partition.DateSplit@&lt;init&gt;(dim:au.com.cba.omnia.grimlock.framework.position.Dimension,ranges:Map[S,(java.util.Date,java.util.Date)],codec:au.com.cba.omnia.grimlock.framework.encoding.DateCodec):au.com.cba.omnia.grimlock.library.partition.DateSplit[P,S]" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" />
       </a>
     </span>
-      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="param">dim</dt><dd class="cmt"><p>The dimension to partition on.</p></dd><dt class="param">ranges</dt><dd class="cmt"><p>A <code>Map</code> holding the partitions and date ranges for each partition.</p></dd><dt class="param">codex</dt><dd class="cmt"><p>The date codex used for comparison.
+      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="param">dim</dt><dd class="cmt"><p>The dimension to partition on.</p></dd><dt class="param">ranges</dt><dd class="cmt"><p>A <code>Map</code> holding the partitions and date ranges for each partition.</p></dd><dt class="param">codec</dt><dd class="cmt"><p>The date codec used for comparison.
 </p></dd></dl></div>
     </li></ol>
             </div>
@@ -271,23 +271,23 @@
     </span>)</span>
               
         </dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.library.partition.DateSplit#codex" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="codex:au.com.cba.omnia.grimlock.framework.encoding.DateCodex"></a>
-      <a id="codex:DateCodex"></a>
+    </li><li name="au.com.cba.omnia.grimlock.library.partition.DateSplit#codec" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="codec:au.com.cba.omnia.grimlock.framework.encoding.DateCodec"></a>
+      <a id="codec:DateCodec"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">codex</span><span class="result">: <a href="../../framework/encoding/DateCodex.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.DateCodex">DateCodex</a></span>
+        <span class="name">codec</span><span class="result">: <a href="../../framework/encoding/DateCodec.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.DateCodec">DateCodec</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.partition.DateSplit@codex:au.com.cba.omnia.grimlock.framework.encoding.DateCodex" title="Permalink" target="_top">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.partition.DateSplit@codec:au.com.cba.omnia.grimlock.framework.encoding.DateCodec" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" />
       </a>
     </span>
-      <p class="shortcomment cmt">The date codex used for comparison.</p>
+      <p class="shortcomment cmt">The date codec used for comparison.</p>
     </li><li name="au.com.cba.omnia.grimlock.library.partition.DateSplit#dim" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="dim:au.com.cba.omnia.grimlock.framework.position.Dimension"></a>
       <a id="dim:Dimension"></a>

@@ -28,10 +28,12 @@
         </head>
         <body class="type">
       <div id="definition">
-        <img src="../../../../../../../lib/class_big.png" />
+        <a href="DateValue$.html" title="See companion object"><img src="../../../../../../../lib/class_to_object_big.png" /></a>
         <p id="owner"><a href="../../../../../../package.html" class="extype" name="au">au</a>.<a href="../../../../../package.html" class="extype" name="au.com">com</a>.<a href="../../../../package.html" class="extype" name="au.com.cba">cba</a>.<a href="../../../package.html" class="extype" name="au.com.cba.omnia">omnia</a>.<a href="../../package.html" class="extype" name="au.com.cba.omnia.grimlock">grimlock</a>.<a href="../package.html" class="extype" name="au.com.cba.omnia.grimlock.framework">framework</a>.<a href="package.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding">encoding</a></p>
-        <h1>DateValue</h1><h3><span class="morelinks"><div>Related Doc:
-            <a href="package.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding">package encoding</a>
+        <h1><a href="DateValue$.html" title="See companion object">DateValue</a></h1><h3><span class="morelinks"><div>
+            Related Docs:
+            <a href="DateValue$.html" title="See companion object">object DateValue</a>
+            | <a href="package.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding">package encoding</a>
           </div></span></h3><span class="permalink">
       <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.encoding.DateValue" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" />
@@ -45,13 +47,13 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <span class="name">DateValue</span><span class="params">(<span name="value">value: <span class="extype" name="java.util.Date">Date</span></span>, <span name="codex">codex: <a href="DateCodex.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.DateCodex">DateCodex</a></span>)</span><span class="result"> extends <a href="Value.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Value">Value</a> with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Product" class="extype" target="_top">Product</a> with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
+        <span class="name">DateValue</span><span class="params">(<span name="value">value: <span class="extype" name="java.util.Date">Date</span></span>, <span name="codec">codec: <a href="Codec.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Codec">Codec</a> { type C = java.util.Date } = <span class="symbol"><span class="name"><a href="DateCodec$.html">DateCodec()</a></span></span></span>)</span><span class="result"> extends <a href="Value.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Value">Value</a> with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Product" class="extype" target="_top">Product</a> with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
       </span>
       </h4>
       
           <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Value for when the data is of type <code>java.util.Date</code>
-</p></div><dl class="paramcmts block"><dt class="param">value</dt><dd class="cmt"><p>A <code>java.util.Date</code>.</p></dd><dt class="param">codex</dt><dd class="cmt"><p>The codex used for encoding/decoding <code>value</code>.
-</p></dd></dl><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/Dirty(72daa4f61ade8c38d7188d1b901925b09f6525b7)//src/main/scala/au/com/cba/omnia/grimlock/framework/Value.scala" target="_blank">Value.scala</a></dd></dl><div class="toggleContainer block">
+</p></div><dl class="paramcmts block"><dt class="param">value</dt><dd class="cmt"><p>A <code>java.util.Date</code>.</p></dd><dt class="param">codec</dt><dd class="cmt"><p>The codec used for encoding/decoding <code>value</code>.
+</p></dd></dl><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/Dirty(113e59a12795eaf3455b65f6885e7a46e6bb64b3)//src/main/scala/au/com/cba/omnia/grimlock/framework/Value.scala" target="_blank">Value.scala</a></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a>, <span class="extype" name="java.io.Serializable">Serializable</span>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Product" class="extype" target="_top">Product</a>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Equals" class="extype" target="_top">Equals</a>, <a href="Value.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Value">Value</a>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Any" class="extype" target="_top">Any</a></div>
         </div></div>
@@ -92,7 +94,7 @@
         <div id="constructors" class="members">
               <h3>Instance Constructors</h3>
               <ol><li name="au.com.cba.omnia.grimlock.framework.encoding.DateValue#&lt;init&gt;" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="&lt;init&gt;(value:java.util.Date,codex:au.com.cba.omnia.grimlock.framework.encoding.DateCodex):au.com.cba.omnia.grimlock.framework.encoding.DateValue"></a>
+      <a id="&lt;init&gt;(value:java.util.Date,codec:au.com.cba.omnia.grimlock.framework.encoding.Codec{typeC=java.util.Date}):au.com.cba.omnia.grimlock.framework.encoding.DateValue"></a>
       <a id="&lt;init&gt;:DateValue"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -100,19 +102,39 @@
         <span class="kind">new</span>
       </span>
       <span class="symbol">
-        <span class="name">DateValue</span><span class="params">(<span name="value">value: <span class="extype" name="java.util.Date">Date</span></span>, <span name="codex">codex: <a href="DateCodex.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.DateCodex">DateCodex</a></span>)</span>
+        <span class="name">DateValue</span><span class="params">(<span name="value">value: <span class="extype" name="java.util.Date">Date</span></span>, <span name="codec">codec: <a href="Codec.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Codec">Codec</a> { type C = java.util.Date } = <span class="symbol"><span class="name"><a href="DateCodec$.html">DateCodec()</a></span></span></span>)</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.encoding.DateValue@&lt;init&gt;(value:java.util.Date,codex:au.com.cba.omnia.grimlock.framework.encoding.DateCodex):au.com.cba.omnia.grimlock.framework.encoding.DateValue" title="Permalink" target="_top">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.encoding.DateValue@&lt;init&gt;(value:java.util.Date,codec:au.com.cba.omnia.grimlock.framework.encoding.Codec{typeC=java.util.Date}):au.com.cba.omnia.grimlock.framework.encoding.DateValue" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" />
       </a>
     </span>
-      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="param">value</dt><dd class="cmt"><p>A <code>java.util.Date</code>.</p></dd><dt class="param">codex</dt><dd class="cmt"><p>The codex used for encoding/decoding <code>value</code>.
+      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="param">value</dt><dd class="cmt"><p>A <code>java.util.Date</code>.</p></dd><dt class="param">codec</dt><dd class="cmt"><p>The codec used for encoding/decoding <code>value</code>.
 </p></dd></dl></div>
     </li></ol>
             </div>
 
-        
+        <div id="types" class="types members">
+              <h3>Type Members</h3>
+              <ol><li name="au.com.cba.omnia.grimlock.framework.encoding.DateValue.V" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="V=java.util.Date"></a>
+      <a id="V:V"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">type</span>
+      </span>
+      <span class="symbol">
+        <span class="name">V</span><span class="result"> = <span class="extype" name="java.util.Date">Date</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.encoding.DateValue@V=java.util.Date" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Type of  the value.</p><div class="fullcomment"><div class="comment cmt"><p>Type of  the value.</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.DateValue">DateValue</a> → <a href="Value.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Value">Value</a></dd></dl></div>
+    </li></ol>
+            </div>
 
         
 
@@ -311,23 +333,23 @@
     </span>)</span>
               
         </dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.framework.encoding.DateValue#codex" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="codex:au.com.cba.omnia.grimlock.framework.encoding.DateCodex"></a>
-      <a id="codex:DateCodex"></a>
+    </li><li name="au.com.cba.omnia.grimlock.framework.encoding.DateValue#codec" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="codec:au.com.cba.omnia.grimlock.framework.encoding.Codec{typeC=java.util.Date}"></a>
+      <a id="codec:Codec{typeC=java.util.Date}"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">codex</span><span class="result">: <a href="DateCodex.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.DateCodex">DateCodex</a></span>
+        <span class="name">codec</span><span class="result">: <a href="Codec.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Codec">Codec</a> { type C = java.util.Date }</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.encoding.DateValue@codex:au.com.cba.omnia.grimlock.framework.encoding.DateCodex" title="Permalink" target="_top">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.encoding.DateValue@codec:au.com.cba.omnia.grimlock.framework.encoding.Codec{typeC=java.util.Date}" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" />
       </a>
     </span>
-      <p class="shortcomment cmt">The codex used for encoding/decoding <code>value</code>.</p><div class="fullcomment"><div class="comment cmt"><p>The codex used for encoding/decoding <code>value</code>.
+      <p class="shortcomment cmt">The codec used for encoding/decoding <code>value</code>.</p><div class="fullcomment"><div class="comment cmt"><p>The codec used for encoding/decoding <code>value</code>.
 </p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.DateValue">DateValue</a> → <a href="Value.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Value">Value</a></dd></dl></div>
     </li><li name="scala.AnyRef#eq" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="eq(x$1:AnyRef):Boolean"></a>
@@ -626,7 +648,7 @@
       </a>
     </span>
       <p class="shortcomment cmt">Return a consise (terse) string representation of a value.</p><div class="fullcomment"><div class="comment cmt"><p>Return a consise (terse) string representation of a value.</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="Value.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Value">Value</a></dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.framework.encoding.DateValue#value" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+    </li><li name="au.com.cba.omnia.grimlock.framework.encoding.DateValue#value" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="value:java.util.Date"></a>
       <a id="value:Date"></a>
       <h4 class="signature">
@@ -642,7 +664,7 @@
         <img src="../../../../../../../lib/permalink.png" />
       </a>
     </span>
-      <p class="shortcomment cmt">A <code>java.util.Date</code>.</p>
+      <p class="shortcomment cmt">A <code>java.util.Date</code>.</p><div class="fullcomment"><div class="comment cmt"><p>A <code>java.util.Date</code>.</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.DateValue">DateValue</a> → <a href="Value.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Value">Value</a></dd></dl></div>
     </li><li name="scala.AnyRef#wait" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="wait():Unit"></a>
       <a id="wait():Unit"></a>
