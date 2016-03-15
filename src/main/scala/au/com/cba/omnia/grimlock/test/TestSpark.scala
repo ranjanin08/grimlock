@@ -257,8 +257,8 @@ object TestSpark6 {
       .slice(Over(Second), List("fid:A", "fid:B", "fid:C", "fid:D", "fid:E", "fid:F", "fid:G"), true)
       .squash(Third, PreservingMaxPosition[Position3D]())
       .summarise(Along(First), aggregators)
-      .whichByPositions(Over(Second), List(("count", (c: Cell[Position2D]) => c.content.value leq 2),
-                                           ("min", (c: Cell[Position2D]) => c.content.value equ 107)))
+      .whichByPosition(Over(Second), List(("count", (c: Cell[Position2D]) => c.content.value leq 2),
+                                          ("min", (c: Cell[Position2D]) => c.content.value equ 107)))
       .saveAsText(s"./tmp.${tool}/whc5.out", Position.toString(descriptive = true))
       .toUnit
   }
@@ -302,7 +302,7 @@ object TestSpark8 {
 
     loadText(path + "/mutualInputfile.txt", Cell.parse2D())
       .data
-      .uniqueByPositions(Over(Second))
+      .uniqueByPosition(Over(Second))
       .map { case (p, c) => Cell(p, c) }
       .saveAsText(s"./tmp.${tool}/uni2.out")
       .toUnit
@@ -665,7 +665,7 @@ object TestSpark18 {
       .summarise(Along(First), aggregators)
 
     val rem = stats
-      .whichByPositions(Over(Second), ("count", (c: Cell[Position2D]) => c.content.value leq 2))
+      .whichByPosition(Over(Second), ("count", (c: Cell[Position2D]) => c.content.value leq 2))
       .names(Over(First))
 
     data

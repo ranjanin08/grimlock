@@ -364,6 +364,7 @@ trait Matrix[P <: Position with CompactablePosition] extends FwMatrix[P] with Pe
     data.flatMap { case c => partitioner.assignWithValue(c, value).map { case q => (q, c) } }
   }
 
+  type StreamTuners[T] = TP1[T]
   def stream[Q <: Position](command: String, files: List[String], writer: TextWriter,
     parser: Cell.TextParser[Q]): (U[Cell[Q]], U[String]) = {
     val result = data
@@ -374,9 +375,9 @@ trait Matrix[P <: Position with CompactablePosition] extends FwMatrix[P] with Pe
     (result.collect { case Right(c) => c }, result.collect { case Left(e) => e })
   }
 
-  def streamByPosition[S <: Position with ExpandablePosition, Q <: Position](slice: Slice[P], command: String,
-    files: List[String], writer: (S, Iterator[Cell[P]]) => Option[String], parser: Cell.TextParser[Q])(
-      implicit ev1: slice.S =:= S, ev2: ClassTag[slice.S]): (U[Cell[Q]], U[String]) = {
+  def streamByPosition[S <: Position with ExpandablePosition, Q <: Position, T <: Tuner : StreamTuners](
+    slice: Slice[P], command: String, files: List[String], writer: TextByPositionWriter[S], parser: Cell.TextParser[Q],
+      tuner: T = Default())(implicit ev1: slice.S =:= S, ev2: ClassTag[slice.S]): (U[Cell[Q]], U[String]) = {
     val result = data
       .groupBy { case c => slice.selected(c.position) }
       .flatMap { case (p, itr) => writer(p, itr.toIterator) }
@@ -482,7 +483,7 @@ trait Matrix[P <: Position with CompactablePosition] extends FwMatrix[P] with Pe
       .tunedDistinct(tuner.parameters)(ordering)
   }
 
-  def uniqueByPositions[T <: Tuner : UniqueTuners](slice: Slice[P], tuner: T = Default())(
+  def uniqueByPosition[T <: Tuner : UniqueTuners](slice: Slice[P], tuner: T = Default())(
     implicit ev1: slice.S =:!= Position0D): U[(slice.S, Content)] = {
     val ordering = new Ordering[Cell[slice.S]] {
       def compare(l: Cell[slice.S], r: Cell[slice.S]) = l.toString().compare(r.toString)
@@ -499,7 +500,7 @@ trait Matrix[P <: Position with CompactablePosition] extends FwMatrix[P] with Pe
     data.collect { case c if predicate(c) => c.position }
   }
 
-  def whichByPositions[I, T <: Tuner : WhichTuners](slice: Slice[P], predicates: I, tuner: T = Default())(
+  def whichByPosition[I, T <: Tuner : WhichTuners](slice: Slice[P], predicates: I, tuner: T = Default())(
     implicit ev1: FwPredicateable[I, P, slice.S, RDD], ev2: ClassTag[slice.S], ev3: ClassTag[P]): U[P] = {
     val pp = ev1.convert(predicates)
       .map { case (pos, pred) => pos.map { case p => (p, pred) } }

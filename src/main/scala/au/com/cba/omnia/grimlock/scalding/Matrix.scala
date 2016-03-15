@@ -156,6 +156,62 @@ private[scalding] object ScaldingImplicits {
   }
 }
 
+private[scalding] object Stream {
+  val delegate = (command: String, files: List[String]) => {
+    val contents = files.map { case f => (new File(f).getName, Files.readAllBytes(Paths.get(f))) }
+
+    (k: Unit, itr: Iterator[String]) => {
+      val tmp = Files.createTempDirectory("grimlock-")
+      tmp.toFile.deleteOnExit
+
+      contents.foreach {
+        case (file, content) =>
+          val path = Paths.get(tmp.toString, file)
+
+          Files.write(path, content)
+          Files.setPosixFilePermissions(path, PosixFilePermissions.fromString("rwxr-x---"))
+      }
+
+      val process = new ProcessBuilder(command.split(' ').toList.asJava).directory(tmp.toFile).start
+
+      new Thread() {
+        override def run() {
+          Source.fromInputStream(process.getErrorStream, "ISO-8859-1").getLines.foreach(System.err.println)
+        }
+      }.start
+
+      new Thread() {
+        override def run() {
+          val out = new PrintWriter(new OutputStreamWriter(process.getOutputStream, UTF_8))
+
+          itr.foreach(out.println)
+          out.close
+        }
+      }.start
+
+      val result = Source.fromInputStream(process.getInputStream, "UTF-8").getLines
+
+      new Iterator[String] {
+        def next(): String = result.next
+
+        def hasNext: Boolean = {
+          if (result.hasNext) {
+            true
+          } else {
+            val status = process.waitFor
+
+            if (status != 0) {
+              throw new Exception(s"Subprocess '${command}' exited with status ${status}")
+            }
+
+            false
+          }
+        }
+      }
+    }
+  }
+}
+
 /** Base trait for matrix operations using a `TypedPipe[Cell[P]]`. */
 trait Matrix[P <: Position with CompactablePosition] extends FwMatrix[P] with Persist[Cell[P]] with UserData {
   type M = Matrix[P]
@@ -510,129 +566,29 @@ trait Matrix[P <: Position with CompactablePosition] extends FwMatrix[P] with Pe
     data.flatMapWithValue(value) { case (c, vo) => partitioner.assignWithValue(c, vo.get).map { case q => (q, c) } }
   }
 
+  type StreamTuners[T] = TP2[T]
   def stream[Q <: Position](command: String, files: List[String], writer: TextWriter,
     parser: Cell.TextParser[Q]): (U[Cell[Q]], U[String]) = {
-    val contents = files.map { case f => (new File(f).getName, Files.readAllBytes(Paths.get(f))) }
-    val smfn = (k: Unit, itr: Iterator[String]) => {
-      val tmp = Files.createTempDirectory("grimlock-")
-      tmp.toFile.deleteOnExit
-
-      contents.foreach {
-        case (file, content) =>
-          val path = Paths.get(tmp.toString, file)
-
-          Files.write(path, content)
-          Files.setPosixFilePermissions(path, PosixFilePermissions.fromString("rwxr-x---"))
-      }
-
-      val process = new ProcessBuilder(command.split(' ').toList.asJava).directory(tmp.toFile).start
-
-      new Thread() {
-        override def run() {
-          Source.fromInputStream(process.getErrorStream, "ISO-8859-1").getLines.foreach(System.err.println)
-        }
-      }.start
-
-      new Thread() {
-        override def run() {
-          val out = new PrintWriter(new OutputStreamWriter(process.getOutputStream, UTF_8))
-
-          itr.foreach(out.println)
-          out.close
-        }
-      }.start
-
-      val result = Source.fromInputStream(process.getInputStream, "UTF-8").getLines
-
-      new Iterator[String] {
-        def next(): String = result.next
-
-        def hasNext: Boolean = {
-          if (result.hasNext) {
-            true
-          } else {
-            val status = process.waitFor
-
-            if (status != 0) {
-              throw new Exception(s"Subprocess '${command}' exited with status ${status}")
-            }
-
-            false
-          }
-        }
-      }
-    }
-
     val result = data
       .flatMap(writer(_))
       .groupAll
-      .mapGroup(smfn)
+      .mapGroup(Stream.delegate(command, files))
       .values
       .flatMap(parser(_))
 
     (result.collect { case Right(c) => c }, result.collect { case Left(e) => e })
   }
 
-  def streamByPosition[S <: Position with ExpandablePosition, Q <: Position](slice: Slice[P], command: String,
-    files: List[String], writer: (S, Iterator[Cell[P]]) => Option[String],
-      parser: Cell.TextParser[Q])(implicit ev1: slice.S =:= S, ev2: ClassTag[slice.S]): (U[Cell[Q]], U[String]) = {
-    val contents = files.map { case f => (new File(f).getName, Files.readAllBytes(Paths.get(f))) }
-    val smfn = (k: Unit, itr: Iterator[String]) => {
-      val tmp = Files.createTempDirectory("grimlock-")
-      tmp.toFile.deleteOnExit
-
-      contents.foreach {
-        case (file, content) =>
-          val path = Paths.get(tmp.toString, file)
-
-          Files.write(path, content)
-          Files.setPosixFilePermissions(path, PosixFilePermissions.fromString("rwxr-x---"))
-      }
-
-      val process = new ProcessBuilder(command.split(' ').toList.asJava).directory(tmp.toFile).start
-
-      new Thread() {
-        override def run() {
-          Source.fromInputStream(process.getErrorStream, "ISO-8859-1").getLines.foreach(System.err.println)
-        }
-      }.start
-
-      new Thread() {
-        override def run() {
-          val out = new PrintWriter(new OutputStreamWriter(process.getOutputStream, UTF_8))
-
-          itr.foreach(out.println)
-          out.close
-        }
-      }.start
-
-      val result = Source.fromInputStream(process.getInputStream, "UTF-8").getLines
-
-      new Iterator[String] {
-        def next(): String = result.next
-
-        def hasNext: Boolean = {
-          if (result.hasNext) {
-            true
-          } else {
-            val status = process.waitFor
-
-            if (status != 0) {
-              throw new Exception(s"Subprocess '${command}' exited with status ${status}")
-            }
-
-            false
-          }
-        }
-      }
-    }
-
+  def streamByPosition[S <: Position with ExpandablePosition, Q <: Position, T <: Tuner : StreamTuners](
+    slice: Slice[P], command: String, files: List[String], writer: TextByPositionWriter[S], parser: Cell.TextParser[Q],
+      tuner: T = Default())(implicit ev1: slice.S =:= S, ev2: ClassTag[slice.S]): (U[Cell[Q]], U[String]) = {
     val result = data
       .groupBy { case c => slice.selected(c.position) }
+      .tuneReducers(tuner.parameters)
       .mapGroup { case (p, itr) => writer(p, itr).toIterator }
       .values
       .groupAll
-      .mapGroup(smfn)
+      .mapGroup(Stream.delegate(command, files))
       .values
       .flatMap(parser(_))
 
@@ -737,7 +693,7 @@ trait Matrix[P <: Position with CompactablePosition] extends FwMatrix[P] with Pe
       .tunedDistinct(tuner.parameters)(ordering)
   }
 
-  def uniqueByPositions[T <: Tuner : UniqueTuners](slice: Slice[P], tuner: T = Default())(
+  def uniqueByPosition[T <: Tuner : UniqueTuners](slice: Slice[P], tuner: T = Default())(
     implicit ev1: slice.S =:!= Position0D): U[(slice.S, Content)] = {
     val ordering = new Ordering[Cell[slice.S]] {
       def compare(l: Cell[slice.S], r: Cell[slice.S]) = l.toString().compare(r.toString)
@@ -754,7 +710,7 @@ trait Matrix[P <: Position with CompactablePosition] extends FwMatrix[P] with Pe
     data.collect { case c if predicate(c) => c.position }
   }
 
-  def whichByPositions[I, T <: Tuner : WhichTuners](slice: Slice[P], predicates: I, tuner: T = InMemory())(
+  def whichByPosition[I, T <: Tuner : WhichTuners](slice: Slice[P], predicates: I, tuner: T = InMemory())(
     implicit ev1: FwPredicateable[I, P, slice.S, TypedPipe], ev2: ClassTag[slice.S], ev3: ClassTag[P]): U[P] = {
     val pp = ev1.convert(predicates)
       .map { case (pos, pred) => pos.map { case p => (p, pred) } }

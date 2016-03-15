@@ -398,6 +398,9 @@ trait Matrix[P <: Position with CompactablePosition] extends Persist[Cell[P]] wi
    */
   def splitWithValue[I, W](partitioners: PartitionableWithValue[P, I, W], value: E[W]): U[(I, Cell[P])]
 
+  /** Specifies tuners permitted on a call to `stream` functions. */
+  type StreamTuners[_]
+
   /**
    * Stream this matrix through `command` and apply `script`.
    *
@@ -413,6 +416,24 @@ trait Matrix[P <: Position with CompactablePosition] extends Persist[Cell[P]] wi
    */
   def stream[Q <: Position](command: String, files: List[String], writer: TextWriter,
     parser: Cell.TextParser[Q]): (U[Cell[Q]], U[String])
+
+  /**
+   * Stream this matrix through `command` and apply `script`, after grouping all data by `slice`.
+   *
+   * @param slice     Encapsulates the dimension(s) along which to stream.
+   * @param command   The command to stream (pipe) the data through.
+   * @param files     A list of text files that will be available to `command`. Note that all files must be
+   *                  located in the same directory as which the job is started.
+   * @param writer    Function that converts a group of cells to a string (prior to streaming it through `command`).
+   * @param parser    Function that parses the resulting string back to a cell.
+   *
+   * @return A `U[Cell[Q]]` with the new data as well as a `U[String]` with any parse errors.
+   *
+   * @note The `command` must be installed on each node of the cluster.
+   */
+  def streamByPosition[S <: Position with ExpandablePosition, Q <: Position, T <: Tuner : StreamTuners](
+    slice: Slice[P], command: String, files: List[String], writer: TextByPositionWriter[S], parser: Cell.TextParser[Q],
+      tuner: T)(implicit ev1: slice.S =:= S, ev2: ClassTag[slice.S]): (U[Cell[Q]], U[String])
 
   /**
    * Sample a matrix according to some `sampler`. It keeps only those cells for which `sampler` returns true.
@@ -550,7 +571,7 @@ trait Matrix[P <: Position with CompactablePosition] extends Persist[Cell[P]] wi
    *
    * @note Comparison is performed based on the string representation of the `slice.S` and `Content`.
    */
-  def uniqueByPositions[T <: Tuner : UniqueTuners](slice: Slice[P], tuner: T)(
+  def uniqueByPosition[T <: Tuner : UniqueTuners](slice: Slice[P], tuner: T)(
     implicit ev1: slice.S =:!= Position0D): U[(slice.S, Content)]
 
   /** Specifies tuners permitted on a call to `which` functions. */
@@ -576,7 +597,7 @@ trait Matrix[P <: Position with CompactablePosition] extends Persist[Cell[P]] wi
    *
    * @return A `U[P]` of the positions for which the content matches predicates.
    */
-  def whichByPositions[I, T <: Tuner : WhichTuners](slice: Slice[P], predicates: I, tuner: T)(
+  def whichByPosition[I, T <: Tuner : WhichTuners](slice: Slice[P], predicates: I, tuner: T)(
     implicit ev1: Predicateable[I, P, slice.S, U], ev2: ClassTag[slice.S], ev3: ClassTag[P]): U[P]
 
   // TODO: Add more compile-time type checking

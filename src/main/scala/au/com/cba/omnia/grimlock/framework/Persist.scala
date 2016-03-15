@@ -15,6 +15,7 @@
 package au.com.cba.omnia.grimlock.framework
 
 import au.com.cba.omnia.grimlock.framework.environment._
+import au.com.cba.omnia.grimlock.framework.position._
 
 import org.apache.hadoop.io.Writable
 
@@ -33,6 +34,9 @@ trait Persist[T] extends DistributedData with Environment {
 
   /** Shorthand type for converting a `T` to string. */
   type TextWriter = (T) => TraversableOnce[String]
+
+  /** Shorthand type for converting one or more `T` by position to string. */
+  type TextByPositionWriter[P <: Position] = (P, Iterator[T]) => TraversableOnce[String]
 
   /** Shorthand type for converting a `T` to key value tuple. */
   type SequenceWriter[K <: Writable, V <: Writable] = (T) => TraversableOnce[(K, V)]
