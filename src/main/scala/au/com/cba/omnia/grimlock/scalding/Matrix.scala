@@ -573,6 +573,72 @@ trait Matrix[P <: Position with CompactablePosition] extends FwMatrix[P] with Pe
     (result.collect { case Right(c) => c }, result.collect { case Left(e) => e })
   }
 
+  def streamByPosition[S <: Position with ExpandablePosition, Q <: Position](slice: Slice[P], command: String,
+    files: List[String], writer: (S, Iterator[Cell[P]]) => Option[String],
+      parser: Cell.TextParser[Q])(implicit ev1: slice.S =:= S, ev2: ClassTag[slice.S]): (U[Cell[Q]], U[String]) = {
+    val contents = files.map { case f => (new File(f).getName, Files.readAllBytes(Paths.get(f))) }
+    val smfn = (k: Unit, itr: Iterator[String]) => {
+      val tmp = Files.createTempDirectory("grimlock-")
+      tmp.toFile.deleteOnExit
+
+      contents.foreach {
+        case (file, content) =>
+          val path = Paths.get(tmp.toString, file)
+
+          Files.write(path, content)
+          Files.setPosixFilePermissions(path, PosixFilePermissions.fromString("rwxr-x---"))
+      }
+
+      val process = new ProcessBuilder(command.split(' ').toList.asJava).directory(tmp.toFile).start
+
+      new Thread() {
+        override def run() {
+          Source.fromInputStream(process.getErrorStream, "ISO-8859-1").getLines.foreach(System.err.println)
+        }
+      }.start
+
+      new Thread() {
+        override def run() {
+          val out = new PrintWriter(new OutputStreamWriter(process.getOutputStream, UTF_8))
+
+          itr.foreach(out.println)
+          out.close
+        }
+      }.start
+
+      val result = Source.fromInputStream(process.getInputStream, "UTF-8").getLines
+
+      new Iterator[String] {
+        def next(): String = result.next
+
+        def hasNext: Boolean = {
+          if (result.hasNext) {
+            true
+          } else {
+            val status = process.waitFor
+
+            if (status != 0) {
+              throw new Exception(s"Subprocess '${command}' exited with status ${status}")
+            }
+
+            false
+          }
+        }
+      }
+    }
+
+    val result = data
+      .groupBy { case c => slice.selected(c.position) }
+      .mapGroup { case (p, itr) => writer(p, itr).toIterator }
+      .values
+      .groupAll
+      .mapGroup(smfn)
+      .values
+      .flatMap(parser(_))
+
+    (result.collect { case Right(c) => c }, result.collect { case Left(e) => e })
+  }
+
   def subset(samplers: Sampleable[P]): U[Cell[P]] = {
     val sampler = samplers()
 

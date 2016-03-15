@@ -374,6 +374,18 @@ trait Matrix[P <: Position with CompactablePosition] extends FwMatrix[P] with Pe
     (result.collect { case Right(c) => c }, result.collect { case Left(e) => e })
   }
 
+  def streamByPosition[S <: Position with ExpandablePosition, Q <: Position](slice: Slice[P], command: String,
+    files: List[String], writer: (S, Iterator[Cell[P]]) => Option[String], parser: Cell.TextParser[Q])(
+      implicit ev1: slice.S =:= S, ev2: ClassTag[slice.S]): (U[Cell[Q]], U[String]) = {
+    val result = data
+      .groupBy { case c => slice.selected(c.position) }
+      .flatMap { case (p, itr) => writer(p, itr.toIterator) }
+      .pipe(command)
+      .flatMap(parser(_))
+
+    (result.collect { case Right(c) => c }, result.collect { case Left(e) => e })
+  }
+
   def subset(samplers: Sampleable[P]): U[Cell[P]] = {
     val sampler = samplers()
 
