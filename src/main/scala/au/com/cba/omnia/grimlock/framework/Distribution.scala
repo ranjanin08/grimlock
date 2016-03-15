@@ -55,8 +55,6 @@ trait ApproximateDistribution[P <: Position with CompactablePosition] { self: Ma
    * @param probs     List of probabilities; values must lie in (0, 1).
    * @param quantiser Function that determines the quantile indices into the order statistics.
    * @param name      Function for extracting the position of the quantile.
-   * @param count     Function that extracts the count value statistics from the user provided value.
-   * @param value     Value holding the counts.
    * @param filter    Indicator if categorical values should be filtered or not.
    * @param nan       Indicator if NaN quantiles should be output or not.
    * @param tuner     The tuner for the job.
@@ -64,24 +62,20 @@ trait ApproximateDistribution[P <: Position with CompactablePosition] { self: Ma
    *
    * @note Non numeric values result in `NaN` quantiles, while missing counts result in no quantiles.
    */
-  def quantile[S <: Position with ExpandablePosition, Q <: Position, W, T <: Tuner : QuantileTuners](slice: Slice[P],
+  def quantile[S <: Position with ExpandablePosition, Q <: Position, T <: Tuner : QuantileTuners](slice: Slice[P],
     probs: List[Double], quantiser: Quantile.Quantiser, name: Locate.FromSelectedAndOutput[S, Double, Q],
-      count: Extract[P, W, Long], value: E[W], filter: Boolean = true, nan: Boolean = false, tuner: T)(
-        implicit ev1: slice.S =:= S, ev2: PosExpDep[slice.S, Q], ev3: slice.R =:!= Position0D,
-          ev4: ClassTag[slice.S]): U[Cell[Q]]
+      filter: Boolean = true, nan: Boolean = false, tuner: T)(implicit ev1: slice.S =:= S, ev2: PosExpDep[slice.S, Q],
+        ev3: slice.R =:!= Position0D, ev4: ClassTag[slice.S]): U[Cell[Q]]
 }
 
-private[grimlock] case class QuantileImpl[P <: Position, S <: Position with ExpandablePosition, Q <: Position, W](
-  probs: List[Double], count: Extract[P, W, Long], quantiser: Quantile.Quantiser,
-    position: Locate.FromSelectedAndOutput[S, Double, Q], nan: Boolean) {
-  type V = W
+private[grimlock] case class QuantileImpl[P <: Position, S <: Position with ExpandablePosition, Q <: Position](
+  probs: List[Double], quantiser: Quantile.Quantiser, position: Locate.FromSelectedAndOutput[S, Double, Q],
+    nan: Boolean) {
   type C = (Long, List[(Long, Double, Double)])
   type T = (Double, Long, Long)
   type O = (Double, Double)
 
-  def prepare(cell: Cell[P], ext: V): (Double, Long) = {
-    (cell.content.value.asDouble.getOrElse(Double.NaN), count.extract(cell, ext).getOrElse(0L))
-  }
+  def prepare(cell: Cell[P]): Double = cell.content.value.asDouble.getOrElse(Double.NaN)
 
   def initialise(curr: Double, count: Long): (T, C, List[O]) = {
     val index = 0
