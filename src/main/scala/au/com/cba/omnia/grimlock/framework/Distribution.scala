@@ -37,7 +37,8 @@ trait ApproximateDistribution[P <: Position with CompactablePosition] { self: Ma
    * @param position  Function for extracting the position of the histogram.
    * @param filter    Indicator if numerical values shoud be filtered or not.
    * @param tuner     The tuner for the job.
-    * @return A `U[Cell[Q]]' with the histogram.
+   *
+   * @return A `U[Cell[Q]]' with the histogram.
    *
    * @note The histogram is computed on the positions returned by `position`.
    */
@@ -58,7 +59,8 @@ trait ApproximateDistribution[P <: Position with CompactablePosition] { self: Ma
    * @param filter    Indicator if categorical values should be filtered or not.
    * @param nan       Indicator if NaN quantiles should be output or not.
    * @param tuner     The tuner for the job.
-    * @return A `U[Cell[Q]]' with the quantiles.
+   *
+   * @return A `U[Cell[Q]]' with the quantiles.
    *
    * @note Non numeric values result in `NaN` quantiles, while missing counts result in no quantiles.
    */

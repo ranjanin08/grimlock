@@ -496,11 +496,11 @@ class TestScaldingQuantile extends TestQuantile {
 
   "A quantile" should "return its first along 1 value in 1D" in {
     toPipe(data1)
-      .quantile(Along(First), probs, Quantile.Type1, TestQuantile.name[Position0D], true, true, Default())
+      .quantile(Along(First), probs, Quantile.Type1, TestQuantile.name[Position0D], true, true, InMemory())
       .toList.sortBy(_.position) shouldBe result1
 
     toPipe(data1)
-      .quantile(Along(First), probs, Quantile.Type2, TestQuantile.name[Position0D], true, true, Default(Reducers(12)))
+      .quantile(Along(First), probs, Quantile.Type2, TestQuantile.name[Position0D], true, true, InMemory(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result1
 
     toPipe(data1)
@@ -512,11 +512,11 @@ class TestScaldingQuantile extends TestQuantile {
       .toList.sortBy(_.position) shouldBe result1
 
     toPipe(data1)
-      .quantile(Along(First), probs, Quantile.Type5, TestQuantile.name[Position0D], true, true, Default())
+      .quantile(Along(First), probs, Quantile.Type5, TestQuantile.name[Position0D], true, true, InMemory())
       .toList.sortBy(_.position) shouldBe result1
 
     toPipe(data1)
-      .quantile(Along(First), probs, Quantile.Type6, TestQuantile.name[Position0D], true, true, Default(Reducers(12)))
+      .quantile(Along(First), probs, Quantile.Type6, TestQuantile.name[Position0D], true, true, InMemory(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result1
 
     toPipe(data1)
@@ -528,13 +528,13 @@ class TestScaldingQuantile extends TestQuantile {
       .toList.sortBy(_.position) shouldBe result1
 
     toPipe(data1)
-      .quantile(Along(First), probs, Quantile.Type9, TestQuantile.name[Position0D], true, true, Default())
+      .quantile(Along(First), probs, Quantile.Type9, TestQuantile.name[Position0D], true, true, InMemory())
       .toList.sortBy(_.position) shouldBe result1
   }
 
   it should "return its first along 3 values in 1D" in {
     toPipe(data2)
-      .quantile(Along(First), probs, Quantile.Type1, TestQuantile.name[Position0D], true, true, Default(Reducers(12)))
+      .quantile(Along(First), probs, Quantile.Type1, TestQuantile.name[Position0D], true, true, InMemory(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result2
 
     toPipe(data2)
@@ -546,11 +546,11 @@ class TestScaldingQuantile extends TestQuantile {
       .toList.sortBy(_.position) shouldBe result3
 
     toPipe(data2)
-      .quantile(Along(First), probs, Quantile.Type4, TestQuantile.name[Position0D], true, true, Default())
+      .quantile(Along(First), probs, Quantile.Type4, TestQuantile.name[Position0D], true, true, InMemory())
       .toList.sortBy(_.position) shouldBe result4
 
     toPipe(data2)
-      .quantile(Along(First), probs, Quantile.Type5, TestQuantile.name[Position0D], true, true, Default(Reducers(12)))
+      .quantile(Along(First), probs, Quantile.Type5, TestQuantile.name[Position0D], true, true, InMemory(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result5
 
     toPipe(data2)
@@ -562,11 +562,11 @@ class TestScaldingQuantile extends TestQuantile {
       .toList.sortBy(_.position) shouldBe result7
 
     toPipe(data2)
-      .quantile(Along(First), probs, Quantile.Type8, TestQuantile.name[Position0D], true, true, Default())
+      .quantile(Along(First), probs, Quantile.Type8, TestQuantile.name[Position0D], true, true, InMemory())
       .toList.sortBy(_.position) shouldBe result8
 
     toPipe(data2)
-      .quantile(Along(First), probs, Quantile.Type9, TestQuantile.name[Position0D], true, true, Default(Reducers(12)))
+      .quantile(Along(First), probs, Quantile.Type9, TestQuantile.name[Position0D], true, true, InMemory(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result9
   }
 
@@ -580,11 +580,11 @@ class TestScaldingQuantile extends TestQuantile {
       .toList.sortBy(_.position) shouldBe result1
 
     toPipe(data3)
-      .quantile(Along(First), probs, Quantile.Type3, TestQuantile.name[Position0D], true, true, Default())
+      .quantile(Along(First), probs, Quantile.Type3, TestQuantile.name[Position0D], true, true, InMemory())
       .toList.sortBy(_.position) shouldBe result1
 
     toPipe(data3)
-      .quantile(Along(First), probs, Quantile.Type4, TestQuantile.name[Position0D], true, true, Default(Reducers(12)))
+      .quantile(Along(First), probs, Quantile.Type4, TestQuantile.name[Position0D], true, true, InMemory(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result1
 
     toPipe(data3)
@@ -596,11 +596,11 @@ class TestScaldingQuantile extends TestQuantile {
       .toList.sortBy(_.position) shouldBe result1
 
     toPipe(data3)
-      .quantile(Along(First), probs, Quantile.Type7, TestQuantile.name[Position0D], true, true, Default())
+      .quantile(Along(First), probs, Quantile.Type7, TestQuantile.name[Position0D], true, true, InMemory())
       .toList.sortBy(_.position) shouldBe result1
 
     toPipe(data3)
-      .quantile(Along(First), probs, Quantile.Type8, TestQuantile.name[Position0D], true, true, Default(Reducers(12)))
+      .quantile(Along(First), probs, Quantile.Type8, TestQuantile.name[Position0D], true, true, InMemory(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result1
 
     toPipe(data3)
@@ -614,11 +614,11 @@ class TestScaldingQuantile extends TestQuantile {
       .toList.sortBy(_.position) shouldBe result10
 
     toPipe(data4)
-      .quantile(Along(First), probs, Quantile.Type2, TestQuantile.name[Position1D], true, true, Default())
+      .quantile(Along(First), probs, Quantile.Type2, TestQuantile.name[Position1D], true, true, InMemory())
       .toList.sortBy(_.position) shouldBe result10
 
     toPipe(data4)
-      .quantile(Along(First), probs, Quantile.Type3, TestQuantile.name[Position1D], true, true, Default(Reducers(12)))
+      .quantile(Along(First), probs, Quantile.Type3, TestQuantile.name[Position1D], true, true, InMemory(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result11
 
     toPipe(data4)
@@ -630,11 +630,11 @@ class TestScaldingQuantile extends TestQuantile {
       .toList.sortBy(_.position) shouldBe result13
 
     toPipe(data4)
-      .quantile(Along(First), probs, Quantile.Type6, TestQuantile.name[Position1D], true, true, Default())
+      .quantile(Along(First), probs, Quantile.Type6, TestQuantile.name[Position1D], true, true, InMemory())
       .toList.sortBy(_.position) shouldBe result14
 
     toPipe(data4)
-      .quantile(Along(First), probs, Quantile.Type7, TestQuantile.name[Position1D], true, true, Default(Reducers(12)))
+      .quantile(Along(First), probs, Quantile.Type7, TestQuantile.name[Position1D], true, true, InMemory(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result15
 
     toPipe(data4)
@@ -648,11 +648,11 @@ class TestScaldingQuantile extends TestQuantile {
 
   it should "return its first over values in 2D" in {
     toPipe(data5)
-      .quantile(Over(First), probs, Quantile.Type1, TestQuantile.name[Position1D], true, true, Default())
+      .quantile(Over(First), probs, Quantile.Type1, TestQuantile.name[Position1D], true, true, InMemory())
       .toList.sortBy(_.position) shouldBe result10
 
     toPipe(data5)
-      .quantile(Over(First), probs, Quantile.Type2, TestQuantile.name[Position1D], true, true, Default(Reducers(12)))
+      .quantile(Over(First), probs, Quantile.Type2, TestQuantile.name[Position1D], true, true, InMemory(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result10
 
     toPipe(data5)
@@ -664,11 +664,11 @@ class TestScaldingQuantile extends TestQuantile {
       .toList.sortBy(_.position) shouldBe result12
 
     toPipe(data5)
-      .quantile(Over(First), probs, Quantile.Type5, TestQuantile.name[Position1D], true, true, Default())
+      .quantile(Over(First), probs, Quantile.Type5, TestQuantile.name[Position1D], true, true, InMemory())
       .toList.sortBy(_.position) shouldBe result13
 
     toPipe(data5)
-      .quantile(Over(First), probs, Quantile.Type6, TestQuantile.name[Position1D], true, true, Default(Reducers(12)))
+      .quantile(Over(First), probs, Quantile.Type6, TestQuantile.name[Position1D], true, true, InMemory(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result14
 
     toPipe(data5)
@@ -680,13 +680,13 @@ class TestScaldingQuantile extends TestQuantile {
       .toList.sortBy(_.position) shouldBe result16
 
     toPipe(data5)
-      .quantile(Over(First), probs, Quantile.Type9, TestQuantile.name[Position1D], true, true, Default())
+      .quantile(Over(First), probs, Quantile.Type9, TestQuantile.name[Position1D], true, true, InMemory())
       .toList.sortBy(_.position) shouldBe result17
   }
 
   it should "return its second along values in 2D" in {
     toPipe(data5)
-      .quantile(Along(Second), probs, Quantile.Type1, TestQuantile.name[Position1D], true, true, Default(Reducers(12)))
+      .quantile(Along(Second), probs, Quantile.Type1, TestQuantile.name[Position1D], true, true, InMemory(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result10
 
     toPipe(data5)
@@ -698,11 +698,11 @@ class TestScaldingQuantile extends TestQuantile {
       .toList.sortBy(_.position) shouldBe result11
 
     toPipe(data5)
-      .quantile(Along(Second), probs, Quantile.Type4, TestQuantile.name[Position1D], true, true, Default())
+      .quantile(Along(Second), probs, Quantile.Type4, TestQuantile.name[Position1D], true, true, InMemory())
       .toList.sortBy(_.position) shouldBe result12
 
     toPipe(data5)
-      .quantile(Along(Second), probs, Quantile.Type5, TestQuantile.name[Position1D], true, true, Default(Reducers(12)))
+      .quantile(Along(Second), probs, Quantile.Type5, TestQuantile.name[Position1D], true, true, InMemory(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result13
 
     toPipe(data5)
@@ -714,11 +714,11 @@ class TestScaldingQuantile extends TestQuantile {
       .toList.sortBy(_.position) shouldBe result15
 
     toPipe(data5)
-      .quantile(Along(Second), probs, Quantile.Type8, TestQuantile.name[Position1D], true, true, Default())
+      .quantile(Along(Second), probs, Quantile.Type8, TestQuantile.name[Position1D], true, true, InMemory())
       .toList.sortBy(_.position) shouldBe result16
 
     toPipe(data5)
-      .quantile(Along(Second), probs, Quantile.Type9, TestQuantile.name[Position1D], true, true, Default(Reducers(12)))
+      .quantile(Along(Second), probs, Quantile.Type9, TestQuantile.name[Position1D], true, true, InMemory(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result17
   }
 
@@ -732,11 +732,11 @@ class TestScaldingQuantile extends TestQuantile {
       .toList.sortBy(_.position) shouldBe result10
 
     toPipe(data4)
-      .quantile(Over(Second), probs, Quantile.Type3, TestQuantile.name[Position1D], true, true, Default())
+      .quantile(Over(Second), probs, Quantile.Type3, TestQuantile.name[Position1D], true, true, InMemory())
       .toList.sortBy(_.position) shouldBe result11
 
     toPipe(data4)
-      .quantile(Over(Second), probs, Quantile.Type4, TestQuantile.name[Position1D], true, true, Default(Reducers(12)))
+      .quantile(Over(Second), probs, Quantile.Type4, TestQuantile.name[Position1D], true, true, InMemory(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result12
 
     toPipe(data4)
@@ -748,11 +748,11 @@ class TestScaldingQuantile extends TestQuantile {
       .toList.sortBy(_.position) shouldBe result14
 
     toPipe(data4)
-      .quantile(Over(Second), probs, Quantile.Type7, TestQuantile.name[Position1D], true, true, Default())
+      .quantile(Over(Second), probs, Quantile.Type7, TestQuantile.name[Position1D], true, true, InMemory())
       .toList.sortBy(_.position) shouldBe result15
 
     toPipe(data4)
-      .quantile(Over(Second), probs, Quantile.Type8, TestQuantile.name[Position1D], true, true, Default(Reducers(12)))
+      .quantile(Over(Second), probs, Quantile.Type8, TestQuantile.name[Position1D], true, true, InMemory(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result16
 
     toPipe(data4)
@@ -771,7 +771,7 @@ class TestScaldingQuantile extends TestQuantile {
     res1(3).content.value.asDouble.map(_.compare(Double.NaN)) shouldBe Some(0)
 
     toPipe(data6)
-      .quantile(Along(First), probs, Quantile.Type1, TestQuantile.name[Position0D], false, false, Default())
+      .quantile(Along(First), probs, Quantile.Type1, TestQuantile.name[Position0D], false, false, InMemory())
       .toList.sortBy(_.position) shouldBe result18
   }
 }
