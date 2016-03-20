@@ -850,8 +850,8 @@ trait Positions[P <: Position] extends Persist[P] {
    * @note The position(s) are returned with an index so the return value can be used in various `save` methods. The
    *       index itself is unique for each position but no ordering is defined.
    */
-  def names[T <: Tuner : NamesTuners](slice: Slice[P], tuner: T)
-                                     (implicit ev1: slice.S =:!= Position0D, ev2: ClassTag[slice.S]): U[slice.S]
+  def names[T <: Tuner : NamesTuners](slice: Slice[P], tuner: T)(implicit ev1: slice.S =:!= Position0D,
+    ev2: ClassTag[slice.S]): U[slice.S]
 
   /**
    * Persist to disk.

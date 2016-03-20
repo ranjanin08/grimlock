@@ -18,7 +18,9 @@ import au.com.cba.omnia.grimlock.framework.{
   Cell,
   Default,
   Extract,
+  InMemory,
   Locate,
+  NoParameters,
   Reducers,
   Tuner,
   Type
@@ -27,6 +29,7 @@ import au.com.cba.omnia.grimlock.framework.content._
 import au.com.cba.omnia.grimlock.framework.content.metadata._
 import au.com.cba.omnia.grimlock.framework.distribution.{ ApproximateDistribution => FwApproximateDistribution, _ }
 import au.com.cba.omnia.grimlock.framework.position._
+import au.com.cba.omnia.grimlock.framework.utility.UnionTypes._
 
 import au.com.cba.omnia.grimlock.scalding._
 
@@ -52,26 +55,34 @@ trait ApproximateDistribution[P <: Position with CompactablePosition] extends Fw
       .map { case (p, s) => Cell(p, Content(DiscreteSchema[Long](), s)) }
   }
 
-  type QuantileTuners[T] = TP2[T]
-  def quantile[S <: Position with ExpandablePosition, Q <: Position, W, T <: Tuner : QuantileTuners](slice: Slice[P],
+  type QuantileTuners[T] = T In OneOf[InMemory[NoParameters]]#
+    Or[InMemory[Reducers]]#
+    Or[Default[NoParameters]]#
+    Or[Default[Reducers]]
+  def quantile[S <: Position with ExpandablePosition, Q <: Position, T <: Tuner : QuantileTuners](slice: Slice[P],
     probs: List[Double], quantiser: Quantile.Quantiser, name: Locate.FromSelectedAndOutput[S, Double, Q],
-      count: Extract[P, W, Long], value: E[W], filter: Boolean, nan: Boolean, tuner: T = Default())(
-        implicit ev1: slice.S =:= S, ev2: PosExpDep[slice.S, Q], ev3: slice.R =:!= Position0D,
-          ev4: ClassTag[slice.S]): U[Cell[Q]] = {
-    val q = QuantileImpl[P, S, Q, W](probs, count, quantiser, name, nan)
+      filter: Boolean, nan: Boolean, tuner: T = Default())(implicit ev1: slice.S =:= S, ev2: PosExpDep[slice.S, Q],
+        ev3: slice.R =:!= Position0D, ev4: ClassTag[slice.S]): U[Cell[Q]] = {
+    val q = QuantileImpl[P, S, Q](probs, quantiser, name, nan)
 
-    val filtered = filter match {
-      case true => data.filter(_.content.schema.kind.isSpecialisationOf(Type.Numerical))
-      case false => data
-    }
-
-    val grouped = filtered
-      .mapWithValue(value) {
-        case (c, vo) =>
-          val (double, count) = q.prepare(c, vo.get)
-
-          ((slice.selected(c.position), count), double)
+    val prep = data
+      .collect {
+        case c if (!filter || c.content.schema.kind.isSpecialisationOf(Type.Numerical)) =>
+          (slice.selected(c.position), q.prepare(c))
       }
+      .group
+
+    val grouped = (tuner match {
+      case InMemory(_) =>
+        prep
+          .flatMapWithValue(prep.size.map { case (k, v) => Map(k -> v) }.sum) {
+            case ((s, d), c) => c.map { case m => ((s, m(s)), d) }
+          }
+      case _ =>
+        prep
+          .tunedJoin(tuner, tuner.parameters, prep.size)
+          .map { case (s, (d, c)) => ((s, c), d) }
+      })
       .group
 
     val tuned = tuner.parameters match {

@@ -49,21 +49,22 @@ trait ApproximateDistribution[P <: Position with CompactablePosition] extends Fw
       .map { case (p, s) => Cell(p, Content(DiscreteSchema[Long](), s)) }
   }
 
-  type QuantileTuners[T] = TP1[T]
-  def quantile[S <: Position with ExpandablePosition, Q <: Position, W, T <: Tuner : QuantileTuners](slice: Slice[P],
+  type QuantileTuners[T] = TP2[T]
+  def quantile[S <: Position with ExpandablePosition, Q <: Position, T <: Tuner : QuantileTuners](slice: Slice[P],
     probs: List[Double], quantiser: Quantile.Quantiser, name: Locate.FromSelectedAndOutput[S, Double, Q],
-      count: Extract[P, W, Long], value: E[W], filter: Boolean, nan: Boolean, tuner: T = Default())(
-        implicit ev1: slice.S =:= S, ev2: PosExpDep[slice.S, Q], ev3: slice.R =:!= Position0D,
-          ev4: ClassTag[slice.S]): U[Cell[Q]] = {
-    val q = QuantileImpl[P, S, Q, W](probs, count, quantiser, name, nan)
+      filter: Boolean, nan: Boolean, tuner: T = Default())(implicit ev1: slice.S =:= S, ev2: PosExpDep[slice.S, Q],
+        ev3: slice.R =:!= Position0D, ev4: ClassTag[slice.S]): U[Cell[Q]] = {
+    val q = QuantileImpl[P, S, Q](probs, quantiser, name, nan)
 
-    data
+    val prep = data
       .collect {
         case c if (!filter || c.content.schema.kind.isSpecialisationOf(Type.Numerical)) =>
-          val (double, count) = q.prepare(c, value)
-
-          ((slice.selected(c.position), count), double)
+          (slice.selected(c.position), q.prepare(c))
       }
+
+    prep
+      .tunedJoin(tuner.parameters, prep.map { case (s, _) => (s, 1L) }.tunedReduce(tuner.parameters, _ + _))
+      .map { case (s, (d, c)) => ((s, c), d) }
       .groupByKey
       .flatMap {
         case ((p, count), itr) =>
