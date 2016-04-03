@@ -20,6 +20,7 @@ import au.com.cba.omnia.grimlock.framework.position._
 
 import java.util.regex.Pattern
 
+import com.twitter.scrooge.ThriftStruct
 import org.apache.hadoop.io.Writable
 
 import scala.util.Try
@@ -160,6 +161,9 @@ object Cell {
 
   /** Type for parsing a key value tuple into either a `Cell[P]` or an error message. */
   type SequenceParser[K <: Writable, V <: Writable, P <: Position] = (K, V) => TraversableOnce[Either[String, Cell[P]]]
+
+  /** Type for parsing Parquet data. */
+  type ParquetParser[T <: ThriftStruct, P <: Position] = (T) => TraversableOnce[Either[String, Cell[P]]]
 
   /**
    * Parse a line into a `Cell[Position1D]`.

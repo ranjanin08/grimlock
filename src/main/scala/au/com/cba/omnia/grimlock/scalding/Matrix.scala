@@ -14,6 +14,7 @@
 
 package au.com.cba.omnia.grimlock.scalding
 
+import au.com.cba.omnia.ebenezer.scrooge.ParquetScroogeSource
 import au.com.cba.omnia.grimlock.framework.{
   Cell,
   Collate,
@@ -74,6 +75,7 @@ import java.nio.charset.StandardCharsets.UTF_8
 import java.nio.file.attribute.PosixFilePermissions
 import java.nio.file.{ Files, Paths }
 
+import com.twitter.scrooge.ThriftStruct
 import org.apache.hadoop.io.Writable
 
 import scala.collection.immutable.HashSet
@@ -1025,6 +1027,13 @@ object Matrix extends Consume with DistributedData with Environment {
   def loadSequence[K <: Writable, V <: Writable, P <: Position](file: String, parser: Cell.SequenceParser[K, V, P])(
     implicit ctx: C, ev1: Manifest[K], ev2: Manifest[V]): (U[Cell[P]], U[String]) = {
     val pipe = TypedPipe.from(WritableSequenceFile[K, V](file)).flatMap { case (k, v) => parser(k, v) }
+
+    (pipe.collect { case Right(c) => c }, pipe.collect { case Left(e) => e })
+  }
+
+  def loadParquet[T <: ThriftStruct : Manifest, P <: Position](file: String,
+    parser: Cell.ParquetParser[T, P])(implicit ctx: C): (U[Cell[P]], U[String]) = {
+    val pipe = TypedPipe.from(ParquetScroogeSource[T](file)).flatMap { parser(_) }
 
     (pipe.collect { case Right(c) => c }, pipe.collect { case Left(e) => e })
   }

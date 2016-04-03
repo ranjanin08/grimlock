@@ -14,6 +14,12 @@
 
 package au.com.cba.omnia.grimlock.spark
 
+import au.com.cba.omnia.ebenezer.scrooge.{ScroogeReadSupport, ParquetScroogeSource}
+import parquet.hadoop.ParquetInputFormat
+import org.apache.hadoop.mapreduce.Job
+
+import scala.reflect._
+
 import au.com.cba.omnia.grimlock.framework.{
   Cell,
   Consume,
@@ -61,15 +67,13 @@ import au.com.cba.omnia.grimlock.framework.window._
 import au.com.cba.omnia.grimlock.spark.distribution._
 import au.com.cba.omnia.grimlock.spark.environment._
 
-import java.io.File
-import java.nio.file.{ Files, Paths }
-
+import com.twitter.scrooge.ThriftStruct
 import org.apache.hadoop.io.Writable
 
 import org.apache.spark.rdd.RDD
 
 import scala.collection.immutable.HashSet
-import scala.reflect.ClassTag
+
 
 import shapeless.=:!=
 
@@ -764,6 +768,23 @@ object Matrix extends Consume with DistributedData with Environment {
   def loadSequence[K <: Writable, V <: Writable, P <: Position](file: String, parser: Cell.SequenceParser[K, V, P])(
     implicit ctx: C, ev1: Manifest[K], ev2: Manifest[V]): (U[Cell[P]], U[String]) = {
     val pipe = ctx.context.sequenceFile[K, V](file).flatMap { case (k, v) => parser(k, v) }
+
+    (pipe.collect { case Right(c) => c }, pipe.collect { case Left(e) => e })
+  }
+
+  def loadParquet[T <: ThriftStruct : Manifest, P <: Position](file: String,
+    parser: Cell.ParquetParser[T, P])(implicit ctx: C): (U[Cell[P]], U[String]) = {
+
+    val job = new Job()
+
+    ParquetInputFormat.setReadSupportClass(job, classOf[ScroogeReadSupport[T]])
+    val pipe = ctx.context.newAPIHadoopFile(
+      file,
+      classOf[ParquetInputFormat[T]],
+      classOf[Void],
+      classTag[T].runtimeClass.asInstanceOf[Class[T]],
+      job.getConfiguration
+    ).flatMap { case (_, v) => parser(v) }
 
     (pipe.collect { case Right(c) => c }, pipe.collect { case Left(e) => e })
   }

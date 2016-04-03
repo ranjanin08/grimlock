@@ -27,6 +27,8 @@ import au.com.cba.omnia.grimlock.framework.squash._
 import au.com.cba.omnia.grimlock.framework.transform._
 import au.com.cba.omnia.grimlock.framework.utility._
 import au.com.cba.omnia.grimlock.framework.window._
+import com.twitter.scalding.typed.TypedPipe
+import com.twitter.scrooge.ThriftStruct
 
 import org.apache.hadoop.io.Writable
 
@@ -604,6 +606,15 @@ trait Consume extends DistributedData with Environment {
    */
   def loadSequence[K <: Writable, V <: Writable, P <: Position](file: String, parser: Cell.SequenceParser[K, V, P])(
     implicit ctx: C, ev1: Manifest[K], ev2: Manifest[V]): (U[Cell[P]], U[String])
+
+  /**
+   * Load Parquet data.
+   *
+   * @param file   File path.
+   * @param parser Parser that convers single Parquet structure to cells.
+   */
+  def loadParquet[T <: ThriftStruct : Manifest, P <: Position](file: String,
+    parser: Cell.ParquetParser[T, P])(implicit ctx: C): (U[Cell[P]], U[String])
 }
 
 /** Base trait for methods that reduce the number of dimensions or that can be filled. */
