@@ -49,12 +49,12 @@
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Base trait for loading data into a matrix.</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/Dirty(faa99a8412b4dcf3aa938bfa6b2f5e451641b3f6)//src/main/scala/au/com/cba/omnia/grimlock/framework/Matrix.scala" target="_blank">Matrix.scala</a></dd></dl><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Base trait for loading data into a matrix.</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/Dirty(6065f76b5824030db117f0e6dcf86fe7fb13c70e)//src/main/scala/au/com/cba/omnia/grimlock/framework/Matrix.scala" target="_blank">Matrix.scala</a></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><a href="environment/Environment.html" class="extype" name="au.com.cba.omnia.grimlock.framework.environment.Environment">Environment</a>, <a href="environment/DistributedData.html" class="extype" name="au.com.cba.omnia.grimlock.framework.environment.DistributedData">DistributedData</a>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Any" class="extype" target="_top">Any</a></div>
         </div><div class="toggleContainer block">
             <span class="toggle">Known Subclasses</span>
-            <div class="subClasses hiddenContent"><a href="../spark/Matrix$.html" class="extype" name="au.com.cba.omnia.grimlock.spark.Matrix">Matrix</a>, <a href="../scalding/Matrix$.html" class="extype" name="au.com.cba.omnia.grimlock.scalding.Matrix">Matrix</a></div>
+            <div class="subClasses hiddenContent"><a href="../scalding/Matrix$.html" class="extype" name="au.com.cba.omnia.grimlock.scalding.Matrix">Matrix</a>, <a href="../spark/Matrix$.html" class="extype" name="au.com.cba.omnia.grimlock.spark.Matrix">Matrix</a></div>
           </div></div>
         
 
@@ -133,7 +133,26 @@
 
         <div id="values" class="values members">
               <h3>Abstract Value Members</h3>
-              <ol><li name="au.com.cba.omnia.grimlock.framework.Consume#loadSequence" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
+              <ol><li name="au.com.cba.omnia.grimlock.framework.Consume#loadParquet" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
+      <a id="loadParquet[T&lt;:com.twitter.scrooge.ThriftStruct,P&lt;:au.com.cba.omnia.grimlock.framework.position.Position](file:String,parser:au.com.cba.omnia.grimlock.framework.Cell.ParquetParser[T,P])(implicitevidence$26:Manifest[T],implicitctx:Consume.this.C):(Consume.this.U[au.com.cba.omnia.grimlock.framework.Cell[P]],Consume.this.U[String])"></a>
+      <a id="loadParquet[T&lt;:ThriftStruct,P&lt;:Position](String,ParquetParser[T,P])(Manifest[T],C):(U[Cell[P]],U[String])"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">abstract </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">loadParquet</span><span class="tparams">[<span name="T">T &lt;: <span class="extype" name="com.twitter.scrooge.ThriftStruct">ThriftStruct</span></span>, <span name="P">P &lt;: <a href="position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="params">(<span name="file">file: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="parser">parser: <a href="Cell$.html#ParquetParser[T&lt;:com.twitter.scrooge.ThriftStruct,P&lt;:au.com.cba.omnia.grimlock.framework.position.Position]=T=&gt;TraversableOnce[Either[String,au.com.cba.omnia.grimlock.framework.Cell[P]]]" class="extmbr" name="au.com.cba.omnia.grimlock.framework.Cell.ParquetParser">ParquetParser</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.Consume.loadParquet.T">T</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.Consume.loadParquet.P">P</span>]</span>)</span><span class="params">(<span class="implicit">implicit </span><span name="arg0">arg0: <span class="extype" name="scala.Predef.Manifest">Manifest</span>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.Consume.loadParquet.T">T</span>]</span>, <span name="ctx">ctx: <a href="#C&lt;:au.com.cba.omnia.grimlock.framework.environment.Context" class="extmbr" name="au.com.cba.omnia.grimlock.framework.Consume.C">C</a></span>)</span><span class="result">: (<a href="#U[_]" class="extmbr" name="au.com.cba.omnia.grimlock.framework.Consume.U">U</a>[<a href="Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.Consume.loadParquet.P">P</span>]], <a href="#U[_]" class="extmbr" name="au.com.cba.omnia.grimlock.framework.Consume.U">U</a>[<span class="extype" name="scala.Predef.String">String</span>])</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../index.html#au.com.cba.omnia.grimlock.framework.Consume@loadParquet[T&lt;:com.twitter.scrooge.ThriftStruct,P&lt;:au.com.cba.omnia.grimlock.framework.position.Position](file:String,parser:au.com.cba.omnia.grimlock.framework.Cell.ParquetParser[T,P])(implicitevidence$26:Manifest[T],implicitctx:Consume.this.C):(Consume.this.U[au.com.cba.omnia.grimlock.framework.Cell[P]],Consume.this.U[String])" title="Permalink" target="_top">
+        <img src="../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Load Parquet data.</p><div class="fullcomment"><div class="comment cmt"><p>Load Parquet data.
+</p></div><dl class="paramcmts block"><dt class="param">file</dt><dd class="cmt"><p>File path.</p></dd><dt class="param">parser</dt><dd class="cmt"><p>Parser that convers single Parquet structure to cells.
+</p></dd></dl></div>
+    </li><li name="au.com.cba.omnia.grimlock.framework.Consume#loadSequence" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
       <a id="loadSequence[K&lt;:org.apache.hadoop.io.Writable,V&lt;:org.apache.hadoop.io.Writable,P&lt;:au.com.cba.omnia.grimlock.framework.position.Position](file:String,parser:au.com.cba.omnia.grimlock.framework.Cell.SequenceParser[K,V,P])(implicitctx:Consume.this.C,implicitev1:Manifest[K],implicitev2:Manifest[V]):(Consume.this.U[au.com.cba.omnia.grimlock.framework.Cell[P]],Consume.this.U[String])"></a>
       <a id="loadSequence[K&lt;:Writable,V&lt;:Writable,P&lt;:Position](String,SequenceParser[K,V,P])(C,Manifest[K],Manifest[V]):(U[Cell[P]],U[String])"></a>
       <h4 class="signature">
