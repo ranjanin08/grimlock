@@ -71,12 +71,16 @@ trait UnionTypes {
   private type NotNot[A] = Not[Not[A]]
 
   private type Contains[S, T <: Disjunction] = NotNot[S] <:< Not[T#D]
+  private type NotContains[S, T <: Disjunction] = NotNot[S] <:!< Not[T#D]
 
   /** Type for specifying `S` is `T`. */
   type Is[S, T] = Contains[S, OneOf[T]#Or[Nothing]]
 
   /** Type for specifying `S` must be in `T`. */
   type In[S, T <: Disjunction] = Contains[S, T]
+
+  /** Type for specifying `S` must not be in `T`. */
+  type NotIn[S, T <: Disjunction] = NotContains[S, T]
 
   /** Defines values for `T`. */
   type OneOf[T] = { type Or[S] = (Disjunction {type D = Not[T]})#Or[S] }
