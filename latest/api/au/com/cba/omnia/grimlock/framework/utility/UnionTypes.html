@@ -51,7 +51,7 @@
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Trait for specifying a union of types.</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/Dirty(6065f76b5824030db117f0e6dcf86fe7fb13c70e)//src/main/scala/au/com/cba/omnia/grimlock/framework/Utility.scala" target="_blank">Utility.scala</a></dd></dl><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Trait for specifying a union of types.</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/Dirty(6b9b41663742df39af3ac3bf2d6b24f3d3dd72d8)//src/main/scala/au/com/cba/omnia/grimlock/framework/Utility.scala" target="_blank">Utility.scala</a></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Any" class="extype" target="_top">Any</a></div>
         </div><div class="toggleContainer block">
@@ -147,6 +147,23 @@
       </a>
     </span>
       <p class="shortcomment cmt">Type for specifying <code>S</code> is <code>T</code>.</p>
+    </li><li name="au.com.cba.omnia.grimlock.framework.utility.UnionTypes.NotIn" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="NotIn[S,T&lt;:UnionTypes.this.Disjunction]=UnionTypes.this.NotContains[S,T]"></a>
+      <a id="NotIn[S,T&lt;:Disjunction]:NotIn[S,T]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">type</span>
+      </span>
+      <span class="symbol">
+        <span class="name">NotIn</span><span class="tparams">[<span name="S">S</span>, <span name="T">T &lt;: <a href="UnionTypes$Disjunction.html" class="extype" name="au.com.cba.omnia.grimlock.framework.utility.UnionTypes.Disjunction">Disjunction</a></span>]</span><span class="result"> = <span class="extype" name="shapeless.&lt;:!&lt;">&lt;:!&lt;</span>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.utility.UnionTypes.NotNot">NotNot</span>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.utility.UnionTypes.NotIn.S">S</span>], <span class="extype" name="au.com.cba.omnia.grimlock.framework.utility.UnionTypes.Not">Not</span>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.utility.UnionTypes.Disjunction.D">NotIn.T.D</span>]]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.utility.UnionTypes@NotIn[S,T&lt;:UnionTypes.this.Disjunction]=UnionTypes.this.NotContains[S,T]" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Type for specifying <code>S</code> must not be in <code>T</code>.</p>
     </li><li name="au.com.cba.omnia.grimlock.framework.utility.UnionTypes.OneOf" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="OneOf[T]=AnyRef{typeOr[S]=UnionTypes.this.Disjunction{typeD=T=&gt;NothingwithS=&gt;Nothing}}"></a>
       <a id="OneOf[T]:OneOf[T]"></a>
