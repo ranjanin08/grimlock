@@ -43,7 +43,7 @@ class TestCell extends TestGrimlock {
         (Cell(Position2D("foo", 123), Content(DiscreteSchema[Long](), 42)))
   }
 
-  val schema = Content.parse(DoubleCodec, ContinuousSchema[Double]())
+  val schema = Content.parser(DoubleCodec, ContinuousSchema[Double]())
   val dictionary = Map("123" -> schema)
 
   "A Cell" should "parse 1D" in {
@@ -340,9 +340,9 @@ class TestCell extends TestGrimlock {
         Some(Left("Unable to split: '123:def|ghi:klm:xyz:3.14'"))
   }
 
-  val columns = List(("abc", Content.parse(DoubleCodec, ContinuousSchema[Double]())),
-    ("def", Content.parse(DoubleCodec, ContinuousSchema[Double]())),
-    ("ghi", Content.parse(DoubleCodec, ContinuousSchema[Double]())))
+  val columns = List(("abc", Content.parser(DoubleCodec, ContinuousSchema[Double]())),
+    ("def", Content.parser(DoubleCodec, ContinuousSchema[Double]())),
+    ("ghi", Content.parser(DoubleCodec, ContinuousSchema[Double]())))
 
   "A Cell" should "parse table" in {
     Cell.parseTable(columns, 0, ":")("3.14:6.28:9.42") shouldBe List(

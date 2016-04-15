@@ -44,13 +44,7 @@ object Dictionary {
           List(key, encoding, schema).exists(_ >= parts.length) match {
             case true => Left("unable to parse: '" + line + "'")
             case false =>
-              val parser = Codec.fromShortString(parts(encoding))
-                .flatMap {
-                  case codec => Schema.fromShortString(parts(schema), codec)
-                    .map { case schema => Content.parse[codec.C](codec, schema) }
-                }
-
-              parser match {
+              Content.parserFromShortStrings(parts(encoding), parts(schema)) match {
                 case Some(p) => Right((parts(key), p))
                 case None => Left("unable to decode '" + line + "'")
               }

@@ -525,7 +525,7 @@ object TestSpark14 {
       .slice(Over(First), List("iid:0221707", "iid:0364354"), true)
 
     data
-      .change(Over(Second), "fid:A", Content.parse(LongCodec, NominalSchema[Long]()))
+      .change(Over(Second), "fid:A", Content.parser(LongCodec, NominalSchema[Long]()))
       .saveAsText(s"./tmp.${tool}/chg1.out", Cell.toString(descriptive = true))
       .toUnit
   }
@@ -861,9 +861,9 @@ object TestSpark24 {
 
     // see http://www.mathsisfun.com/data/correlation.html for data
 
-    val schema = List(("day", Content.parse(StringCodec, NominalSchema[String]())),
-                      ("temperature", Content.parse(DoubleCodec, ContinuousSchema[Double]())),
-                      ("sales", Content.parse(LongCodec, DiscreteSchema[Long]())))
+    val schema = List(("day", Content.parser(StringCodec, NominalSchema[String]())),
+                      ("temperature", Content.parser(DoubleCodec, ContinuousSchema[Double]())),
+                      ("sales", Content.parser(LongCodec, DiscreteSchema[Long]())))
     val (data, _) = loadText(path + "/somePairwise2.txt", Cell.parseTable(schema, separator = "|"))
 
     data
@@ -871,10 +871,10 @@ object TestSpark24 {
       .saveAsText(s"./tmp.${tool}/pws2.out")
       .toUnit
 
-    val schema2 = List(("day", Content.parse(StringCodec, NominalSchema[String]())),
-                       ("temperature", Content.parse(DoubleCodec, ContinuousSchema[Double]())),
-                       ("sales", Content.parse(LongCodec, DiscreteSchema[Long]())),
-                       ("neg.sales", Content.parse(LongCodec, DiscreteSchema[Long]())))
+    val schema2 = List(("day", Content.parser(StringCodec, NominalSchema[String]())),
+                       ("temperature", Content.parser(DoubleCodec, ContinuousSchema[Double]())),
+                       ("sales", Content.parser(LongCodec, DiscreteSchema[Long]())),
+                       ("neg.sales", Content.parser(LongCodec, DiscreteSchema[Long]())))
     val (data2, _) = loadText(path + "/somePairwise3.txt", Cell.parseTable(schema2, separator = "|"))
 
     data2

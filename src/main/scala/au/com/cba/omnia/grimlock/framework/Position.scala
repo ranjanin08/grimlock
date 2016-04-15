@@ -905,8 +905,13 @@ object Positionable {
   /** Converts a position to a position; that is, it's a pass through. */
   implicit def P2P[T <: Position](t: T): Positionable[T] = new Positionable[T] { def apply(): T = t }
 
+  /** Converts a `Value` to a position. */
+  implicit def V2P[T <: Value](t: T): Positionable[Position1D] = {
+    new Positionable[Position1D] { def apply(): Position1D = Position1D(t) }
+  }
+
   /** Converts a `Valueable` to a position. */
-  implicit def V2P[T <% Valueable](t: T): Positionable[Position1D] = {
+  implicit def Va2P[T <% Valueable](t: T): Positionable[Position1D] = {
     new Positionable[Position1D] { def apply(): Position1D = Position1D(t()) }
   }
 }

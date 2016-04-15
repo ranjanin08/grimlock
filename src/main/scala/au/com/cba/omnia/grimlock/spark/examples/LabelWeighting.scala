@@ -53,7 +53,7 @@ object LabelWeighting {
 
     // Read labels and melt the date into the instance id to generate a 1D matrix.
     val labels = loadText(s"${path}/exampleLabels.txt",
-      Cell.parse2DWithSchema(Content.parse(DoubleCodec, ContinuousSchema[Double]())))
+      Cell.parse2DWithSchema(Content.parser(DoubleCodec, ContinuousSchema[Double]())))
       .data // Keep only the data (ignoring errors).
       .melt(Second, First, ":")
 
@@ -85,7 +85,7 @@ object LabelWeighting {
 
     // Re-read labels and add the computed weight.
     loadText(s"${path}/exampleLabels.txt",
-      Cell.parse2DWithSchema(Content.parse(DoubleCodec, ContinuousSchema[Double]())))
+      Cell.parse2DWithSchema(Content.parser(DoubleCodec, ContinuousSchema[Double]())))
       .data // Keep only the data (ignoring errors).
       .transformWithValue(AddWeight(), weights)
       .saveAsText(s"./demo.${output}/weighted.out")

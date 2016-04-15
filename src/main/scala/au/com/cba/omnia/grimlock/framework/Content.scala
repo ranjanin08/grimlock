@@ -78,7 +78,7 @@ object Content {
    *
    * @return A content parser.
    */
-  def parse[T](codec: Codec { type C = T }, schema: Schema { type S = T }): Parser = {
+  def parser[T](codec: Codec { type C = T }, schema: Schema { type S = T }): Parser = {
     (str: String) => {
       codec
         .decode(str)
@@ -87,6 +87,11 @@ object Content {
           case _ => None
         }
     }
+  }
+
+  def parserFromShortStrings(codec: String, schema: String): Option[Parser] = {
+    Codec.fromShortString(codec)
+      .flatMap { case c => Schema.fromShortString(schema, c).map { case s => parser[c.C](c, s) } }
   }
 
   /**
@@ -99,12 +104,7 @@ object Content {
    */
   def fromShortString(str: String, separator: String = "|"): Option[Content] = {
     str.split(Pattern.quote(separator)) match {
-      case Array(c, s, v) =>
-        Codec.fromShortString(c)
-          .flatMap {
-            case codec =>
-              Schema.fromShortString(s, codec).flatMap { case schema => Content.parse[codec.C](codec, schema)(v) }
-          }
+      case Array(c, s, v) => parserFromShortStrings(c, s).flatMap { case f => f(v) }
       case _ => None
     }
   }

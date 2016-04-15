@@ -5679,84 +5679,84 @@ class TestScaldingMatrixChange extends TestMatrixChange {
 
   "A Matrix.change" should "return its first over data in 1D" in {
     toPipe(data1)
-      .change(Over(First), "foo", Content.parse(DoubleCodec, ContinuousSchema[Double]()), InMemory())
+      .change(Over(First), "foo", Content.parser(DoubleCodec, ContinuousSchema[Double]()), InMemory())
       .toList.sortBy(_.position) shouldBe result1
   }
 
   it should "return its first over data in 2D" in {
     toPipe(data2)
-      .change(Over(First), "foo", Content.parse(DoubleCodec, ContinuousSchema[Double]()), Default())
+      .change(Over(First), "foo", Content.parser(DoubleCodec, ContinuousSchema[Double]()), Default())
       .toList.sortBy(_.position) shouldBe result2
   }
 
   it should "return its first along data in 2D" in {
     toPipe(data2)
-      .change(Along(First), List(3, 4), Content.parse(DoubleCodec, ContinuousSchema[Double]()), Default(Reducers(123)))
+      .change(Along(First), List(3, 4), Content.parser(DoubleCodec, ContinuousSchema[Double]()), Default(Reducers(123)))
       .toList.sortBy(_.position) shouldBe result3
   }
 
   it should "return its second over data in 2D" in {
     toPipe(data2)
-      .change(Over(Second), List(3, 4), Content.parse(DoubleCodec, ContinuousSchema[Double]()),
+      .change(Over(Second), List(3, 4), Content.parser(DoubleCodec, ContinuousSchema[Double]()),
         Unbalanced(Reducers(123)))
       .toList.sortBy(_.position) shouldBe result4
   }
 
   it should "return its second along data in 2D" in {
     toPipe(data2)
-      .change(Along(Second), "foo", Content.parse(DoubleCodec, ContinuousSchema[Double]()), InMemory())
+      .change(Along(Second), "foo", Content.parser(DoubleCodec, ContinuousSchema[Double]()), InMemory())
       .toList.sortBy(_.position) shouldBe result5
   }
 
   it should "return its first over data in 3D" in {
     toPipe(data3)
-      .change(Over(First), "foo", Content.parse(DoubleCodec, ContinuousSchema[Double]()), Default())
+      .change(Over(First), "foo", Content.parser(DoubleCodec, ContinuousSchema[Double]()), Default())
       .toList.sortBy(_.position) shouldBe result6
   }
 
   it should "return its first along data in 3D" in {
     toPipe(data3)
       .change(Along(First), List(Position2D(3, "xyz"), Position2D(4, "xyz")),
-        Content.parse(DoubleCodec, ContinuousSchema[Double]()), Default(Reducers(123)))
+        Content.parser(DoubleCodec, ContinuousSchema[Double]()), Default(Reducers(123)))
       .toList.sortBy(_.position) shouldBe result7
   }
 
   it should "return its second over data in 3D" in {
     toPipe(data3)
-      .change(Over(Second), List(3, 4), Content.parse(DoubleCodec, ContinuousSchema[Double]()),
+      .change(Over(Second), List(3, 4), Content.parser(DoubleCodec, ContinuousSchema[Double]()),
         Unbalanced(Reducers(123)))
       .toList.sortBy(_.position) shouldBe result8
   }
 
   it should "return its second along data in 3D" in {
     toPipe(data3)
-      .change(Along(Second), Position2D("foo", "xyz"), Content.parse(DoubleCodec, ContinuousSchema[Double]()),
+      .change(Along(Second), Position2D("foo", "xyz"), Content.parser(DoubleCodec, ContinuousSchema[Double]()),
         InMemory())
       .toList.sortBy(_.position) shouldBe result9
   }
 
   it should "return its third over data in 3D" in {
     toPipe(data3)
-      .change(Over(Third), List("xyz"), Content.parse(DoubleCodec, ContinuousSchema[Double]()), Default())
+      .change(Over(Third), List("xyz"), Content.parser(DoubleCodec, ContinuousSchema[Double]()), Default())
       .toList.sortBy(_.position) shouldBe result10
   }
 
   it should "return its third along data in 3D" in {
     toPipe(data3)
-      .change(Along(Third), Position2D("foo", 1), Content.parse(DoubleCodec, ContinuousSchema[Double]()),
+      .change(Along(Third), Position2D("foo", 1), Content.parser(DoubleCodec, ContinuousSchema[Double]()),
         Default(Reducers(123)))
       .toList.sortBy(_.position) shouldBe result11
   }
 
   it should "return with empty data - InMemory" in {
     toPipe(data3)
-      .change(Over(First), List.empty[Position1D], Content.parse(DoubleCodec, ContinuousSchema[Double]()), InMemory())
+      .change(Over(First), List.empty[Position1D], Content.parser(DoubleCodec, ContinuousSchema[Double]()), InMemory())
       .toList.sortBy(_.position) shouldBe data3.sortBy(_.position)
   }
 
   it should "return with empty data - Default" in {
     toPipe(data3)
-      .change(Over(First), List.empty[Position1D], Content.parse(DoubleCodec, ContinuousSchema[Double]()), Default())
+      .change(Over(First), List.empty[Position1D], Content.parser(DoubleCodec, ContinuousSchema[Double]()), Default())
       .toList.sortBy(_.position) shouldBe data3.sortBy(_.position)
   }
 }
@@ -5765,75 +5765,75 @@ class TestSparkMatrixChange extends TestMatrixChange {
 
   "A Matrix.change" should "return its first over data in 1D" in {
     toRDD(data1)
-      .change(Over(First), "foo", Content.parse(DoubleCodec, ContinuousSchema[Double]()), Default())
+      .change(Over(First), "foo", Content.parser(DoubleCodec, ContinuousSchema[Double]()), Default())
       .toList.sortBy(_.position) shouldBe result1
   }
 
   it should "return its first over data in 2D" in {
     toRDD(data2)
-      .change(Over(First), "foo", Content.parse(DoubleCodec, ContinuousSchema[Double]()), Default(Reducers(12)))
+      .change(Over(First), "foo", Content.parser(DoubleCodec, ContinuousSchema[Double]()), Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result2
   }
 
   it should "return its first along data in 2D" in {
     toRDD(data2)
-      .change(Along(First), List(3, 4), Content.parse(DoubleCodec, ContinuousSchema[Double]()), Default())
+      .change(Along(First), List(3, 4), Content.parser(DoubleCodec, ContinuousSchema[Double]()), Default())
       .toList.sortBy(_.position) shouldBe result3
   }
 
   it should "return its second over data in 2D" in {
     toRDD(data2)
-      .change(Over(Second), List(3, 4), Content.parse(DoubleCodec, ContinuousSchema[Double]()), Default(Reducers(12)))
+      .change(Over(Second), List(3, 4), Content.parser(DoubleCodec, ContinuousSchema[Double]()), Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result4
   }
 
   it should "return its second along data in 2D" in {
     toRDD(data2)
-      .change(Along(Second), "foo", Content.parse(DoubleCodec, ContinuousSchema[Double]()), Default())
+      .change(Along(Second), "foo", Content.parser(DoubleCodec, ContinuousSchema[Double]()), Default())
       .toList.sortBy(_.position) shouldBe result5
   }
 
   it should "return its first over data in 3D" in {
     toRDD(data3)
-      .change(Over(First), "foo", Content.parse(DoubleCodec, ContinuousSchema[Double]()), Default(Reducers(12)))
+      .change(Over(First), "foo", Content.parser(DoubleCodec, ContinuousSchema[Double]()), Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result6
   }
 
   it should "return its first along data in 3D" in {
     toRDD(data3)
       .change(Along(First), List(Position2D(3, "xyz"), Position2D(4, "xyz")),
-        Content.parse(DoubleCodec, ContinuousSchema[Double]()), Default())
+        Content.parser(DoubleCodec, ContinuousSchema[Double]()), Default())
       .toList.sortBy(_.position) shouldBe result7
   }
 
   it should "return its second over data in 3D" in {
     toRDD(data3)
-      .change(Over(Second), List(3, 4), Content.parse(DoubleCodec, ContinuousSchema[Double]()), Default(Reducers(12)))
+      .change(Over(Second), List(3, 4), Content.parser(DoubleCodec, ContinuousSchema[Double]()), Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result8
   }
 
   it should "return its second along data in 3D" in {
     toRDD(data3)
-      .change(Along(Second), Position2D("foo", "xyz"), Content.parse(DoubleCodec, ContinuousSchema[Double]()),
+      .change(Along(Second), Position2D("foo", "xyz"), Content.parser(DoubleCodec, ContinuousSchema[Double]()),
         Default())
       .toList.sortBy(_.position) shouldBe result9
   }
 
   it should "return its third over data in 3D" in {
     toRDD(data3)
-      .change(Over(Third), List("xyz"), Content.parse(DoubleCodec, ContinuousSchema[Double]()), Default(Reducers(12)))
+      .change(Over(Third), List("xyz"), Content.parser(DoubleCodec, ContinuousSchema[Double]()), Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result10
   }
 
   it should "return its third along data in 3D" in {
     toRDD(data3)
-      .change(Along(Third), Position2D("foo", 1), Content.parse(DoubleCodec, ContinuousSchema[Double]()), Default())
+      .change(Along(Third), Position2D("foo", 1), Content.parser(DoubleCodec, ContinuousSchema[Double]()), Default())
       .toList.sortBy(_.position) shouldBe result11
   }
 
   it should "return with empty data - Default" in {
     toRDD(data3)
-      .change(Over(First), List.empty[Position1D], Content.parse(DoubleCodec, ContinuousSchema[Double]()), Default())
+      .change(Over(First), List.empty[Position1D], Content.parser(DoubleCodec, ContinuousSchema[Double]()), Default())
       .toList.sortBy(_.position) shouldBe data3.sortBy(_.position)
   }
 }
