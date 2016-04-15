@@ -36,6 +36,7 @@ import au.com.cba.omnia.grimlock.library.window._
 
 import au.com.cba.omnia.grimlock.spark.environment._
 import au.com.cba.omnia.grimlock.spark.content.Contents._
+import au.com.cba.omnia.grimlock.spark.content.IndexedContents._
 import au.com.cba.omnia.grimlock.spark.Matrix._
 import au.com.cba.omnia.grimlock.spark.Matrixable._
 import au.com.cba.omnia.grimlock.spark.partition.Partitions._
@@ -257,8 +258,8 @@ object TestSpark6 {
       .slice(Over(Second), List("fid:A", "fid:B", "fid:C", "fid:D", "fid:E", "fid:F", "fid:G"), true)
       .squash(Third, PreservingMaxPosition[Position3D]())
       .summarise(Along(First), aggregators)
-      .whichByPositions(Over(Second), List(("count", (c: Cell[Position2D]) => c.content.value leq 2),
-                                           ("min", (c: Cell[Position2D]) => c.content.value equ 107)))
+      .whichByPosition(Over(Second), List(("count", (c: Cell[Position2D]) => c.content.value leq 2),
+                                          ("min", (c: Cell[Position2D]) => c.content.value equ 107)))
       .saveAsText(s"./tmp.${tool}/whc5.out", Position.toString(descriptive = true))
       .toUnit
   }
@@ -302,8 +303,7 @@ object TestSpark8 {
 
     loadText(path + "/mutualInputfile.txt", Cell.parse2D())
       .data
-      .uniqueByPositions(Over(Second))
-      .map { case (p, c) => Cell(p, c) }
+      .uniqueByPosition(Over(Second))
       .saveAsText(s"./tmp.${tool}/uni2.out")
       .toUnit
 
@@ -665,7 +665,7 @@ object TestSpark18 {
       .summarise(Along(First), aggregators)
 
     val rem = stats
-      .whichByPositions(Over(Second), ("count", (c: Cell[Position2D]) => c.content.value leq 2))
+      .whichByPosition(Over(Second), ("count", (c: Cell[Position2D]) => c.content.value leq 2))
       .names(Over(First))
 
     data

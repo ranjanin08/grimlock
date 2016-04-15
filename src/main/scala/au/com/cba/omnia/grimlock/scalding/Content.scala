@@ -14,7 +14,8 @@
 
 package au.com.cba.omnia.grimlock.scalding.content
 
-import au.com.cba.omnia.grimlock.framework.content.{ Contents => FwContents, _ }
+import au.com.cba.omnia.grimlock.framework.content.{ Contents => FwContents, IndexedContents => FwIndexedContents, _ }
+import au.com.cba.omnia.grimlock.framework.position._
 
 import au.com.cba.omnia.grimlock.scalding._
 
@@ -33,5 +34,21 @@ case class Contents(data: TypedPipe[Content]) extends FwContents with Persist[Co
 object Contents {
   /** Converts a `TypedPipe[Content]` to a `Contents`. */
   implicit def TPC2TPC(data: TypedPipe[Content]): Contents = Contents(data)
+}
+
+/**
+ * Rich wrapper around a `TypedPipe[(P, Content]`.
+ *
+ * @param data The `TypedPipe[(P, Content]`.
+ */
+case class IndexedContents[P <: Position](
+  data: TypedPipe[(P, Content)]) extends FwIndexedContents[P] with Persist[(P, Content)] {
+  def saveAsText(file: String, writer: TextWriter)(implicit ctx: C): U[(P, Content)] = saveText(file, writer)
+}
+
+/** Companion object for the Scalding `IndexedContents` class. */
+object IndexedContents {
+  /** Converts a `TypedPipe[(P, Content)]` to a `IndexedContents`. */
+  implicit def TPIC2TPC[P <: Position](data: TypedPipe[(P, Content)]): IndexedContents[P] = IndexedContents[P](data)
 }
 

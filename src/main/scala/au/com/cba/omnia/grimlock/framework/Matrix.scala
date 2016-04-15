@@ -552,7 +552,7 @@ trait Matrix[P <: Position with CompactablePosition] extends Persist[Cell[P]] wi
    *
    * @note Comparison is performed based on the string representation of the `slice.S` and `Content`.
    */
-  def uniqueByPositions[T <: Tuner : UniqueTuners](slice: Slice[P], tuner: T)(
+  def uniqueByPosition[T <: Tuner : UniqueTuners](slice: Slice[P], tuner: T)(
     implicit ev1: slice.S =:!= Position0D): U[(slice.S, Content)]
 
   /** Specifies tuners permitted on a call to `which` functions. */
@@ -578,7 +578,7 @@ trait Matrix[P <: Position with CompactablePosition] extends Persist[Cell[P]] wi
    *
    * @return A `U[P]` of the positions for which the content matches predicates.
    */
-  def whichByPositions[I, T <: Tuner : WhichTuners](slice: Slice[P], predicates: I, tuner: T)(
+  def whichByPosition[I, T <: Tuner : WhichTuners](slice: Slice[P], predicates: I, tuner: T)(
     implicit ev1: Predicateable[I, P, slice.S, U], ev2: ClassTag[slice.S], ev3: ClassTag[P]): U[P]
 
   // TODO: Add more compile-time type checking
