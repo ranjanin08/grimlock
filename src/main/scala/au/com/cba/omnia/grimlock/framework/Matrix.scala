@@ -487,11 +487,11 @@ trait Matrix[P <: Position with CompactablePosition] extends Persist[Cell[P]] wi
   /**
    * Merge all dimensions into a single.
    *
-   * @param separator The separator to use when merging the coordinates.
+   * @param melt A function that melts the coordinates to a single valueable.
    *
-   * @return A `U[CellPosition1D]]` where all coordinates have been merged into a single string.
+   * @return A `U[CellPosition1D]]` where all coordinates have been merged into a single position.
    */
-  def toVector(separator: String = "|"): U[Cell[Position1D]]
+  def toVector(melt: (List[Value]) => Valueable): U[Cell[Position1D]]
 
   /**
    * Transform the content of a matrix.
@@ -622,16 +622,16 @@ trait ReduceableMatrix[P <: Position with CompactablePosition with ReduceablePos
   /**
    * Melt one dimension of a matrix into another.
    *
-   * @param dim       The dimension to melt
-   * @param into      The dimension to melt into
-   * @param separator The separator to use in the melt dimension
+   * @param dim   The dimension to melt
+   * @param into  The dimension to melt into
+   * @param merge The function for merging two coordinates.
    *
    * @return A `U[Cell[P#L]]` with one fewer dimension.
    *
    * @note A melt coordinate is always a string value constructed from the string representation of the `dim` and
    *       `into` coordinates.
    */
-  def melt(dim: Dimension, into: Dimension, separator: String = ".")(implicit ev1: PosDimDep[P, dim.D],
+  def melt(dim: Dimension, into: Dimension, merge: (Value, Value) => Valueable)(implicit ev1: PosDimDep[P, dim.D],
     ev2: PosDimDep[P, into.D], ne: dim.D =:!= into.D): U[Cell[P#L]]
 
   /** Specifies tuners permitted on a call to `squash` functions. */

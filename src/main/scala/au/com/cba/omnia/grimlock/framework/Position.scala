@@ -421,21 +421,21 @@ trait ReduceablePosition { self: Position =>
   /**
    * Melt dimension `dim` into `into`.
    *
-   * @param dim       The dimension to remove.
-   * @param into      The dimension into which to melt.
-   * @param separator The separator to use in the new coordinate name.
+   * @param dim   The dimension to remove.
+   * @param into  The dimension into which to melt.
+   * @param merge The function to use for merging coordinates
    *
    * @return A new position with dimension `dim` removed. The coordinate at `unto` will be a string value consisting of
    *         the string representations of the coordinates `dim` and `unto` separated by `separator`.
    *
    * @note `dim` and `into` must not be the same.
    */
-  def melt(dim: Dimension, into: Dimension, separator: String): L = {
+  def melt(dim: Dimension, into: Dimension, merge: (Value, Value) => Valueable): L = {
     val iidx = getIndex(into)
     val didx = getIndex(dim)
 
     less(coordinates
-      .updated(iidx, StringValue(coordinates(iidx).toShortString + separator + coordinates(didx).toShortString))
+      .updated(iidx, merge(coordinates(iidx), coordinates(didx))())
       .zipWithIndex
       .filter(_._2 != didx)
       .map(_._1))

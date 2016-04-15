@@ -528,7 +528,7 @@ class TestScalding15(args : Args) extends Job(args) {
     .slice(Over(Second), List("fid:A", "fid:C", "fid:E", "fid:G"), true)
     .slice(Over(First), List("iid:0221707", "iid:0364354"), true)
     .summarise(Along(Third), Sum[Position3D, Position2D]().andThenRelocate(_.position.append("sum").toOption))
-    .melt(Third, Second)
+    .melt(Third, Second, Value.concatenate("."))
     .saveAsCSV(Over(First), s"./tmp.${tool}/rsh1.out")
     .toUnit
 

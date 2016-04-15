@@ -54,7 +54,7 @@ class LabelWeighting(args: Args) extends Job(args) {
   val labels = loadText(s"${path}/exampleLabels.txt",
     Cell.parse2DWithSchema(Content.parser(DoubleCodec, ContinuousSchema[Double]())))
     .data // Keep only the data (ignoring errors).
-    .melt(Second, First, ":")
+    .melt(Second, First, Value.concatenate(":"))
 
   // Compute histogram over the label values.
   val histogram = labels
