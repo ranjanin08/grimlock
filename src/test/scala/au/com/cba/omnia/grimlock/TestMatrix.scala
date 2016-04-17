@@ -7977,8 +7977,6 @@ class TestSparkMatrixSquash extends TestMatrixSquash {
 
 trait TestMatrixMelt extends TestMatrix {
 
-  def merge(i: Value, d: Value) = Value.concatenate(".")(i, d)
-
   val result1 = List(Cell(Position1D("1.bar"), Content(OrdinalSchema[String](), "6.28")),
     Cell(Position1D("1.baz"), Content(OrdinalSchema[String](), "9.42")),
     Cell(Position1D("1.foo"), Content(OrdinalSchema[String](), "3.14")),
@@ -8040,35 +8038,39 @@ trait TestMatrixMelt extends TestMatrix {
     Cell(Position2D("qux.xyz", 1), Content(OrdinalSchema[String](), "12.56")))
 }
 
+object TestMatrixMelt {
+  def merge(i: Value, d: Value) = Value.concatenate(".")(i, d)
+}
+
 class TestScaldingMatrixMelt extends TestMatrixMelt {
 
   "A Matrix.melt" should "return its first melted data in 2D" in {
     toPipe(data2)
-      .melt(First, Second, merge)
+      .melt(First, Second, TestMatrixMelt.merge)
       .toList.sortBy(_.position) shouldBe result1
   }
 
   it should "return its second melted data in 2D" in {
     toPipe(data2)
-      .melt(Second, First, merge)
+      .melt(Second, First, TestMatrixMelt.merge)
       .toList.sortBy(_.position) shouldBe result2
   }
 
   it should "return its first melted data in 3D" in {
     toPipe(data3)
-      .melt(First, Third, merge)
+      .melt(First, Third, TestMatrixMelt.merge)
       .toList.sortBy(_.position) shouldBe result3
   }
 
   it should "return its second melted data in 3D" in {
     toPipe(data3)
-      .melt(Second, Third, merge)
+      .melt(Second, Third, TestMatrixMelt.merge)
       .toList.sortBy(_.position) shouldBe result4
   }
 
   it should "return its third melted data in 3D" in {
     toPipe(data3)
-      .melt(Third, First, merge)
+      .melt(Third, First, TestMatrixMelt.merge)
       .toList.sortBy(_.position) shouldBe result5
   }
 }
@@ -8077,31 +8079,31 @@ class TestSparkMatrixMelt extends TestMatrixMelt {
 
   "A Matrix.melt" should "return its first melted data in 2D" in {
     toRDD(data2)
-      .melt(First, Second, merge)
+      .melt(First, Second, TestMatrixMelt.merge)
       .toList.sortBy(_.position) shouldBe result1
   }
 
   it should "return its second melted data in 2D" in {
     toRDD(data2)
-      .melt(Second, First, merge)
+      .melt(Second, First, TestMatrixMelt.merge)
       .toList.sortBy(_.position) shouldBe result2
   }
 
   it should "return its first melted data in 3D" in {
     toRDD(data3)
-      .melt(First, Third, merge)
+      .melt(First, Third, TestMatrixMelt.merge)
       .toList.sortBy(_.position) shouldBe result3
   }
 
   it should "return its second melted data in 3D" in {
     toRDD(data3)
-      .melt(Second, Third, merge)
+      .melt(Second, Third, TestMatrixMelt.merge)
       .toList.sortBy(_.position) shouldBe result4
   }
 
   it should "return its third melted data in 3D" in {
     toRDD(data3)
-      .melt(Third, First, merge)
+      .melt(Third, First, TestMatrixMelt.merge)
       .toList.sortBy(_.position) shouldBe result5
   }
 }
@@ -8646,33 +8648,40 @@ class TestSparkMatrixPermute extends TestMatrixPermute {
 
 trait TestMatrixToVector extends TestMatrix {
 
-  val separator = ":"
-
-  def melt[P <: Position](coords: List[Value]): Valueable = coords.map(_.toShortString).mkString(separator)
-
   val result1 = data2
-    .map { case Cell(Position2D(f, s), c) => Cell(Position1D(f.toShortString + separator + s.toShortString), c) }
+    .map {
+      case Cell(Position2D(f, s), c) =>
+        Cell(Position1D(f.toShortString + TestMatrixToVector.separator + s.toShortString), c)
+    }
     .sortBy(_.position)
 
   val result2 = data3
     .map {
       case Cell(Position3D(f, s, t), c) =>
-        Cell(Position1D(f.toShortString + separator + s.toShortString + separator + t.toShortString), c)
+        Cell(Position1D(f.toShortString + TestMatrixToVector.separator + s.toShortString +
+          TestMatrixToVector.separator + t.toShortString), c)
     }
     .sortBy(_.position)
+}
+
+object TestMatrixToVector {
+
+  val separator = ":"
+
+  def melt[P <: Position](coords: List[Value]): Valueable = coords.map(_.toShortString).mkString(separator)
 }
 
 class TestScaldingMatrixToVector extends TestMatrixToVector {
 
   "A Matrix.toVector" should "return its vector for 2D" in {
     toPipe(data2)
-      .toVector(melt)
+      .toVector(TestMatrixToVector.melt)
       .toList.sortBy(_.position) shouldBe result1
   }
 
   it should "return its permutation vector for 3D" in {
     toPipe(data3)
-      .toVector(melt)
+      .toVector(TestMatrixToVector.melt)
       .toList.sortBy(_.position) shouldBe result2
   }
 }
@@ -8681,13 +8690,13 @@ class TestSparkMatrixToVector extends TestMatrixToVector {
 
   "A Matrix.toVector" should "return its vector for 2D" in {
     toRDD(data2)
-      .toVector(melt)
+      .toVector(TestMatrixToVector.melt)
       .toList.sortBy(_.position) shouldBe result1
   }
 
   it should "return its permutation vector for 3D" in {
     toRDD(data3)
-      .toVector(melt)
+      .toVector(TestMatrixToVector.melt)
       .toList.sortBy(_.position) shouldBe result2
   }
 }
