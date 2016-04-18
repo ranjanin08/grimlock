@@ -173,7 +173,7 @@ case class Mean[P <: Position, S <: Position with ExpandablePosition](filter: Bo
  */
 case class StandardDeviation[P <: Position, S <: Position with ExpandablePosition](filter: Boolean = true,
   strict: Boolean = true, nan: Boolean = false) extends Aggregator[P, S, S] with MomentsAggregator[P, S] {
-  protected def asDouble(t: T): Double = t.stddev
+  protected def asDouble(t: T): Double = t.stddev * math.sqrt(t.count / (t.count - 1))
 }
 
 /**
@@ -203,7 +203,7 @@ case class Skewness[P <: Position, S <: Position with ExpandablePosition](filter
  */
 case class Kurtosis[P <: Position, S <: Position with ExpandablePosition](filter: Boolean = true,
   strict: Boolean = true, nan: Boolean = false) extends Aggregator[P, S, S] with MomentsAggregator[P, S] {
-  protected def asDouble(t: T): Double = t.kurtosis
+  protected def asDouble(t: T): Double = t.kurtosis + 3
 }
 
 /** Base trait for aggregator that return a `Double` value. */

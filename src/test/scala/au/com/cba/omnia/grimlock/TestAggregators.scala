@@ -318,7 +318,7 @@ class TestStandardDeviation extends TestAggregators {
     r shouldBe com.twitter.algebird.Moments(2, 1.5, 0.5, 0.0, 0.125)
 
     val c = obj.present(Position1D("foo"), r)
-    c shouldBe Some(Cell(Position1D("foo"), getDoubleContent(0.5)))
+    c shouldBe Some(Cell(Position1D("foo"), getDoubleContent(0.7071067811865476)))
   }
 
   it should "prepare, reduce and present with strict and nan" in {
@@ -385,7 +385,7 @@ class TestStandardDeviation extends TestAggregators {
     r2 shouldBe com.twitter.algebird.Moments(2, 1.5, 0.5, 0.0, 0.125)
 
     val c = obj.present(Position1D("foo"), r2)
-    c shouldBe Some(Cell(Position1D("foo"), getDoubleContent(0.5)))
+    c shouldBe Some(Cell(Position1D("foo"), getDoubleContent(0.7071067811865476)))
   }
 
   it should "prepare, reduce and present with non-strict and non-nan" in {
@@ -407,7 +407,7 @@ class TestStandardDeviation extends TestAggregators {
     r2 shouldBe com.twitter.algebird.Moments(2, 1.5, 0.5, 0.0, 0.125)
 
     val c = obj.present(Position1D("foo"), r2)
-    c shouldBe Some(Cell(Position1D("foo"), getDoubleContent(0.5)))
+    c shouldBe Some(Cell(Position1D("foo"), getDoubleContent(0.7071067811865476)))
   }
 
   it should "prepare, reduce and present expanded" in {
@@ -424,7 +424,7 @@ class TestStandardDeviation extends TestAggregators {
     r shouldBe com.twitter.algebird.Moments(2, 1.5, 0.5, 0.0, 0.125)
 
     val c = obj.present(Position1D("foo"), r)
-    c shouldBe Some(Cell(Position2D("foo", "sd"), getDoubleContent(0.5)))
+    c shouldBe Some(Cell(Position2D("foo", "sd"), getDoubleContent(0.7071067811865476)))
   }
 
   it should "prepare, reduce and present expanded with strict and nan" in {
@@ -494,7 +494,7 @@ class TestStandardDeviation extends TestAggregators {
     r2 shouldBe com.twitter.algebird.Moments(2, 1.5, 0.5, 0.0, 0.125)
 
     val c = obj.present(Position1D("foo"), r2)
-    c shouldBe Some(Cell(Position2D("foo", "sd"), getDoubleContent(0.5)))
+    c shouldBe Some(Cell(Position2D("foo", "sd"), getDoubleContent(0.7071067811865476)))
   }
 
   it should "prepare, reduce and present expanded with non-strict and non-nan" in {
@@ -517,7 +517,7 @@ class TestStandardDeviation extends TestAggregators {
     r2 shouldBe com.twitter.algebird.Moments(2, 1.5, 0.5, 0.0, 0.125)
 
     val c = obj.present(Position1D("foo"), r2)
-    c shouldBe Some(Cell(Position2D("foo", "sd"), getDoubleContent(0.5)))
+    c shouldBe Some(Cell(Position2D("foo", "sd"), getDoubleContent(0.7071067811865476)))
   }
 
   it should "filter" in {
@@ -778,7 +778,7 @@ class TestKurtosis extends TestAggregators {
     r shouldBe com.twitter.algebird.Moments(2, 1.5, 0.5, 0.0, 0.125)
 
     val c = obj.present(Position1D("foo"), r)
-    c shouldBe Some(Cell(Position1D("foo"), getDoubleContent(-2)))
+    c shouldBe Some(Cell(Position1D("foo"), getDoubleContent(1)))
   }
 
   it should "prepare, reduce and present with strict and nan" in {
@@ -845,7 +845,7 @@ class TestKurtosis extends TestAggregators {
     r2 shouldBe com.twitter.algebird.Moments(2, 1.5, 0.5, 0.0, 0.125)
 
     val c = obj.present(Position1D("foo"), r2)
-    c shouldBe Some(Cell(Position1D("foo"), getDoubleContent(-2)))
+    c shouldBe Some(Cell(Position1D("foo"), getDoubleContent(1)))
   }
 
   it should "prepare, reduce and present with non-strict and non-nan" in {
@@ -867,7 +867,7 @@ class TestKurtosis extends TestAggregators {
     r2 shouldBe com.twitter.algebird.Moments(2, 1.5, 0.5, 0.0, 0.125)
 
     val c = obj.present(Position1D("foo"), r2)
-    c shouldBe Some(Cell(Position1D("foo"), getDoubleContent(-2)))
+    c shouldBe Some(Cell(Position1D("foo"), getDoubleContent(1)))
   }
 
   it should "prepare, reduce and present expanded" in {
@@ -884,7 +884,7 @@ class TestKurtosis extends TestAggregators {
     r shouldBe com.twitter.algebird.Moments(2, 1.5, 0.5, 0.0, 0.125)
 
     val c = obj.present(Position1D("foo"), r)
-    c shouldBe Some(Cell(Position2D("foo", "kurtosis"), getDoubleContent(-2)))
+    c shouldBe Some(Cell(Position2D("foo", "kurtosis"), getDoubleContent(1)))
   }
 
   it should "prepare, reduce and present expanded with strict and nan" in {
@@ -954,7 +954,7 @@ class TestKurtosis extends TestAggregators {
     r2 shouldBe com.twitter.algebird.Moments(2, 1.5, 0.5, 0.0, 0.125)
 
     val c = obj.present(Position1D("foo"), r2)
-    c shouldBe Some(Cell(Position2D("foo", "kurtosis"), getDoubleContent(-2)))
+    c shouldBe Some(Cell(Position2D("foo", "kurtosis"), getDoubleContent(1)))
   }
 
   it should "prepare, reduce and present expanded with non-strict and non-nan" in {
@@ -977,7 +977,7 @@ class TestKurtosis extends TestAggregators {
     r2 shouldBe com.twitter.algebird.Moments(2, 1.5, 0.5, 0.0, 0.125)
 
     val c = obj.present(Position1D("foo"), r2)
-    c shouldBe Some(Cell(Position2D("foo", "kurtosis"), getDoubleContent(-2)))
+    c shouldBe Some(Cell(Position2D("foo", "kurtosis"), getDoubleContent(1)))
   }
 
   it should "filter" in {
