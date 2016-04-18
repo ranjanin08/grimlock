@@ -175,7 +175,9 @@ case class Mean[P <: Position, S <: Position with ExpandablePosition](filter: Bo
 case class StandardDeviation[P <: Position, S <: Position with ExpandablePosition](biased: Boolean = false,
   filter: Boolean = true, strict: Boolean = true, nan: Boolean = false) extends Aggregator[P, S, S]
     with MomentsAggregator[P, S] {
-  protected def asDouble(t: T): Double = if (biased) t.stddev else t.stddev * math.sqrt(t.count / (t.count - 1))
+  protected def asDouble(t: T): Double = {
+    if (biased) t.stddev else if (t.count > 1) t.stddev * math.sqrt(t.count / (t.count - 1)) else Double.NaN
+  }
 }
 
 /**
