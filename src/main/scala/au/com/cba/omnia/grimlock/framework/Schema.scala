@@ -98,7 +98,7 @@ private[metadata] trait SchemaParameters {
   protected def parseSet(codec: Codec, set: String): Option[Set[codec.C]] = {
     val values = set.split("(?<!\\\\),").map(parse(codec, _))
 
-    values.exists(_.isEmpty) match {
+    values.isEmpty || values.exists(_.isEmpty) match {
       case true => None
       case false => Some(values.map(_.get).toSet)
     }
@@ -307,6 +307,7 @@ object NominalSchema extends SchemaParameters {
   def fromShortString(str: String, cdc: Codec): Option[NominalSchema[cdc.C]] = {
     (cdc.tag, str) match {
       case (Some(tag), Pattern(null)) => Some(NominalSchema()(tag))
+      case (Some(tag), Pattern("")) => Some(NominalSchema()(tag))
       case (Some(tag), Pattern(domain)) => parseSet(cdc, domain).map(NominalSchema(_)(tag))
       case _ => None
     }
@@ -341,6 +342,7 @@ object OrdinalSchema extends SchemaParameters {
   def fromShortString(str: String, cdc: Codec): Option[OrdinalSchema[cdc.C]] = {
     (cdc.tag, cdc.ordering, str) match {
       case (Some(tag), Some(ord), Pattern(null)) => Some(OrdinalSchema()(tag, ord))
+      case (Some(tag), Some(ord), Pattern("")) => Some(OrdinalSchema()(tag, ord))
       case (Some(tag), Some(ord), Pattern(domain)) => parseSet(cdc, domain).map(OrdinalSchema(_)(tag, ord))
       case _ => None
     }
