@@ -19,6 +19,9 @@ import au.com.cba.omnia.grimlock.framework.encoding._
 import au.com.cba.omnia.grimlock.framework.position._
 
 object Locate {
+  /** Extract position. */
+  type FromPosition[P <: Position, Q <: Position] = (P) => Option[Q]
+
   /** Extract position from cell. */
   type FromCell[P <: Position, Q <: Position] = (Cell[P]) => Option[Q]
 

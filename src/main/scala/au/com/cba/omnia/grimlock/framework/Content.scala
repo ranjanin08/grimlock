@@ -91,7 +91,15 @@ object Content {
     }
   }
 
-  def parserFromShortStrings(codec: String, schema: String): Option[Parser] = {
+  /**
+   * Return content parser from codec and schema strings.
+   *
+   * @param codec  The codec string to decode content with.
+   * @param schema The schema string to validate content with.
+   *
+   * @return A content parser.
+   */
+  def parserFromComponents(codec: String, schema: String): Option[Parser] = {
     Codec.fromShortString(codec)
       .flatMap { case c => Schema.fromShortString(schema, c).map { case s => parser[c.C](c, s) } }
   }
@@ -106,7 +114,7 @@ object Content {
    */
   def fromShortString(str: String, separator: String = "|"): Option[Content] = {
     str.split(Pattern.quote(separator)) match {
-      case Array(c, s, v) => parserFromShortStrings(c, s).flatMap { case f => f(v) }
+      case Array(c, s, v) => parserFromComponents(c, s).flatMap { case f => f(v) }
       case _ => None
     }
   }

@@ -44,7 +44,7 @@ object Dictionary {
           List(key, encoding, schema).exists(_ >= parts.length) match {
             case true => Left("unable to parse: '" + line + "'")
             case false =>
-              Content.parserFromShortStrings(parts(encoding), parts(schema)) match {
+              Content.parserFromComponents(parts(encoding), parts(schema)) match {
                 case Some(p) => Right((parts(key), p))
                 case None => Left("unable to decode '" + line + "'")
               }
