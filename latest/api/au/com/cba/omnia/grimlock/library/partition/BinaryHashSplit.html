@@ -28,13 +28,13 @@
         </head>
         <body class="type">
       <div id="definition">
-        <img src="../../../../../../../lib/class_big.png" />
+        <img alt="Class" src="../../../../../../../lib/class_big.png" />
         <p id="owner"><a href="../../../../../../package.html" class="extype" name="au">au</a>.<a href="../../../../../package.html" class="extype" name="au.com">com</a>.<a href="../../../../package.html" class="extype" name="au.com.cba">cba</a>.<a href="../../../package.html" class="extype" name="au.com.cba.omnia">omnia</a>.<a href="../../package.html" class="extype" name="au.com.cba.omnia.grimlock">grimlock</a>.<a href="../package.html" class="extype" name="au.com.cba.omnia.grimlock.library">library</a>.<a href="package.html" class="extype" name="au.com.cba.omnia.grimlock.library.partition">partition</a></p>
         <h1>BinaryHashSplit</h1><h3><span class="morelinks"><div>Related Doc:
             <a href="package.html" class="extype" name="au.com.cba.omnia.grimlock.library.partition">package partition</a>
           </div></span></h3><span class="permalink">
       <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.partition.BinaryHashSplit" title="Permalink" target="_top">
-        <img src="../../../../../../../lib/permalink.png" />
+        <img src="../../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       </div>
@@ -45,17 +45,15 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <span class="name">BinaryHashSplit</span><span class="tparams">[<span name="P">P &lt;: <a href="../../framework/position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="S">S</span>]</span><span class="params">(<span name="dim">dim: <a href="../../framework/position/Dimension.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Dimension">Dimension</a></span>, <span name="ratio">ratio: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Int" class="extype" target="_top">Int</a></span>, <span name="left">left: <span class="extype" name="au.com.cba.omnia.grimlock.library.partition.BinaryHashSplit.S">S</span></span>, <span name="right">right: <span class="extype" name="au.com.cba.omnia.grimlock.library.partition.BinaryHashSplit.S">S</span></span>, <span name="base">base: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Int" class="extype" target="_top">Int</a> = <span class="symbol">100</span></span>)</span><span class="result"> extends <a href="../../framework/partition/Partitioner.html" class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitioner">Partitioner</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.partition.BinaryHashSplit.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.partition.BinaryHashSplit.S">S</span>] with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Product" class="extype" target="_top">Product</a> with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
+        <span class="name">BinaryHashSplit</span><span class="tparams">[<span name="P">P &lt;: <a href="../../framework/position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="S">S</span>]</span><span class="params">(<span name="dim">dim: <a href="../../framework/position/Dimension.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Dimension">Dimension</a></span>, <span name="ratio">ratio: <a href="http://www.scala-lang.org/api/2.11.7/index.html#scala.Int" class="extype" target="_top">Int</a></span>, <span name="left">left: <span class="extype" name="au.com.cba.omnia.grimlock.library.partition.BinaryHashSplit.S">S</span></span>, <span name="right">right: <span class="extype" name="au.com.cba.omnia.grimlock.library.partition.BinaryHashSplit.S">S</span></span>, <span name="base">base: <a href="http://www.scala-lang.org/api/2.11.7/index.html#scala.Int" class="extype" target="_top">Int</a> = <span class="symbol">100</span></span>)</span><span class="result"> extends <a href="../../framework/partition/Partitioner.html" class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitioner">Partitioner</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.partition.BinaryHashSplit.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.partition.BinaryHashSplit.S">S</span>] with <a href="http://www.scala-lang.org/api/2.11.7/index.html#scala.Product" class="extype" target="_top">Product</a> with <a href="http://www.scala-lang.org/api/2.11.7/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
       </span>
       </h4>
       
           <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Binary partition based on the hash code of a coordinate.
-</p></div><dl class="paramcmts block"><dt class="param">dim</dt><dd class="cmt"><p>The dimension to partition on.</p></dd><dt class="param">ratio</dt><dd class="cmt"><p>The binary split ratio (relative to <code>base</code>).</p></dd><dt class="param">left</dt><dd class="cmt"><p>The identifier for the left partition.</p></dd><dt class="param">right</dt><dd class="cmt"><p>The identifier for the right partition.</p></dd><dt class="param">base</dt><dd class="cmt"><p>The base for the ratio.
-</p></dd></dl><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/Dirty(6b9b41663742df39af3ac3bf2d6b24f3d3dd72d8)//src/main/scala/au/com/cba/omnia/grimlock/library/Partitioners.scala" target="_blank">Partitioners.scala</a></dd><dt>Note</dt><dd><span class="cmt"><p>The hash code modulo <code>base</code> is used for comparison with the ratio. While the position is assigned to the left
-      partition if it is less or equal to the <code>ratio</code> value.
-</p></span></dd></dl><div class="toggleContainer block">
+</p></div><dl class="paramcmts block"><dt class="param">dim</dt><dd class="cmt"><p>The dimension to partition on.</p></dd><dt class="param">ratio</dt><dd class="cmt"><p>The binary split ratio (relative to <code>base</code>).</p></dd><dt class="param">left</dt><dd class="cmt"><p>The identifier for the left partition.</p></dd><dt class="param">right</dt><dd class="cmt"><p>The identifier for the right partition.</p></dd><dt class="param">base</dt><dd class="cmt"><p>The base for the ratio.</p></dd></dl><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/94b76761374d5324475ea8de56264a4e5119e3eb//src/main/scala/au/com/cba/omnia/grimlock/library/Partitioners.scala" target="_blank">Partitioners.scala</a></dd><dt>Note</dt><dd><span class="cmt"><p>The hash code modulo <code>base</code> is used for comparison with the ratio. While the position is assigned to the left
+      partition if it is less or equal to the <code>ratio</code> value.</p></span></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
-          <div class="superTypes hiddenContent"><a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a>, <span class="extype" name="java.io.Serializable">Serializable</span>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Product" class="extype" target="_top">Product</a>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Equals" class="extype" target="_top">Equals</a>, <a href="../../framework/partition/Partitioner.html" class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitioner">Partitioner</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.partition.BinaryHashSplit.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.partition.BinaryHashSplit.S">S</span>], <a href="../../framework/partition/PartitionerWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.partition.PartitionerWithValue">PartitionerWithValue</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.partition.BinaryHashSplit.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.partition.BinaryHashSplit.S">S</span>], <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Any" class="extype" target="_top">Any</a></div>
+          <div class="superTypes hiddenContent"><a href="http://www.scala-lang.org/api/2.11.7/index.html#scala.Serializable" class="extype" target="_top">Serializable</a>, <span class="extype" name="java.io.Serializable">Serializable</span>, <a href="http://www.scala-lang.org/api/2.11.7/index.html#scala.Product" class="extype" target="_top">Product</a>, <a href="http://www.scala-lang.org/api/2.11.7/index.html#scala.Equals" class="extype" target="_top">Equals</a>, <a href="../../framework/partition/Partitioner.html" class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitioner">Partitioner</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.partition.BinaryHashSplit.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.partition.BinaryHashSplit.S">S</span>], <a href="../../framework/partition/PartitionerWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.partition.PartitionerWithValue">PartitionerWithValue</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.partition.BinaryHashSplit.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.partition.BinaryHashSplit.S">S</span>], <a href="http://www.scala-lang.org/api/2.11.7/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a>, <a href="http://www.scala-lang.org/api/2.11.7/index.html#scala.Any" class="extype" target="_top">Any</a></div>
         </div></div>
         
 
@@ -81,7 +79,6 @@
               <li class="hideall out"><span>Hide All</span></li>
               <li class="showall in"><span>Show all</span></li>
             </ol>
-            <a href="http://docs.scala-lang.org/overviews/scaladoc/usage.html#members" target="_blank">Learn more about member selection</a>
           </div>
         <div id="visbl">
             <span class="filtertype">Visibility</span>
@@ -102,15 +99,14 @@
         <span class="kind">new</span>
       </span>
       <span class="symbol">
-        <span class="name">BinaryHashSplit</span><span class="params">(<span name="dim">dim: <a href="../../framework/position/Dimension.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Dimension">Dimension</a></span>, <span name="ratio">ratio: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Int" class="extype" target="_top">Int</a></span>, <span name="left">left: <span class="extype" name="au.com.cba.omnia.grimlock.library.partition.BinaryHashSplit.S">S</span></span>, <span name="right">right: <span class="extype" name="au.com.cba.omnia.grimlock.library.partition.BinaryHashSplit.S">S</span></span>, <span name="base">base: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Int" class="extype" target="_top">Int</a> = <span class="symbol">100</span></span>)</span>
+        <span class="name">BinaryHashSplit</span><span class="params">(<span name="dim">dim: <a href="../../framework/position/Dimension.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Dimension">Dimension</a></span>, <span name="ratio">ratio: <a href="http://www.scala-lang.org/api/2.11.7/index.html#scala.Int" class="extype" target="_top">Int</a></span>, <span name="left">left: <span class="extype" name="au.com.cba.omnia.grimlock.library.partition.BinaryHashSplit.S">S</span></span>, <span name="right">right: <span class="extype" name="au.com.cba.omnia.grimlock.library.partition.BinaryHashSplit.S">S</span></span>, <span name="base">base: <a href="http://www.scala-lang.org/api/2.11.7/index.html#scala.Int" class="extype" target="_top">Int</a> = <span class="symbol">100</span></span>)</span>
       </span>
       </h4><span class="permalink">
       <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.partition.BinaryHashSplit@&lt;init&gt;(dim:au.com.cba.omnia.grimlock.framework.position.Dimension,ratio:Int,left:S,right:S,base:Int):au.com.cba.omnia.grimlock.library.partition.BinaryHashSplit[P,S]" title="Permalink" target="_top">
-        <img src="../../../../../../../lib/permalink.png" />
+        <img src="../../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="param">dim</dt><dd class="cmt"><p>The dimension to partition on.</p></dd><dt class="param">ratio</dt><dd class="cmt"><p>The binary split ratio (relative to <code>base</code>).</p></dd><dt class="param">left</dt><dd class="cmt"><p>The identifier for the left partition.</p></dd><dt class="param">right</dt><dd class="cmt"><p>The identifier for the right partition.</p></dd><dt class="param">base</dt><dd class="cmt"><p>The base for the ratio.
-</p></dd></dl></div>
+      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="param">dim</dt><dd class="cmt"><p>The dimension to partition on.</p></dd><dt class="param">ratio</dt><dd class="cmt"><p>The binary split ratio (relative to <code>base</code>).</p></dd><dt class="param">left</dt><dd class="cmt"><p>The identifier for the left partition.</p></dd><dt class="param">right</dt><dd class="cmt"><p>The identifier for the right partition.</p></dd><dt class="param">base</dt><dd class="cmt"><p>The base for the ratio.</p></dd></dl></div>
     </li></ol>
             </div>
 
@@ -125,11 +121,11 @@
         <span class="kind">type</span>
       </span>
       <span class="symbol">
-        <span class="name">V</span><span class="result"> = <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Any" class="extype" target="_top">Any</a></span>
+        <span class="name">V</span><span class="result"> = <a href="http://www.scala-lang.org/api/2.11.7/index.html#scala.Any" class="extype" target="_top">Any</a></span>
       </span>
       </h4><span class="permalink">
       <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.partition.BinaryHashSplit@V=Any" title="Permalink" target="_top">
-        <img src="../../../../../../../lib/permalink.png" />
+        <img src="../../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <p class="shortcomment cmt">Type of the external value.</p><div class="fullcomment"><div class="comment cmt"><p>Type of the external value.</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../../framework/partition/Partitioner.html" class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitioner">Partitioner</a> → <a href="../../framework/partition/PartitionerWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.partition.PartitionerWithValue">PartitionerWithValue</a></dd></dl></div>
@@ -149,11 +145,11 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span title="gt4s: $bang$eq" class="name">!=</span><span class="params">(<span name="arg0">arg0: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Any" class="extype" target="_top">Any</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
+        <span title="gt4s: $bang$eq" class="name">!=</span><span class="params">(<span name="arg0">arg0: <a href="http://www.scala-lang.org/api/2.11.7/index.html#scala.Any" class="extype" target="_top">Any</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.7/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
       </h4><span class="permalink">
       <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.partition.BinaryHashSplit@!=(x$1:Any):Boolean" title="Permalink" target="_top">
-        <img src="../../../../../../../lib/permalink.png" />
+        <img src="../../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
@@ -166,11 +162,11 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span title="gt4s: $hash$hash" class="name">##</span><span class="params">()</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Int" class="extype" target="_top">Int</a></span>
+        <span title="gt4s: $hash$hash" class="name">##</span><span class="params">()</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.7/index.html#scala.Int" class="extype" target="_top">Int</a></span>
       </span>
       </h4><span class="permalink">
       <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.partition.BinaryHashSplit@##():Int" title="Permalink" target="_top">
-        <img src="../../../../../../../lib/permalink.png" />
+        <img src="../../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
@@ -183,11 +179,11 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span title="gt4s: $eq$eq" class="name">==</span><span class="params">(<span name="arg0">arg0: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Any" class="extype" target="_top">Any</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
+        <span title="gt4s: $eq$eq" class="name">==</span><span class="params">(<span name="arg0">arg0: <a href="http://www.scala-lang.org/api/2.11.7/index.html#scala.Any" class="extype" target="_top">Any</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.7/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
       </h4><span class="permalink">
       <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.partition.BinaryHashSplit@==(x$1:Any):Boolean" title="Permalink" target="_top">
-        <img src="../../../../../../../lib/permalink.png" />
+        <img src="../../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
@@ -204,7 +200,7 @@
       </span>
       </h4><span class="permalink">
       <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.partition.BinaryHashSplit@asInstanceOf[T0]:T0" title="Permalink" target="_top">
-        <img src="../../../../../../../lib/permalink.png" />
+        <img src="../../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
@@ -221,13 +217,11 @@
       </span>
       </h4><span class="permalink">
       <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.partition.BinaryHashSplit@assign(cell:au.com.cba.omnia.grimlock.framework.Cell[P]):TraversableOnce[S]" title="Permalink" target="_top">
-        <img src="../../../../../../../lib/permalink.png" />
+        <img src="../../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <p class="shortcomment cmt">Assign the cell to a partition.</p><div class="fullcomment"><div class="comment cmt"><p>Assign the cell to a partition.
-</p></div><dl class="paramcmts block"><dt class="param">cell</dt><dd class="cmt"><p>The cell to assign to a partition.
-</p></dd><dt>returns</dt><dd class="cmt"><p>Zero or more partitition identifiers.
-</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.library.partition.BinaryHashSplit">BinaryHashSplit</a> → <a href="../../framework/partition/Partitioner.html" class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitioner">Partitioner</a></dd></dl></div>
+</p></div><dl class="paramcmts block"><dt class="param">cell</dt><dd class="cmt"><p>The cell to assign to a partition.</p></dd><dt>returns</dt><dd class="cmt"><p>Zero or more partitition identifiers.</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.library.partition.BinaryHashSplit">BinaryHashSplit</a> → <a href="../../framework/partition/Partitioner.html" class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitioner">Partitioner</a></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.framework.partition.Partitioner#assignWithValue" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="assignWithValue(cell:au.com.cba.omnia.grimlock.framework.Cell[P],ext:Partitioner.this.V):TraversableOnce[I]"></a>
       <a id="assignWithValue(Cell[P],V):TraversableOnce[S]"></a>
@@ -241,13 +235,11 @@
       </span>
       </h4><span class="permalink">
       <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.partition.BinaryHashSplit@assignWithValue(cell:au.com.cba.omnia.grimlock.framework.Cell[P],ext:Partitioner.this.V):TraversableOnce[I]" title="Permalink" target="_top">
-        <img src="../../../../../../../lib/permalink.png" />
+        <img src="../../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <p class="shortcomment cmt">Assign the cell to a partition using a user supplied value.</p><div class="fullcomment"><div class="comment cmt"><p>Assign the cell to a partition using a user supplied value.
-</p></div><dl class="paramcmts block"><dt class="param">cell</dt><dd class="cmt"><p>The cell to assign to a partition.</p></dd><dt class="param">ext</dt><dd class="cmt"><p>The user supplied value.
-</p></dd><dt>returns</dt><dd class="cmt"><p>Zero or more partitition identifiers.
-</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../../framework/partition/Partitioner.html" class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitioner">Partitioner</a> → <a href="../../framework/partition/PartitionerWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.partition.PartitionerWithValue">PartitionerWithValue</a></dd></dl></div>
+</p></div><dl class="paramcmts block"><dt class="param">cell</dt><dd class="cmt"><p>The cell to assign to a partition.</p></dd><dt class="param">ext</dt><dd class="cmt"><p>The user supplied value.</p></dd><dt>returns</dt><dd class="cmt"><p>Zero or more partitition identifiers.</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../../framework/partition/Partitioner.html" class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitioner">Partitioner</a> → <a href="../../framework/partition/PartitionerWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.partition.PartitionerWithValue">PartitionerWithValue</a></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.library.partition.BinaryHashSplit#base" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="base:Int"></a>
       <a id="base:Int"></a>
@@ -257,11 +249,11 @@
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">base</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Int" class="extype" target="_top">Int</a></span>
+        <span class="name">base</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.7/index.html#scala.Int" class="extype" target="_top">Int</a></span>
       </span>
       </h4><span class="permalink">
       <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.partition.BinaryHashSplit@base:Int" title="Permalink" target="_top">
-        <img src="../../../../../../../lib/permalink.png" />
+        <img src="../../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <p class="shortcomment cmt">The base for the ratio.</p>
@@ -274,11 +266,11 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">clone</span><span class="params">()</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a></span>
+        <span class="name">clone</span><span class="params">()</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.7/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a></span>
       </span>
       </h4><span class="permalink">
       <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.partition.BinaryHashSplit@clone():Object" title="Permalink" target="_top">
-        <img src="../../../../../../../lib/permalink.png" />
+        <img src="../../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected[<a href="../../../../../../../java$lang.html" class="extype" name="java.lang">java.lang</a>] </dd><dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
@@ -301,7 +293,7 @@
       </span>
       </h4><span class="permalink">
       <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.partition.BinaryHashSplit@dim:au.com.cba.omnia.grimlock.framework.position.Dimension" title="Permalink" target="_top">
-        <img src="../../../../../../../lib/permalink.png" />
+        <img src="../../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <p class="shortcomment cmt">The dimension to partition on.</p>
@@ -314,11 +306,11 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">eq</span><span class="params">(<span name="arg0">arg0: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
+        <span class="name">eq</span><span class="params">(<span name="arg0">arg0: <a href="http://www.scala-lang.org/api/2.11.7/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.7/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
       </h4><span class="permalink">
       <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.partition.BinaryHashSplit@eq(x$1:AnyRef):Boolean" title="Permalink" target="_top">
-        <img src="../../../../../../../lib/permalink.png" />
+        <img src="../../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
@@ -331,11 +323,11 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">finalize</span><span class="params">()</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+        <span class="name">finalize</span><span class="params">()</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.7/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4><span class="permalink">
       <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.partition.BinaryHashSplit@finalize():Unit" title="Permalink" target="_top">
-        <img src="../../../../../../../lib/permalink.png" />
+        <img src="../../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected[<a href="../../../../../../../java$lang.html" class="extype" name="java.lang">java.lang</a>] </dd><dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
@@ -358,7 +350,7 @@
       </span>
       </h4><span class="permalink">
       <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.partition.BinaryHashSplit@getClass():Class[_]" title="Permalink" target="_top">
-        <img src="../../../../../../../lib/permalink.png" />
+        <img src="../../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
@@ -371,11 +363,11 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">isInstanceOf</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
+        <span class="name">isInstanceOf</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.7/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
       </h4><span class="permalink">
       <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.partition.BinaryHashSplit@isInstanceOf[T0]:Boolean" title="Permalink" target="_top">
-        <img src="../../../../../../../lib/permalink.png" />
+        <img src="../../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
@@ -392,7 +384,7 @@
       </span>
       </h4><span class="permalink">
       <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.partition.BinaryHashSplit@left:S" title="Permalink" target="_top">
-        <img src="../../../../../../../lib/permalink.png" />
+        <img src="../../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <p class="shortcomment cmt">The identifier for the left partition.</p>
@@ -405,11 +397,11 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">ne</span><span class="params">(<span name="arg0">arg0: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
+        <span class="name">ne</span><span class="params">(<span name="arg0">arg0: <a href="http://www.scala-lang.org/api/2.11.7/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.7/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
       </h4><span class="permalink">
       <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.partition.BinaryHashSplit@ne(x$1:AnyRef):Boolean" title="Permalink" target="_top">
-        <img src="../../../../../../../lib/permalink.png" />
+        <img src="../../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
@@ -422,11 +414,11 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">notify</span><span class="params">()</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+        <span class="name">notify</span><span class="params">()</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.7/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4><span class="permalink">
       <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.partition.BinaryHashSplit@notify():Unit" title="Permalink" target="_top">
-        <img src="../../../../../../../lib/permalink.png" />
+        <img src="../../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
@@ -439,11 +431,11 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">notifyAll</span><span class="params">()</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+        <span class="name">notifyAll</span><span class="params">()</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.7/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4><span class="permalink">
       <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.partition.BinaryHashSplit@notifyAll():Unit" title="Permalink" target="_top">
-        <img src="../../../../../../../lib/permalink.png" />
+        <img src="../../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
@@ -456,11 +448,11 @@
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">ratio</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Int" class="extype" target="_top">Int</a></span>
+        <span class="name">ratio</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.7/index.html#scala.Int" class="extype" target="_top">Int</a></span>
       </span>
       </h4><span class="permalink">
       <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.partition.BinaryHashSplit@ratio:Int" title="Permalink" target="_top">
-        <img src="../../../../../../../lib/permalink.png" />
+        <img src="../../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <p class="shortcomment cmt">The binary split ratio (relative to <code>base</code>).</p>
@@ -477,7 +469,7 @@
       </span>
       </h4><span class="permalink">
       <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.partition.BinaryHashSplit@right:S" title="Permalink" target="_top">
-        <img src="../../../../../../../lib/permalink.png" />
+        <img src="../../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <p class="shortcomment cmt">The identifier for the right partition.</p>
@@ -494,7 +486,7 @@
       </span>
       </h4><span class="permalink">
       <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.partition.BinaryHashSplit@synchronized[T0](x$1:=&gt;T0):T0" title="Permalink" target="_top">
-        <img src="../../../../../../../lib/permalink.png" />
+        <img src="../../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
@@ -507,11 +499,11 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">wait</span><span class="params">()</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+        <span class="name">wait</span><span class="params">()</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.7/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4><span class="permalink">
       <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.partition.BinaryHashSplit@wait():Unit" title="Permalink" target="_top">
-        <img src="../../../../../../../lib/permalink.png" />
+        <img src="../../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
@@ -530,11 +522,11 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">wait</span><span class="params">(<span name="arg0">arg0: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Long" class="extype" target="_top">Long</a></span>, <span name="arg1">arg1: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Int" class="extype" target="_top">Int</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+        <span class="name">wait</span><span class="params">(<span name="arg0">arg0: <a href="http://www.scala-lang.org/api/2.11.7/index.html#scala.Long" class="extype" target="_top">Long</a></span>, <span name="arg1">arg1: <a href="http://www.scala-lang.org/api/2.11.7/index.html#scala.Int" class="extype" target="_top">Int</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.7/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4><span class="permalink">
       <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.partition.BinaryHashSplit@wait(x$1:Long,x$2:Int):Unit" title="Permalink" target="_top">
-        <img src="../../../../../../../lib/permalink.png" />
+        <img src="../../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
@@ -553,11 +545,11 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">wait</span><span class="params">(<span name="arg0">arg0: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Long" class="extype" target="_top">Long</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+        <span class="name">wait</span><span class="params">(<span name="arg0">arg0: <a href="http://www.scala-lang.org/api/2.11.7/index.html#scala.Long" class="extype" target="_top">Long</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.7/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4><span class="permalink">
       <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.partition.BinaryHashSplit@wait(x$1:Long):Unit" title="Permalink" target="_top">
-        <img src="../../../../../../../lib/permalink.png" />
+        <img src="../../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
@@ -577,21 +569,21 @@
 
         <div id="inheritedMembers">
         <div class="parent" name="scala.Serializable">
-              <h3>Inherited from <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></h3>
+              <h3>Inherited from <a href="http://www.scala-lang.org/api/2.11.7/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></h3>
             </div><div class="parent" name="java.io.Serializable">
               <h3>Inherited from <span class="extype" name="java.io.Serializable">Serializable</span></h3>
             </div><div class="parent" name="scala.Product">
-              <h3>Inherited from <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Product" class="extype" target="_top">Product</a></h3>
+              <h3>Inherited from <a href="http://www.scala-lang.org/api/2.11.7/index.html#scala.Product" class="extype" target="_top">Product</a></h3>
             </div><div class="parent" name="scala.Equals">
-              <h3>Inherited from <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Equals" class="extype" target="_top">Equals</a></h3>
+              <h3>Inherited from <a href="http://www.scala-lang.org/api/2.11.7/index.html#scala.Equals" class="extype" target="_top">Equals</a></h3>
             </div><div class="parent" name="au.com.cba.omnia.grimlock.framework.partition.Partitioner">
               <h3>Inherited from <a href="../../framework/partition/Partitioner.html" class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitioner">Partitioner</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.partition.BinaryHashSplit.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.partition.BinaryHashSplit.S">S</span>]</h3>
             </div><div class="parent" name="au.com.cba.omnia.grimlock.framework.partition.PartitionerWithValue">
               <h3>Inherited from <a href="../../framework/partition/PartitionerWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.partition.PartitionerWithValue">PartitionerWithValue</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.partition.BinaryHashSplit.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.partition.BinaryHashSplit.S">S</span>]</h3>
             </div><div class="parent" name="scala.AnyRef">
-              <h3>Inherited from <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a></h3>
+              <h3>Inherited from <a href="http://www.scala-lang.org/api/2.11.7/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a></h3>
             </div><div class="parent" name="scala.Any">
-              <h3>Inherited from <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Any" class="extype" target="_top">Any</a></h3>
+              <h3>Inherited from <a href="http://www.scala-lang.org/api/2.11.7/index.html#scala.Any" class="extype" target="_top">Any</a></h3>
             </div>
         
         </div>
