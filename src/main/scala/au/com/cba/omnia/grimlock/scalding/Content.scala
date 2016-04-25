@@ -42,7 +42,8 @@ object Contents {
  * @param data The `TypedPipe[(P, Content]`.
  */
 case class IndexedContents[P <: Position](
-  data: TypedPipe[(P, Content)]) extends FwIndexedContents[P] with Persist[(P, Content)] {
+  data: TypedPipe[(P, Content)]
+) extends FwIndexedContents[P] with Persist[(P, Content)] {
   def saveAsText(file: String, writer: TextWriter)(implicit ctx: C): U[(P, Content)] = saveText(file, writer)
 }
 

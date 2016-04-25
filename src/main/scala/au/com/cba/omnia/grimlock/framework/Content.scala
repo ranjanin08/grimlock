@@ -171,7 +171,7 @@ object IndexedContent {
   def toString[P <: Position](separator: String = "|",
     descriptive: Boolean = false): ((P, Content)) => TraversableOnce[String] = {
     (t: (P, Content)) => Some(
-      if (descriptive) { t.toString } else { t._1.toShortString(separator) + separator + t._2.toShortString }
+      if (descriptive) t.toString else t._1.toShortString(separator) + separator + t._2.toShortString
     )
   }
 }

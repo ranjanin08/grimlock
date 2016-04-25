@@ -41,14 +41,12 @@ object Dictionary {
         case line =>
           val parts = line.split(Pattern.quote(separator))
 
-          List(key, encoding, schema).exists(_ >= parts.length) match {
-            case true => Left("unable to parse: '" + line + "'")
-            case false =>
-              Content.parserFromComponents(parts(encoding), parts(schema)) match {
-                case Some(p) => Right((parts(key), p))
-                case None => Left("unable to decode '" + line + "'")
-              }
-          }
+          if (List(key, encoding, schema).exists(_ >= parts.length))
+            Left("unable to parse: '" + line + "'")
+          else
+            Content.parserFromComponents(parts(encoding), parts(schema))
+              .map { case p => Right((parts(key), p)) }
+              .getOrElse(Left("unable to decode '" + line + "'"))
       }
 
     (result.collect { case Right(entry) => entry }.toMap, result.collect { case Left(error) => error })

@@ -346,9 +346,8 @@ object NominalSchema extends SchemaParameters {
   def fromComponents(dom: Set[String], cdc: Codec): Option[NominalSchema[cdc.C]] = {
     val values = dom.map(parse(cdc, _))
 
-    (cdc.tag, values.isEmpty || values.exists(_.isEmpty)) match {
-      case (Some(tag), false) => Some(NominalSchema(values.map(_.get))(tag))
-      case _ => None
+    cdc.tag.collect {
+      case tag if !(values.isEmpty || values.exists(_.isEmpty)) => NominalSchema(values.map(_.get))(tag)
     }
   }
 }
