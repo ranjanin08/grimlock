@@ -17,6 +17,7 @@ package au.com.cba.omnia.grimlock.framework.content
 import au.com.cba.omnia.grimlock.framework._
 import au.com.cba.omnia.grimlock.framework.encoding._
 import au.com.cba.omnia.grimlock.framework.content.metadata._
+import au.com.cba.omnia.grimlock.framework.position._
 
 import java.util.regex.Pattern
 
@@ -47,6 +48,7 @@ trait Content {
    * Converts the content to a consise (terse) string.
    *
    * @param separator The separator to use between the fields.
+   *
    * @return Short string representation.
    */
   def toShortString(separator: String): String = {
@@ -78,7 +80,7 @@ object Content {
    *
    * @return A content parser.
    */
-  def parse[T](codec: Codec { type C = T }, schema: Schema { type S = T }): Parser = {
+  def parser[T](codec: Codec { type C = T }, schema: Schema { type S = T }): Parser = {
     (str: String) => {
       codec
         .decode(str)
@@ -87,6 +89,19 @@ object Content {
           case _ => None
         }
     }
+  }
+
+  /**
+   * Return content parser from codec and schema strings.
+   *
+   * @param codec  The codec string to decode content with.
+   * @param schema The schema string to validate content with.
+   *
+   * @return A content parser.
+   */
+  def parserFromComponents(codec: String, schema: String): Option[Parser] = {
+    Codec.fromShortString(codec)
+      .flatMap { case c => Schema.fromShortString(schema, c).map { case s => parser[c.C](c, s) } }
   }
 
   /**
@@ -99,16 +114,17 @@ object Content {
    */
   def fromShortString(str: String, separator: String = "|"): Option[Content] = {
     str.split(Pattern.quote(separator)) match {
-      case Array(c, s, v) =>
-        Codec.fromShortString(c)
-          .flatMap {
-            case codec =>
-              Schema.fromShortString(s, codec).flatMap { case schema => Content.parse[codec.C](codec, schema)(v) }
-          }
+      case Array(c, s, v) => parserFromComponents(c, s).flatMap { case f => f(v) }
       case _ => None
     }
   }
 
+  /**
+   * Return string representation of a content.
+   *
+   * @param separator   The separator to use between various fields.
+   * @param descriptive Indicator if descriptive string is required or not.
+   */
   def toString(separator: String = "|", descriptive: Boolean = false): (Content) => TraversableOnce[String] = {
     (t: Content) => if (descriptive) { Some(t.toString) } else { Some(t.toShortString(separator)) }
   }
@@ -129,5 +145,34 @@ trait Contents extends Persist[Content] {
    * @return A `U[Content]` which is this object's data.
    */
   def saveAsText(file: String, writer: TextWriter = Content.toString())(implicit ctx: C): U[Content]
+}
+
+/** Base trait that represents the output of uniqueByPosition. */
+trait IndexedContents[P <: Position] extends Persist[(P, Content)] {
+  /**
+   * Persist to disk.
+   *
+   * @param file   Name of the output file.
+   * @param writer Writer that converts `IndexedContent` to string.
+   *
+   * @return A `U[(P, Content)]` which is this object's data.
+   */
+  def saveAsText(file: String, writer: TextWriter = IndexedContent.toString())(implicit ctx: C): U[(P, Content)]
+}
+
+/** Object for `IndexedContent` functions. */
+object IndexedContent {
+  /**
+   * Return string representation of an indexed content.
+   *
+   * @param separator   The separator to use between various fields.
+   * @param descriptive Indicator if descriptive string is required or not.
+   */
+  def toString[P <: Position](separator: String = "|",
+    descriptive: Boolean = false): ((P, Content)) => TraversableOnce[String] = {
+    (t: (P, Content)) => Some(
+      if (descriptive) t.toString else t._1.toShortString(separator) + separator + t._2.toShortString
+    )
+  }
 }
 

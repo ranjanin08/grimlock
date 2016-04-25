@@ -123,20 +123,22 @@ class TestPosition1D extends TestGrimlock {
     a [UnsupportedOperationException] shouldBe thrownBy { pos.remove(Fifth) }
   }
 
+  def merge(i: Value, d: Value): Valueable = i.toShortString + "|" + d.toShortString
+
   it should "melt" in {
-    pos.melt(First, First, "|") shouldBe Position0D()
+    pos.melt(First, First, merge) shouldBe Position0D()
   }
 
   it should "throw an exception for an invalid melt dimension" in {
-    a [IndexOutOfBoundsException] shouldBe thrownBy { pos.melt(First, Second, "|") }
-    a [IndexOutOfBoundsException] shouldBe thrownBy { pos.melt(First, Third, "|") }
-    a [IndexOutOfBoundsException] shouldBe thrownBy { pos.melt(First, Fourth, "|") }
-    a [IndexOutOfBoundsException] shouldBe thrownBy { pos.melt(First, Fifth, "|") }
+    a [IndexOutOfBoundsException] shouldBe thrownBy { pos.melt(First, Second, merge) }
+    a [IndexOutOfBoundsException] shouldBe thrownBy { pos.melt(First, Third, merge) }
+    a [IndexOutOfBoundsException] shouldBe thrownBy { pos.melt(First, Fourth, merge) }
+    a [IndexOutOfBoundsException] shouldBe thrownBy { pos.melt(First, Fifth, merge) }
 
-    a [IndexOutOfBoundsException] shouldBe thrownBy { pos.melt(Second, First, "|") }
-    a [IndexOutOfBoundsException] shouldBe thrownBy { pos.melt(Third, First, "|") }
-    a [IndexOutOfBoundsException] shouldBe thrownBy { pos.melt(Fourth, First, "|") }
-    a [IndexOutOfBoundsException] shouldBe thrownBy { pos.melt(Fifth, First, "|") }
+    a [IndexOutOfBoundsException] shouldBe thrownBy { pos.melt(Second, First, merge) }
+    a [IndexOutOfBoundsException] shouldBe thrownBy { pos.melt(Third, First, merge) }
+    a [IndexOutOfBoundsException] shouldBe thrownBy { pos.melt(Fourth, First, merge) }
+    a [IndexOutOfBoundsException] shouldBe thrownBy { pos.melt(Fifth, First, merge) }
   }
 
   it should "prepend" in {
@@ -225,29 +227,31 @@ class TestPosition2D extends TestGrimlock {
     a [UnsupportedOperationException] shouldBe thrownBy { pos.remove(Fifth) }
   }
 
+  def merge(i: Value, d: Value): Valueable = i.toShortString + "|" + d.toShortString
+
   it should "melt" in {
-    pos.melt(First, First, "|") shouldBe Position1D(123)
-    pos.melt(First, Second, "|") shouldBe Position1D("123|foo")
-    pos.melt(Second, First, "|") shouldBe Position1D("foo|123")
-    pos.melt(Second, Second, "|") shouldBe Position1D("foo")
+    pos.melt(First, First, merge) shouldBe Position1D(123)
+    pos.melt(First, Second, merge) shouldBe Position1D("123|foo")
+    pos.melt(Second, First, merge) shouldBe Position1D("foo|123")
+    pos.melt(Second, Second, merge) shouldBe Position1D("foo")
   }
 
   it should "throw an exception for an invalid melt dimension" in {
-    a [IndexOutOfBoundsException] shouldBe thrownBy { pos.melt(First, Third, "|") }
-    a [IndexOutOfBoundsException] shouldBe thrownBy { pos.melt(First, Fourth, "|") }
-    a [IndexOutOfBoundsException] shouldBe thrownBy { pos.melt(First, Fifth, "|") }
+    a [IndexOutOfBoundsException] shouldBe thrownBy { pos.melt(First, Third, merge) }
+    a [IndexOutOfBoundsException] shouldBe thrownBy { pos.melt(First, Fourth, merge) }
+    a [IndexOutOfBoundsException] shouldBe thrownBy { pos.melt(First, Fifth, merge) }
 
-    a [IndexOutOfBoundsException] shouldBe thrownBy { pos.melt(Third, First, "|") }
-    a [IndexOutOfBoundsException] shouldBe thrownBy { pos.melt(Fourth, First, "|") }
-    a [IndexOutOfBoundsException] shouldBe thrownBy { pos.melt(Fifth, First, "|") }
+    a [IndexOutOfBoundsException] shouldBe thrownBy { pos.melt(Third, First, merge) }
+    a [IndexOutOfBoundsException] shouldBe thrownBy { pos.melt(Fourth, First, merge) }
+    a [IndexOutOfBoundsException] shouldBe thrownBy { pos.melt(Fifth, First, merge) }
 
-    a [IndexOutOfBoundsException] shouldBe thrownBy { pos.melt(Second, Third, "|") }
-    a [IndexOutOfBoundsException] shouldBe thrownBy { pos.melt(Second, Fourth, "|") }
-    a [IndexOutOfBoundsException] shouldBe thrownBy { pos.melt(Second, Fifth, "|") }
+    a [IndexOutOfBoundsException] shouldBe thrownBy { pos.melt(Second, Third, merge) }
+    a [IndexOutOfBoundsException] shouldBe thrownBy { pos.melt(Second, Fourth, merge) }
+    a [IndexOutOfBoundsException] shouldBe thrownBy { pos.melt(Second, Fifth, merge) }
 
-    a [IndexOutOfBoundsException] shouldBe thrownBy { pos.melt(Third, Second, "|") }
-    a [IndexOutOfBoundsException] shouldBe thrownBy { pos.melt(Fourth, Second, "|") }
-    a [IndexOutOfBoundsException] shouldBe thrownBy { pos.melt(Fifth, Second, "|") }
+    a [IndexOutOfBoundsException] shouldBe thrownBy { pos.melt(Third, Second, merge) }
+    a [IndexOutOfBoundsException] shouldBe thrownBy { pos.melt(Fourth, Second, merge) }
+    a [IndexOutOfBoundsException] shouldBe thrownBy { pos.melt(Fifth, Second, merge) }
   }
 
   it should "prepend" in {
@@ -343,38 +347,40 @@ class TestPosition3D extends TestGrimlock {
     a [UnsupportedOperationException] shouldBe thrownBy { pos.remove(Fifth) }
   }
 
+  def merge(i: Value, d: Value): Valueable = i.toShortString + "|" + d.toShortString
+
   it should "melt" in {
-    pos.melt(First, First, "|") shouldBe Position2D(123, "bar")
-    pos.melt(First, Second, "|") shouldBe Position2D("123|foo", "bar")
-    pos.melt(First, Third, "|") shouldBe Position2D(123, "bar|foo")
+    pos.melt(First, First, merge) shouldBe Position2D(123, "bar")
+    pos.melt(First, Second, merge) shouldBe Position2D("123|foo", "bar")
+    pos.melt(First, Third, merge) shouldBe Position2D(123, "bar|foo")
 
-    pos.melt(Second, First, "|") shouldBe Position2D("foo|123", "bar")
-    pos.melt(Second, Second, "|") shouldBe Position2D("foo", "bar")
-    pos.melt(Second, Third, "|") shouldBe Position2D("foo", "bar|123")
+    pos.melt(Second, First, merge) shouldBe Position2D("foo|123", "bar")
+    pos.melt(Second, Second, merge) shouldBe Position2D("foo", "bar")
+    pos.melt(Second, Third, merge) shouldBe Position2D("foo", "bar|123")
 
-    pos.melt(Third, First, "|") shouldBe Position2D("foo|bar", 123)
-    pos.melt(Third, Second, "|") shouldBe Position2D("foo", "123|bar")
-    pos.melt(Third, Third, "|") shouldBe Position2D("foo", 123)
+    pos.melt(Third, First, merge) shouldBe Position2D("foo|bar", 123)
+    pos.melt(Third, Second, merge) shouldBe Position2D("foo", "123|bar")
+    pos.melt(Third, Third, merge) shouldBe Position2D("foo", 123)
   }
 
   it should "throw an exception for an invalid melt dimension" in {
-    a [IndexOutOfBoundsException] shouldBe thrownBy { pos.melt(First, Fourth, "|") }
-    a [IndexOutOfBoundsException] shouldBe thrownBy { pos.melt(First, Fifth, "|") }
+    a [IndexOutOfBoundsException] shouldBe thrownBy { pos.melt(First, Fourth, merge) }
+    a [IndexOutOfBoundsException] shouldBe thrownBy { pos.melt(First, Fifth, merge) }
 
-    a [IndexOutOfBoundsException] shouldBe thrownBy { pos.melt(Fourth, First, "|") }
-    a [IndexOutOfBoundsException] shouldBe thrownBy { pos.melt(Fifth, First, "|") }
+    a [IndexOutOfBoundsException] shouldBe thrownBy { pos.melt(Fourth, First, merge) }
+    a [IndexOutOfBoundsException] shouldBe thrownBy { pos.melt(Fifth, First, merge) }
 
-    a [IndexOutOfBoundsException] shouldBe thrownBy { pos.melt(Second, Fourth, "|") }
-    a [IndexOutOfBoundsException] shouldBe thrownBy { pos.melt(Second, Fifth, "|") }
+    a [IndexOutOfBoundsException] shouldBe thrownBy { pos.melt(Second, Fourth, merge) }
+    a [IndexOutOfBoundsException] shouldBe thrownBy { pos.melt(Second, Fifth, merge) }
 
-    a [IndexOutOfBoundsException] shouldBe thrownBy { pos.melt(Fourth, Second, "|") }
-    a [IndexOutOfBoundsException] shouldBe thrownBy { pos.melt(Fifth, Second, "|") }
+    a [IndexOutOfBoundsException] shouldBe thrownBy { pos.melt(Fourth, Second, merge) }
+    a [IndexOutOfBoundsException] shouldBe thrownBy { pos.melt(Fifth, Second, merge) }
 
-    a [IndexOutOfBoundsException] shouldBe thrownBy { pos.melt(Third, Fourth, "|") }
-    a [IndexOutOfBoundsException] shouldBe thrownBy { pos.melt(Third, Fifth, "|") }
+    a [IndexOutOfBoundsException] shouldBe thrownBy { pos.melt(Third, Fourth, merge) }
+    a [IndexOutOfBoundsException] shouldBe thrownBy { pos.melt(Third, Fifth, merge) }
 
-    a [IndexOutOfBoundsException] shouldBe thrownBy { pos.melt(Fourth, Third, "|") }
-    a [IndexOutOfBoundsException] shouldBe thrownBy { pos.melt(Fifth, Third, "|") }
+    a [IndexOutOfBoundsException] shouldBe thrownBy { pos.melt(Fourth, Third, merge) }
+    a [IndexOutOfBoundsException] shouldBe thrownBy { pos.melt(Fifth, Third, merge) }
   }
 
   it should "prepend" in {
@@ -494,40 +500,42 @@ class TestPosition4D extends TestGrimlock {
     a [UnsupportedOperationException] shouldBe thrownBy { pos.remove(Fifth) }
   }
 
+  def merge(i: Value, d: Value): Valueable = i.toShortString + "|" + d.toShortString
+
   it should "melt" in {
-    pos.melt(First, First, "|") shouldBe Position3D(123, "bar", 456)
-    pos.melt(First, Second, "|") shouldBe Position3D("123|foo", "bar", 456)
-    pos.melt(First, Third, "|") shouldBe Position3D(123, "bar|foo", 456)
-    pos.melt(First, Fourth, "|") shouldBe Position3D(123, "bar", "456|foo")
+    pos.melt(First, First, merge) shouldBe Position3D(123, "bar", 456)
+    pos.melt(First, Second, merge) shouldBe Position3D("123|foo", "bar", 456)
+    pos.melt(First, Third, merge) shouldBe Position3D(123, "bar|foo", 456)
+    pos.melt(First, Fourth, merge) shouldBe Position3D(123, "bar", "456|foo")
 
-    pos.melt(Second, First, "|") shouldBe Position3D("foo|123", "bar", 456)
-    pos.melt(Second, Second, "|") shouldBe Position3D("foo", "bar", 456)
-    pos.melt(Second, Third, "|") shouldBe Position3D("foo", "bar|123", 456)
-    pos.melt(Second, Fourth, "|") shouldBe Position3D("foo", "bar", "456|123")
+    pos.melt(Second, First, merge) shouldBe Position3D("foo|123", "bar", 456)
+    pos.melt(Second, Second, merge) shouldBe Position3D("foo", "bar", 456)
+    pos.melt(Second, Third, merge) shouldBe Position3D("foo", "bar|123", 456)
+    pos.melt(Second, Fourth, merge) shouldBe Position3D("foo", "bar", "456|123")
 
-    pos.melt(Third, First, "|") shouldBe Position3D("foo|bar", 123, 456)
-    pos.melt(Third, Second, "|") shouldBe Position3D("foo", "123|bar", 456)
-    pos.melt(Third, Third, "|") shouldBe Position3D("foo", 123, 456)
-    pos.melt(Third, Fourth, "|") shouldBe Position3D("foo", 123, "456|bar")
+    pos.melt(Third, First, merge) shouldBe Position3D("foo|bar", 123, 456)
+    pos.melt(Third, Second, merge) shouldBe Position3D("foo", "123|bar", 456)
+    pos.melt(Third, Third, merge) shouldBe Position3D("foo", 123, 456)
+    pos.melt(Third, Fourth, merge) shouldBe Position3D("foo", 123, "456|bar")
 
-    pos.melt(Fourth, First, "|") shouldBe Position3D("foo|456", 123, "bar")
-    pos.melt(Fourth, Second, "|") shouldBe Position3D("foo", "123|456", "bar")
-    pos.melt(Fourth, Third, "|") shouldBe Position3D("foo", 123, "bar|456")
-    pos.melt(Fourth, Fourth, "|") shouldBe Position3D("foo", 123, "bar")
+    pos.melt(Fourth, First, merge) shouldBe Position3D("foo|456", 123, "bar")
+    pos.melt(Fourth, Second, merge) shouldBe Position3D("foo", "123|456", "bar")
+    pos.melt(Fourth, Third, merge) shouldBe Position3D("foo", 123, "bar|456")
+    pos.melt(Fourth, Fourth, merge) shouldBe Position3D("foo", 123, "bar")
   }
 
   it should "throw an exception for an invalid melt dimension" in {
-    a [IndexOutOfBoundsException] shouldBe thrownBy { pos.melt(First, Fifth, "|") }
-    a [IndexOutOfBoundsException] shouldBe thrownBy { pos.melt(Fifth, First, "|") }
+    a [IndexOutOfBoundsException] shouldBe thrownBy { pos.melt(First, Fifth, merge) }
+    a [IndexOutOfBoundsException] shouldBe thrownBy { pos.melt(Fifth, First, merge) }
 
-    a [IndexOutOfBoundsException] shouldBe thrownBy { pos.melt(Second, Fifth, "|") }
-    a [IndexOutOfBoundsException] shouldBe thrownBy { pos.melt(Fifth, Second, "|") }
+    a [IndexOutOfBoundsException] shouldBe thrownBy { pos.melt(Second, Fifth, merge) }
+    a [IndexOutOfBoundsException] shouldBe thrownBy { pos.melt(Fifth, Second, merge) }
 
-    a [IndexOutOfBoundsException] shouldBe thrownBy { pos.melt(Third, Fifth, "|") }
-    a [IndexOutOfBoundsException] shouldBe thrownBy { pos.melt(Fifth, Third, "|") }
+    a [IndexOutOfBoundsException] shouldBe thrownBy { pos.melt(Third, Fifth, merge) }
+    a [IndexOutOfBoundsException] shouldBe thrownBy { pos.melt(Fifth, Third, merge) }
 
-    a [IndexOutOfBoundsException] shouldBe thrownBy { pos.melt(Fourth, Fifth, "|") }
-    a [IndexOutOfBoundsException] shouldBe thrownBy { pos.melt(Fifth, Fourth, "|") }
+    a [IndexOutOfBoundsException] shouldBe thrownBy { pos.melt(Fourth, Fifth, merge) }
+    a [IndexOutOfBoundsException] shouldBe thrownBy { pos.melt(Fifth, Fourth, merge) }
   }
 
   it should "prepend" in {
@@ -733,36 +741,38 @@ class TestPosition5D extends TestGrimlock {
     pos.remove(Fifth) shouldBe Position4D("foo", 123, "bar", 456)
   }
 
+  def merge(i: Value, d: Value): Valueable = i.toShortString + "|" + d.toShortString
+
   it should "melt" in {
-    pos.melt(First, First, "|") shouldBe Position4D(123, "bar", 456, "baz")
-    pos.melt(First, Second, "|") shouldBe Position4D("123|foo", "bar", 456, "baz")
-    pos.melt(First, Third, "|") shouldBe Position4D(123, "bar|foo", 456, "baz")
-    pos.melt(First, Fourth, "|") shouldBe Position4D(123, "bar", "456|foo", "baz")
-    pos.melt(First, Fifth, "|") shouldBe Position4D(123, "bar", 456, "baz|foo")
+    pos.melt(First, First, merge) shouldBe Position4D(123, "bar", 456, "baz")
+    pos.melt(First, Second, merge) shouldBe Position4D("123|foo", "bar", 456, "baz")
+    pos.melt(First, Third, merge) shouldBe Position4D(123, "bar|foo", 456, "baz")
+    pos.melt(First, Fourth, merge) shouldBe Position4D(123, "bar", "456|foo", "baz")
+    pos.melt(First, Fifth, merge) shouldBe Position4D(123, "bar", 456, "baz|foo")
 
-    pos.melt(Second, First, "|") shouldBe Position4D("foo|123", "bar", 456, "baz")
-    pos.melt(Second, Second, "|") shouldBe Position4D("foo", "bar", 456, "baz")
-    pos.melt(Second, Third, "|") shouldBe Position4D("foo", "bar|123", 456, "baz")
-    pos.melt(Second, Fourth, "|") shouldBe Position4D("foo", "bar", "456|123", "baz")
-    pos.melt(Second, Fifth, "|") shouldBe Position4D("foo", "bar", 456, "baz|123")
+    pos.melt(Second, First, merge) shouldBe Position4D("foo|123", "bar", 456, "baz")
+    pos.melt(Second, Second, merge) shouldBe Position4D("foo", "bar", 456, "baz")
+    pos.melt(Second, Third, merge) shouldBe Position4D("foo", "bar|123", 456, "baz")
+    pos.melt(Second, Fourth, merge) shouldBe Position4D("foo", "bar", "456|123", "baz")
+    pos.melt(Second, Fifth, merge) shouldBe Position4D("foo", "bar", 456, "baz|123")
 
-    pos.melt(Third, First, "|") shouldBe Position4D("foo|bar", 123, 456, "baz")
-    pos.melt(Third, Second, "|") shouldBe Position4D("foo", "123|bar", 456, "baz")
-    pos.melt(Third, Third, "|") shouldBe Position4D("foo", 123, 456, "baz")
-    pos.melt(Third, Fourth, "|") shouldBe Position4D("foo", 123, "456|bar", "baz")
-    pos.melt(Third, Fifth, "|") shouldBe Position4D("foo", 123, 456, "baz|bar")
+    pos.melt(Third, First, merge) shouldBe Position4D("foo|bar", 123, 456, "baz")
+    pos.melt(Third, Second, merge) shouldBe Position4D("foo", "123|bar", 456, "baz")
+    pos.melt(Third, Third, merge) shouldBe Position4D("foo", 123, 456, "baz")
+    pos.melt(Third, Fourth, merge) shouldBe Position4D("foo", 123, "456|bar", "baz")
+    pos.melt(Third, Fifth, merge) shouldBe Position4D("foo", 123, 456, "baz|bar")
 
-    pos.melt(Fourth, First, "|") shouldBe Position4D("foo|456", 123, "bar", "baz")
-    pos.melt(Fourth, Second, "|") shouldBe Position4D("foo", "123|456", "bar", "baz")
-    pos.melt(Fourth, Third, "|") shouldBe Position4D("foo", 123, "bar|456", "baz")
-    pos.melt(Fourth, Fourth, "|") shouldBe Position4D("foo", 123, "bar", "baz")
-    pos.melt(Fourth, Fifth, "|") shouldBe Position4D("foo", 123, "bar", "baz|456")
+    pos.melt(Fourth, First, merge) shouldBe Position4D("foo|456", 123, "bar", "baz")
+    pos.melt(Fourth, Second, merge) shouldBe Position4D("foo", "123|456", "bar", "baz")
+    pos.melt(Fourth, Third, merge) shouldBe Position4D("foo", 123, "bar|456", "baz")
+    pos.melt(Fourth, Fourth, merge) shouldBe Position4D("foo", 123, "bar", "baz")
+    pos.melt(Fourth, Fifth, merge) shouldBe Position4D("foo", 123, "bar", "baz|456")
 
-    pos.melt(Fifth, First, "|") shouldBe Position4D("foo|baz", 123, "bar", 456)
-    pos.melt(Fifth, Second, "|") shouldBe Position4D("foo", "123|baz", "bar", 456)
-    pos.melt(Fifth, Third, "|") shouldBe Position4D("foo", 123, "bar|baz", 456)
-    pos.melt(Fifth, Fourth, "|") shouldBe Position4D("foo", 123, "bar", "456|baz")
-    pos.melt(Fifth, Fifth, "|") shouldBe Position4D("foo", 123, "bar", 456)
+    pos.melt(Fifth, First, merge) shouldBe Position4D("foo|baz", 123, "bar", 456)
+    pos.melt(Fifth, Second, merge) shouldBe Position4D("foo", "123|baz", "bar", 456)
+    pos.melt(Fifth, Third, merge) shouldBe Position4D("foo", 123, "bar|baz", 456)
+    pos.melt(Fifth, Fourth, merge) shouldBe Position4D("foo", 123, "bar", "456|baz")
+    pos.melt(Fifth, Fifth, merge) shouldBe Position4D("foo", 123, "bar", 456)
   }
 }
 

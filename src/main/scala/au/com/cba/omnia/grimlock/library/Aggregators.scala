@@ -164,6 +164,7 @@ case class Mean[P <: Position, S <: Position with ExpandablePosition](filter: Bo
 /**
  * Standard deviation of a distribution.
  *
+ * @param biased Indicates if the biased estimate should be returned.
  * @param filter Indicates if only numerical types should be aggregated. Is set then all categorical values are
  *               filtered prior to aggregation.
  * @param strict Indicates if strict data handling is required. If so then any non-numeric value fails the reduction.
@@ -171,9 +172,12 @@ case class Mean[P <: Position, S <: Position with ExpandablePosition](filter: Bo
  * @param nan    Indicator if 'NaN' string should be output if the reduction failed (for example due to non-numeric
  *               data).
  */
-case class StandardDeviation[P <: Position, S <: Position with ExpandablePosition](filter: Boolean = true,
-  strict: Boolean = true, nan: Boolean = false) extends Aggregator[P, S, S] with MomentsAggregator[P, S] {
-  protected def asDouble(t: T): Double = t.stddev
+case class StandardDeviation[P <: Position, S <: Position with ExpandablePosition](biased: Boolean = false,
+  filter: Boolean = true, strict: Boolean = true, nan: Boolean = false) extends Aggregator[P, S, S]
+    with MomentsAggregator[P, S] {
+  protected def asDouble(t: T): Double = {
+    if (biased) t.stddev else if (t.count > 1) t.stddev * math.sqrt(t.count / (t.count - 1)) else Double.NaN
+  }
 }
 
 /**
@@ -194,6 +198,7 @@ case class Skewness[P <: Position, S <: Position with ExpandablePosition](filter
 /**
  * Kurtosis of a distribution.
  *
+ * @param excess Indicates if the kurtosis or excess kurtosis should be returned.
  * @param filter Indicates if only numerical types should be aggregated. Is set then all categorical values are
  *               filtered prior to aggregation.
  * @param strict Indicates if strict data handling is required. If so then any non-numeric value fails the reduction.
@@ -201,9 +206,10 @@ case class Skewness[P <: Position, S <: Position with ExpandablePosition](filter
  * @param nan    Indicator if 'NaN' string should be output if the reduction failed (for example due to non-numeric
  *               data).
  */
-case class Kurtosis[P <: Position, S <: Position with ExpandablePosition](filter: Boolean = true,
-  strict: Boolean = true, nan: Boolean = false) extends Aggregator[P, S, S] with MomentsAggregator[P, S] {
-  protected def asDouble(t: T): Double = t.kurtosis
+case class Kurtosis[P <: Position, S <: Position with ExpandablePosition](excess: Boolean = false,
+  filter: Boolean = true, strict: Boolean = true, nan: Boolean = false) extends Aggregator[P, S, S]
+    with MomentsAggregator[P, S] {
+  protected def asDouble(t: T): Double = if (excess) t.kurtosis else t.kurtosis + 3
 }
 
 /** Base trait for aggregator that return a `Double` value. */

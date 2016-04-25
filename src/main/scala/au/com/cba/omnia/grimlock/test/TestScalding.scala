@@ -36,6 +36,7 @@ import au.com.cba.omnia.grimlock.library.window._
 
 import au.com.cba.omnia.grimlock.scalding.environment._
 import au.com.cba.omnia.grimlock.scalding.content.Contents._
+import au.com.cba.omnia.grimlock.scalding.content.IndexedContents._
 import au.com.cba.omnia.grimlock.scalding.Matrix._
 import au.com.cba.omnia.grimlock.scalding.Matrixable._
 import au.com.cba.omnia.grimlock.scalding.partition.Partitions._
@@ -251,8 +252,8 @@ class TestScalding6(args : Args) extends Job(args) {
     .slice(Over(Second), List("fid:A", "fid:B", "fid:C", "fid:D", "fid:E", "fid:F", "fid:G"), true)
     .squash(Third, PreservingMaxPosition[Position3D]())
     .summarise(Along(First), aggregators)
-    .whichByPositions(Over(Second), List(("count", (c: Cell[Position2D]) => c.content.value leq 2),
-                                         ("min", (c: Cell[Position2D]) => c.content.value equ 107)))
+    .whichByPosition(Over(Second), List(("count", (c: Cell[Position2D]) => c.content.value leq 2),
+                                        ("min", (c: Cell[Position2D]) => c.content.value equ 107)))
     .saveAsText(s"./tmp.${tool}/whc5.out", Position.toString(descriptive = true))
     .toUnit
 }
@@ -294,8 +295,7 @@ class TestScalding8(args : Args) extends Job(args) {
 
   loadText(path + "/mutualInputfile.txt", Cell.parse2D())
     .data
-    .uniqueByPositions(Over(Second))
-    .map { case (p, c) => Cell(p, c) }
+    .uniqueByPosition(Over(Second))
     .saveAsText(s"./tmp.${tool}/uni2.out")
     .toUnit
 
@@ -511,7 +511,7 @@ class TestScalding14(args : Args) extends Job(args) {
     .slice(Over(First), List("iid:0221707", "iid:0364354"), true)
 
   data
-    .change(Over(Second), "fid:A", Content.parse(LongCodec, NominalSchema[Long]()))
+    .change(Over(Second), "fid:A", Content.parser(LongCodec, NominalSchema[Long]()))
     .saveAsText(s"./tmp.${tool}/chg1.out", Cell.toString(descriptive = true))
     .toUnit
 }
@@ -528,7 +528,7 @@ class TestScalding15(args : Args) extends Job(args) {
     .slice(Over(Second), List("fid:A", "fid:C", "fid:E", "fid:G"), true)
     .slice(Over(First), List("iid:0221707", "iid:0364354"), true)
     .summarise(Along(Third), Sum[Position3D, Position2D]().andThenRelocate(_.position.append("sum").toOption))
-    .melt(Third, Second)
+    .melt(Third, Second, Value.concatenate("."))
     .saveAsCSV(Over(First), s"./tmp.${tool}/rsh1.out")
     .toUnit
 
@@ -647,7 +647,7 @@ class TestScalding18(args : Args) extends Job(args) {
     .summarise(Along(First), aggregators)
 
   val rem = stats
-    .whichByPositions(Over(Second), ("count", (c: Cell[Position2D]) => c.content.value leq 2))
+    .whichByPosition(Over(Second), ("count", (c: Cell[Position2D]) => c.content.value leq 2))
     .names(Over(First))
 
   data
@@ -837,9 +837,9 @@ class TestScalding24(args: Args) extends Job(args) {
 
   // see http://www.mathsisfun.com/data/correlation.html for data
 
-  val schema = List(("day", Content.parse(StringCodec, NominalSchema[String]())),
-                    ("temperature", Content.parse(DoubleCodec, ContinuousSchema[Double]())),
-                    ("sales", Content.parse(LongCodec, DiscreteSchema[Long]())))
+  val schema = List(("day", Content.parser(StringCodec, NominalSchema[String]())),
+                    ("temperature", Content.parser(DoubleCodec, ContinuousSchema[Double]())),
+                    ("sales", Content.parser(LongCodec, DiscreteSchema[Long]())))
   val (data, _) = loadText(path + "/somePairwise2.txt", Cell.parseTable(schema, separator = "|"))
 
   data
@@ -847,10 +847,10 @@ class TestScalding24(args: Args) extends Job(args) {
     .saveAsText(s"./tmp.${tool}/pws2.out")
     .toUnit
 
-  val schema2 = List(("day", Content.parse(StringCodec, NominalSchema[String]())),
-                     ("temperature", Content.parse(DoubleCodec, ContinuousSchema[Double]())),
-                     ("sales", Content.parse(LongCodec, DiscreteSchema[Long]())),
-                     ("neg.sales", Content.parse(LongCodec, DiscreteSchema[Long]())))
+  val schema2 = List(("day", Content.parser(StringCodec, NominalSchema[String]())),
+                     ("temperature", Content.parser(DoubleCodec, ContinuousSchema[Double]())),
+                     ("sales", Content.parser(LongCodec, DiscreteSchema[Long]())),
+                     ("neg.sales", Content.parser(LongCodec, DiscreteSchema[Long]())))
   val (data2, _) = loadText(path + "/somePairwise3.txt", Cell.parseTable(schema2, separator = "|"))
 
   data2

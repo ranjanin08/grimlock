@@ -638,8 +638,8 @@ trait Matrix[P <: Position with CompactablePosition] extends FwMatrix[P] with Pe
 
   def toText(writer: TextWriter): U[String] = data.flatMap(writer(_))
 
-  def toVector(separator: String): U[Cell[Position1D]] = {
-    data.map { case Cell(p, c) => Cell(Position1D(p.coordinates.map(_.toShortString).mkString(separator)), c) }
+  def toVector(melt: (List[Value]) => Valueable): U[Cell[Position1D]] = {
+    data.map { case Cell(p, c) => Cell(Position1D(melt(p.coordinates)), c) }
   }
 
   def transform[Q <: Position](transformers: Transformable[P, Q])(implicit ev: PosIncDep[P, Q]): U[Cell[Q]] = {
@@ -673,7 +673,7 @@ trait Matrix[P <: Position with CompactablePosition] extends FwMatrix[P] with Pe
       .tunedDistinct(tuner.parameters)(ordering)
   }
 
-  def uniqueByPositions[T <: Tuner : UniqueTuners](slice: Slice[P], tuner: T = Default())(
+  def uniqueByPosition[T <: Tuner : UniqueTuners](slice: Slice[P], tuner: T = Default())(
     implicit ev1: slice.S =:!= Position0D): U[(slice.S, Content)] = {
     val ordering = new Ordering[Cell[slice.S]] {
       def compare(l: Cell[slice.S], r: Cell[slice.S]) = l.toString().compare(r.toString)
@@ -690,7 +690,7 @@ trait Matrix[P <: Position with CompactablePosition] extends FwMatrix[P] with Pe
     data.collect { case c if predicate(c) => c.position }
   }
 
-  def whichByPositions[I, T <: Tuner : WhichTuners](slice: Slice[P], predicates: I, tuner: T = InMemory())(
+  def whichByPosition[I, T <: Tuner : WhichTuners](slice: Slice[P], predicates: I, tuner: T = InMemory())(
     implicit ev1: FwPredicateable[I, P, slice.S, TypedPipe], ev2: ClassTag[slice.S], ev3: ClassTag[P]): U[P] = {
     val pp = ev1.convert(predicates)
       .map { case (pos, pred) => pos.map { case p => (p, pred) } }
@@ -789,9 +789,9 @@ trait ReduceableMatrix[P <: Position with CompactablePosition with ReduceablePos
 
   import ScaldingImplicits._
 
-  def melt(dim: Dimension, into: Dimension, separator: String = ".")(implicit ev1: PosDimDep[P, dim.D],
+  def melt(dim: Dimension, into: Dimension, merge: (Value, Value) => Valueable)(implicit ev1: PosDimDep[P, dim.D],
     ev2: PosDimDep[P, into.D], ne: dim.D =:!= into.D): U[Cell[P#L]] = {
-    data.map { case Cell(p, c) => Cell(p.melt(dim, into, separator), c) }
+    data.map { case Cell(p, c) => Cell(p.melt(dim, into, merge), c) }
   }
 
   type SquashTuners[T] = TP2[T]

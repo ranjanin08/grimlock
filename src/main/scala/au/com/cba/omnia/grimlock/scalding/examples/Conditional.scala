@@ -60,7 +60,7 @@ class Conditional(args: Args) extends Job(args) {
     .reshape(Second, "hair", cast)
     .reshape(Second, "eye", cast)
     .reshape(Second, "gender", cast)
-    .melt(Second, First)
+    .melt(Second, First, Value.concatenate("."))
     .squash(First, PreservingMaxPosition[Position4D]())
 
   // Define an extractor for getting data out of the gender count (gcount) map.

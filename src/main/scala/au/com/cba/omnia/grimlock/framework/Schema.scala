@@ -84,25 +84,14 @@ object Schema {
 private[metadata] trait SchemaParameters {
   protected def parse(codec: Codec, value: String): Option[codec.C] = codec.decode(value).map(_.value)
 
-  protected def parseRange(codec: Codec, range: String): Option[(codec.C, codec.C)] = {
+  protected def splitRange(range: String): Option[(String, String)] = {
     range.split(":") match {
-      case Array(lower, upper) =>
-        (parse(codec, lower), parse(codec, upper)) match {
-          case (Some(low), Some(upp)) => Some((low, upp))
-          case _ => None
-        }
+      case Array(lower, upper) => Some((lower, upper))
       case _ => None
     }
   }
 
-  protected def parseSet(codec: Codec, set: String): Option[Set[codec.C]] = {
-    val values = set.split("(?<!\\\\),").map(parse(codec, _))
-
-    values.exists(_.isEmpty) match {
-      case true => None
-      case false => Some(values.map(_.get).toSet)
-    }
-  }
+  protected def splitSet(set: String): Set[String] = set.split("(?<!\\\\),").toSet
 
   protected def writeRange[S](short: Boolean, range: Option[(S, S)], f: (S) => String): String = {
     range.map { case (lower, upper) => f(lower) + (if (short) { ":" } else { "," }) + f(upper) }.getOrElse("")
@@ -184,7 +173,7 @@ object ContinuousSchema extends SchemaParameters {
   /**
    * Parse a continuous schema from string.
    *
-   * @param str The string to parse
+   * @param str The string to parse.
    * @param cdc The codec to parse with.
    *
    * @return A `Some[ContinuousSchema]` if successful, `None` otherwise.
@@ -192,10 +181,27 @@ object ContinuousSchema extends SchemaParameters {
   def fromShortString(str: String, cdc: Codec): Option[ContinuousSchema[cdc.C]] = {
     (cdc.tag, cdc.numeric, str) match {
       case (Some(tag), Some(ev), Pattern(null)) => Some(ContinuousSchema()(tag, ev))
-      case (Some(tag), Some(ev), Pattern(range)) =>
-        parseRange(cdc, range).map { case (lower, upper) => ContinuousSchema(lower, upper)(tag, ev) }
+      case (_, _, Pattern(range)) => splitRange(range).flatMap { case (min, max) => fromComponents(min, max, cdc) }
       case _ => None
     }
+  }
+
+  /**
+   * Parse a continuous schema from components.
+   *
+   * @param min The minimum value string to parse.
+   * @param max The maximum value string to parse.
+   * @param cdc The codec to parse with.
+   *
+   * @return A `Some[ContinuousSchema]` if successful, `None` otherwise.
+   */
+  def fromComponents(min: String, max: String, cdc: Codec): Option[ContinuousSchema[cdc.C]] = {
+    for {
+      low <- parse(cdc, min)
+      upp <- parse(cdc, max)
+      tag <- cdc.tag
+      ev <- cdc.numeric
+    } yield ContinuousSchema(low, upp)(tag, ev)
   }
 }
 
@@ -246,7 +252,7 @@ object DiscreteSchema extends SchemaParameters {
   /**
    * Parse a discrete schema from string.
    *
-   * @param str The string to parse
+   * @param str The string to parse.
    * @param cdc The codec to parse with.
    *
    * @return A `Some[DiscreteSchema]` if successful, `None` otherwise.
@@ -254,14 +260,30 @@ object DiscreteSchema extends SchemaParameters {
   def fromShortString(str: String, cdc: Codec): Option[DiscreteSchema[cdc.C]] = {
     (cdc.tag, cdc.integral, str) match {
       case (Some(tag), Some(ev), Pattern(null, null)) => Some(DiscreteSchema()(tag, ev))
-      case (Some(tag), Some(ev), Pattern(range, step)) => {
-        (parseRange(cdc, range), parse(cdc, step)) match {
-          case (Some((lower, upper)), Some(step)) => Some(DiscreteSchema(lower, upper, step)(tag, ev))
-          case _ => None
-        }
-      }
+      case (_, _, Pattern(range, step)) =>
+        splitRange(range).flatMap { case (min, max) => fromComponents(min, max, step, cdc) }
       case _ => None
     }
+  }
+
+  /**
+   * Parse a discrete schema from components.
+   *
+   * @param min  The minimum value string to parse.
+   * @param max  The maximum value string to parse.
+   * @param step The step size string to parse.
+   * @param cdc  The codec to parse with.
+   *
+   * @return A `Some[DiscreteSchema]` if successful, `None` otherwise.
+   */
+  def fromComponents(min: String, max: String, step: String, cdc: Codec): Option[DiscreteSchema[cdc.C]] = {
+    for {
+      low <- parse(cdc, min)
+      upp <- parse(cdc, max)
+      stp <- parse(cdc, step)
+      tag <- cdc.tag
+      ev <- cdc.integral
+    } yield DiscreteSchema(low, upp, stp)(tag, ev)
   }
 }
 
@@ -299,7 +321,7 @@ object NominalSchema extends SchemaParameters {
   /**
    * Parse a nominal schema from string.
    *
-   * @param str The string to parse
+   * @param str The string to parse.
    * @param cdc The codec to parse with.
    *
    * @return A `Some[NominalSchema]` if successful, `None` otherwise.
@@ -307,8 +329,25 @@ object NominalSchema extends SchemaParameters {
   def fromShortString(str: String, cdc: Codec): Option[NominalSchema[cdc.C]] = {
     (cdc.tag, str) match {
       case (Some(tag), Pattern(null)) => Some(NominalSchema()(tag))
-      case (Some(tag), Pattern(domain)) => parseSet(cdc, domain).map(NominalSchema(_)(tag))
+      case (Some(tag), Pattern("")) => Some(NominalSchema()(tag))
+      case (_, Pattern(domain)) => fromComponents(splitSet(domain), cdc)
       case _ => None
+    }
+  }
+
+  /**
+   * Parse a nominal schema from string components.
+   *
+   * @param dom The domain value strings to parse.
+   * @param cdc The codec to parse with.
+   *
+   * @return A `Some[NominalSchema]` if successful, `None` otherwise.
+   */
+  def fromComponents(dom: Set[String], cdc: Codec): Option[NominalSchema[cdc.C]] = {
+    val values = dom.map(parse(cdc, _))
+
+    cdc.tag.collect {
+      case tag if !(values.isEmpty || values.exists(_.isEmpty)) => NominalSchema(values.map(_.get))(tag)
     }
   }
 }
@@ -333,15 +372,33 @@ object OrdinalSchema extends SchemaParameters {
   /**
    * Parse a ordinal schema from string.
    *
-   * @param str The string to parse
+   * @param str The string to parse.
    * @param cdc The codec to parse with.
    *
    * @return A `Some[OrdinalSchema]` if successful, `None` otherwise.
    */
   def fromShortString(str: String, cdc: Codec): Option[OrdinalSchema[cdc.C]] = {
     (cdc.tag, cdc.ordering, str) match {
-      case (Some(tag), Some(ord), Pattern(null)) => Some(OrdinalSchema()(tag, ord))
-      case (Some(tag), Some(ord), Pattern(domain)) => parseSet(cdc, domain).map(OrdinalSchema(_)(tag, ord))
+      case (Some(tag), Some(ev), Pattern(null)) => Some(OrdinalSchema()(tag, ev))
+      case (Some(tag), Some(ev), Pattern("")) => Some(OrdinalSchema()(tag, ev))
+      case (_, _, Pattern(domain)) => fromComponents(splitSet(domain), cdc)
+      case _ => None
+    }
+  }
+
+  /**
+   * Parse a ordinal schema from string components.
+   *
+   * @param dom The domain value strings to parse.
+   * @param cdc The codec to parse with.
+   *
+   * @return A `Some[OrdinalSchema]` if successful, `None` otherwise.
+   */
+  def fromComponents(dom: Set[String], cdc: Codec): Option[OrdinalSchema[cdc.C]] = {
+    val values = dom.map(parse(cdc, _))
+
+    (cdc.tag, cdc.ordering, values.isEmpty || values.exists(_.isEmpty)) match {
+      case (Some(tag), Some(ev), false) => Some(OrdinalSchema(values.map(_.get))(tag, ev))
       case _ => None
     }
   }
@@ -407,7 +464,7 @@ object DateSchema extends SchemaParameters {
   /**
    * Parse a date schema from string.
    *
-   * @param str The string to parse
+   * @param str The string to parse.
    * @param cdc The codec to parse with.
    *
    * @return A `Some[DateSchema]` if successful, `None` otherwise.
@@ -416,9 +473,44 @@ object DateSchema extends SchemaParameters {
     (cdc.tag, cdc.date, str) match {
       case (Some(tag), Some(ev), Pattern(null)) => Some(DateSchema()(tag, ev))
       case (Some(tag), Some(ev), Pattern("")) => Some(DateSchema()(tag, ev))
-      case (Some(tag), Some(ev), RangePattern(range)) =>
-        parseRange(cdc, range).map { case (lower, upper) => DateSchema(lower, upper)(tag, ev) }
-      case (Some(tag), Some(ev), Pattern(domain)) => parseSet(cdc, domain).map(DateSchema(_)(tag, ev))
+      case (_, _, RangePattern(range)) =>
+        splitRange(range).flatMap { case (lower, upper) => fromComponents(lower, upper, cdc) }
+      case (_, _, Pattern(domain)) => fromComponents(splitSet(domain), cdc)
+      case _ => None
+    }
+  }
+
+  /**
+   * Parse a date schema from components.
+   *
+   * @param min The minimum value string to parse.
+   * @param max The maximum value string to parse.
+   * @param cdc The codec to parse with.
+   *
+   * @return A `Some[DateSchema]` if successful, `None` otherwise.
+   */
+  def fromComponents(min: String, max: String, cdc: Codec): Option[DateSchema[cdc.C]] = {
+    for {
+      low <- parse(cdc, min)
+      upp <- parse(cdc, max)
+      tag <- cdc.tag
+      ev <- cdc.date
+    } yield DateSchema(low, upp)(tag, ev)
+  }
+
+  /**
+   * Parse a date schema from string components.
+   *
+   * @param dom The domain value strings to parse.
+   * @param cdc The codec to parse with.
+   *
+   * @return A `Some[DateSchema]` if successful, `None` otherwise.
+   */
+  def fromComponents(dom: Set[String], cdc: Codec): Option[DateSchema[cdc.C]] = {
+    val values = dom.map(parse(cdc, _))
+
+    (cdc.tag, cdc.date, values.isEmpty || values.exists(_.isEmpty)) match {
+      case (Some(tag), Some(ev), false) => Some(DateSchema(values.map(_.get))(tag, ev))
       case _ => None
     }
   }

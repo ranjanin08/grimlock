@@ -144,6 +144,17 @@ object Value {
   }
 
   /**
+   * Concatenates the string representation of two values.
+   *
+   * @param separator Separator to use between the strings.
+   *
+   * @return A function that concatenates values as a string.
+   */
+  def concatenate(separator: String): (Value, Value) => Valueable = {
+    (left: Value, right: Value) => left.toShortString + separator + right.toShortString
+  }
+
+  /**
    * Parse a value from string.
    *
    * @param str The string to parse.

@@ -42,6 +42,42 @@ class TestContinuousSchema extends TestGrimlock {
     ContinuousSchema[Long](-1, 1).validate(LongValue(4)) shouldBe false
     ContinuousSchema[Long](-1, 1).validate(LongValue(-4)) shouldBe false
   }
+
+  it should "parse correctly" in {
+    ContinuousSchema.fromShortString("continuous", DoubleCodec) shouldBe Some(ContinuousSchema[Double])
+    ContinuousSchema.fromShortString("continuous()", DoubleCodec) shouldBe Some(ContinuousSchema[Double])
+    ContinuousSchema.fromShortString("continuous(-3.1415:1.4142)",
+      DoubleCodec) shouldBe Some(ContinuousSchema[Double](-3.1415, 1.4142))
+
+    ContinuousSchema.fromShortString("continuous", LongCodec) shouldBe Some(ContinuousSchema[Long])
+    ContinuousSchema.fromShortString("continuous()", LongCodec) shouldBe Some(ContinuousSchema[Long])
+    ContinuousSchema.fromShortString("continuous(-1:1)", LongCodec) shouldBe Some(ContinuousSchema[Long](-1, 1))
+
+    ContinuousSchema.fromShortString("foo", DoubleCodec) shouldBe None
+
+    ContinuousSchema.fromShortString("continuous(", DoubleCodec) shouldBe None
+    ContinuousSchema.fromShortString("continuous)", DoubleCodec) shouldBe None
+    ContinuousSchema.fromShortString("continuous:", DoubleCodec) shouldBe None
+    ContinuousSchema.fromShortString("continuous:)", DoubleCodec) shouldBe None
+    ContinuousSchema.fromShortString("continuous(:", DoubleCodec) shouldBe None
+    ContinuousSchema.fromShortString("continuous(:)", DoubleCodec) shouldBe None
+    ContinuousSchema.fromShortString("continuous(-3.1414:foo)", DoubleCodec) shouldBe None
+    ContinuousSchema.fromShortString("continuous(foo:1.4142)", DoubleCodec) shouldBe None
+    ContinuousSchema.fromShortString("continuous(-3.1414,1.4142)", DoubleCodec) shouldBe None
+
+    ContinuousSchema.fromShortString("continuous(", LongCodec) shouldBe None
+    ContinuousSchema.fromShortString("continuous)", LongCodec) shouldBe None
+    ContinuousSchema.fromShortString("continuous:", LongCodec) shouldBe None
+    ContinuousSchema.fromShortString("continuous:)", LongCodec) shouldBe None
+    ContinuousSchema.fromShortString("continuous(:", LongCodec) shouldBe None
+    ContinuousSchema.fromShortString("continuous(:)", LongCodec) shouldBe None
+    ContinuousSchema.fromShortString("continuous(-1:foo)", LongCodec) shouldBe None
+    ContinuousSchema.fromShortString("continuous(foo:1)", LongCodec) shouldBe None
+    ContinuousSchema.fromShortString("continuous(-1,1)", LongCodec) shouldBe None
+    ContinuousSchema.fromShortString("continuous(-1.2:1)", LongCodec) shouldBe None
+    ContinuousSchema.fromShortString("continuous(-1:1.2)", LongCodec) shouldBe None
+    ContinuousSchema.fromShortString("continuous(-1:1:2)", LongCodec) shouldBe None
+  }
 }
 
 class TestDiscreteSchema extends TestGrimlock {
@@ -61,6 +97,36 @@ class TestDiscreteSchema extends TestGrimlock {
     DiscreteSchema[Long](-1, 1, 1).validate(LongValue(4)) shouldBe false
     DiscreteSchema[Long](-1, 1, 1).validate(LongValue(-4)) shouldBe false
     DiscreteSchema[Long](-4, 4, 2).validate(LongValue(3)) shouldBe false
+  }
+
+  it should "parse correctly" in {
+    DiscreteSchema.fromShortString("discrete", LongCodec) shouldBe Some(DiscreteSchema[Long])
+    DiscreteSchema.fromShortString("discrete()", LongCodec) shouldBe Some(DiscreteSchema[Long])
+    DiscreteSchema.fromShortString("discrete(-1:2,1)", LongCodec) shouldBe Some(DiscreteSchema[Long](-1, 2, 1))
+
+    DiscreteSchema.fromShortString("foo", LongCodec) shouldBe None
+
+    DiscreteSchema.fromShortString("discrete(", LongCodec) shouldBe None
+    DiscreteSchema.fromShortString("discrete)", LongCodec) shouldBe None
+    DiscreteSchema.fromShortString("discrete:", LongCodec) shouldBe None
+    DiscreteSchema.fromShortString("discrete,", LongCodec) shouldBe None
+    DiscreteSchema.fromShortString("discrete:)", LongCodec) shouldBe None
+    DiscreteSchema.fromShortString("discrete(:", LongCodec) shouldBe None
+    DiscreteSchema.fromShortString("discrete,)", LongCodec) shouldBe None
+    DiscreteSchema.fromShortString("discrete(,", LongCodec) shouldBe None
+    DiscreteSchema.fromShortString("discrete(:)", LongCodec) shouldBe None
+    DiscreteSchema.fromShortString("discrete(,)", LongCodec) shouldBe None
+    DiscreteSchema.fromShortString("discrete(:,)", LongCodec) shouldBe None
+    DiscreteSchema.fromShortString("discrete(-1:foo,1)", LongCodec) shouldBe None
+    DiscreteSchema.fromShortString("discrete(foo:2,1)", LongCodec) shouldBe None
+    DiscreteSchema.fromShortString("discrete(-1:2,foo)", LongCodec) shouldBe None
+    DiscreteSchema.fromShortString("discrete(-1,1)", LongCodec) shouldBe None
+    DiscreteSchema.fromShortString("discrete(-1:2)", LongCodec) shouldBe None
+    DiscreteSchema.fromShortString("discrete(-1.2:2,1)", LongCodec) shouldBe None
+    DiscreteSchema.fromShortString("discrete(-1:2.2,1)", LongCodec) shouldBe None
+    DiscreteSchema.fromShortString("discrete(-1:2,1.2)", LongCodec) shouldBe None
+    DiscreteSchema.fromShortString("discrete(-1:2:3,1)", LongCodec) shouldBe None
+    DiscreteSchema.fromShortString("discrete(-1:2,1,3)", LongCodec) shouldBe None
   }
 }
 
@@ -95,6 +161,55 @@ class TestNominalSchema extends TestGrimlock {
 
     NominalSchema[String](Set("a","b","c")).validate(StringValue("d")) shouldBe false
   }
+
+  it should "parse correctly" in {
+    NominalSchema.fromShortString("nominal", StringCodec) shouldBe Some(NominalSchema[String]())
+    NominalSchema.fromShortString("nominal()", StringCodec) shouldBe Some(NominalSchema[String](Set[String]()))
+    NominalSchema.fromShortString("nominal(a,b,c)",
+      StringCodec) shouldBe Some(NominalSchema(Set[String]("a", "b", "c")))
+
+    NominalSchema.fromShortString("nominal", DoubleCodec) shouldBe Some(NominalSchema[Double]())
+    NominalSchema.fromShortString("nominal()", DoubleCodec) shouldBe Some(NominalSchema[Double]())
+    NominalSchema.fromShortString("nominal(-3.1415,1.4142,42)",
+      DoubleCodec) shouldBe Some(NominalSchema[Double](Set(-3.1415, 1.4142, 42)))
+
+    NominalSchema.fromShortString("nominal", LongCodec) shouldBe Some(NominalSchema[Long]())
+    NominalSchema.fromShortString("nominal()", LongCodec) shouldBe Some(NominalSchema[Long]())
+    NominalSchema.fromShortString("nominal(-1,1,3)", LongCodec) shouldBe Some(NominalSchema(Set[Long](-1, 1, 3)))
+
+    NominalSchema.fromShortString("foo", StringCodec) shouldBe None
+    NominalSchema.fromShortString("foo", DoubleCodec) shouldBe None
+    NominalSchema.fromShortString("foo", LongCodec) shouldBe None
+
+    NominalSchema.fromShortString("nominal(", StringCodec) shouldBe None
+    NominalSchema.fromShortString("nominal)", StringCodec) shouldBe None
+    NominalSchema.fromShortString("nominal,", StringCodec) shouldBe None
+    NominalSchema.fromShortString("nominal,)", StringCodec) shouldBe None
+    NominalSchema.fromShortString("nominal(,", StringCodec) shouldBe None
+    NominalSchema.fromShortString("nominal(,)", StringCodec) shouldBe None
+
+    NominalSchema.fromShortString("nominal(", DoubleCodec) shouldBe None
+    NominalSchema.fromShortString("nominal)", DoubleCodec) shouldBe None
+    NominalSchema.fromShortString("nominal,", DoubleCodec) shouldBe None
+    NominalSchema.fromShortString("nominal,)", DoubleCodec) shouldBe None
+    NominalSchema.fromShortString("nominal(,", DoubleCodec) shouldBe None
+    NominalSchema.fromShortString("nominal(,)", DoubleCodec) shouldBe None
+    NominalSchema.fromShortString("nominal(-1,foo)", DoubleCodec) shouldBe None
+    NominalSchema.fromShortString("nominal(foo,1)", DoubleCodec) shouldBe None
+    NominalSchema.fromShortString("nominal(-1:1)", DoubleCodec) shouldBe None
+
+    NominalSchema.fromShortString("nominal(", LongCodec) shouldBe None
+    NominalSchema.fromShortString("nominal)", LongCodec) shouldBe None
+    NominalSchema.fromShortString("nominal,", LongCodec) shouldBe None
+    NominalSchema.fromShortString("nominal,)", LongCodec) shouldBe None
+    NominalSchema.fromShortString("nominal(,", LongCodec) shouldBe None
+    NominalSchema.fromShortString("nominal(,)", LongCodec) shouldBe None
+    NominalSchema.fromShortString("nominal(-1,foo)", LongCodec) shouldBe None
+    NominalSchema.fromShortString("nominal(foo,1)", LongCodec) shouldBe None
+    NominalSchema.fromShortString("nominal(-1:1)", LongCodec) shouldBe None
+    NominalSchema.fromShortString("nominal(-1.2,1)", LongCodec) shouldBe None
+    NominalSchema.fromShortString("nominal(-1,1.2)", LongCodec) shouldBe None
+  }
 }
 
 class TestOrdinalSchema extends TestGrimlock {
@@ -128,6 +243,55 @@ class TestOrdinalSchema extends TestGrimlock {
 
     OrdinalSchema[String](Set("a","b","c")).validate(StringValue("d")) shouldBe false
   }
+
+  it should "parse correctly" in {
+    OrdinalSchema.fromShortString("ordinal", StringCodec) shouldBe Some(OrdinalSchema[String]())
+    OrdinalSchema.fromShortString("ordinal()", StringCodec) shouldBe Some(OrdinalSchema[String](Set[String]()))
+    OrdinalSchema.fromShortString("ordinal(a,b,c)",
+      StringCodec) shouldBe Some(OrdinalSchema(Set[String]("a", "b", "c")))
+
+    OrdinalSchema.fromShortString("ordinal", DoubleCodec) shouldBe Some(OrdinalSchema[Double]())
+    OrdinalSchema.fromShortString("ordinal()", DoubleCodec) shouldBe Some(OrdinalSchema[Double]())
+    OrdinalSchema.fromShortString("ordinal(-3.1415,1.4142,42)",
+      DoubleCodec) shouldBe Some(OrdinalSchema[Double](Set(-3.1415, 1.4142, 42)))
+
+    OrdinalSchema.fromShortString("ordinal", LongCodec) shouldBe Some(OrdinalSchema[Long]())
+    OrdinalSchema.fromShortString("ordinal()", LongCodec) shouldBe Some(OrdinalSchema[Long]())
+    OrdinalSchema.fromShortString("ordinal(-1,1,3)", LongCodec) shouldBe Some(OrdinalSchema(Set[Long](-1, 1, 3)))
+
+    OrdinalSchema.fromShortString("foo", StringCodec) shouldBe None
+    OrdinalSchema.fromShortString("foo", DoubleCodec) shouldBe None
+    OrdinalSchema.fromShortString("foo", LongCodec) shouldBe None
+
+    OrdinalSchema.fromShortString("ordinal(", StringCodec) shouldBe None
+    OrdinalSchema.fromShortString("ordinal)", StringCodec) shouldBe None
+    OrdinalSchema.fromShortString("ordinal,", StringCodec) shouldBe None
+    OrdinalSchema.fromShortString("ordinal,)", StringCodec) shouldBe None
+    OrdinalSchema.fromShortString("ordinal(,", StringCodec) shouldBe None
+    OrdinalSchema.fromShortString("ordinal(,)", StringCodec) shouldBe None
+
+    OrdinalSchema.fromShortString("ordinal(", DoubleCodec) shouldBe None
+    OrdinalSchema.fromShortString("ordinal)", DoubleCodec) shouldBe None
+    OrdinalSchema.fromShortString("ordinal,", DoubleCodec) shouldBe None
+    OrdinalSchema.fromShortString("ordinal,)", DoubleCodec) shouldBe None
+    OrdinalSchema.fromShortString("ordinal(,", DoubleCodec) shouldBe None
+    OrdinalSchema.fromShortString("ordinal(,)", DoubleCodec) shouldBe None
+    OrdinalSchema.fromShortString("ordinal(-1,foo)", DoubleCodec) shouldBe None
+    OrdinalSchema.fromShortString("ordinal(foo,1)", DoubleCodec) shouldBe None
+    OrdinalSchema.fromShortString("ordinal(-1:1)", DoubleCodec) shouldBe None
+
+    OrdinalSchema.fromShortString("ordinal(", LongCodec) shouldBe None
+    OrdinalSchema.fromShortString("ordinal)", LongCodec) shouldBe None
+    OrdinalSchema.fromShortString("ordinal,", LongCodec) shouldBe None
+    OrdinalSchema.fromShortString("ordinal,)", LongCodec) shouldBe None
+    OrdinalSchema.fromShortString("ordinal(,", LongCodec) shouldBe None
+    OrdinalSchema.fromShortString("ordinal(,)", LongCodec) shouldBe None
+    OrdinalSchema.fromShortString("ordinal(-1,foo)", LongCodec) shouldBe None
+    OrdinalSchema.fromShortString("ordinal(foo,1)", LongCodec) shouldBe None
+    OrdinalSchema.fromShortString("ordinal(-1:1)", LongCodec) shouldBe None
+    OrdinalSchema.fromShortString("ordinal(-1.2,1)", LongCodec) shouldBe None
+    OrdinalSchema.fromShortString("ordinal(-1,1.2)", LongCodec) shouldBe None
+  }
 }
 
 class TestDateSchema extends TestGrimlock {
@@ -141,8 +305,61 @@ class TestDateSchema extends TestGrimlock {
 
   it should "validate a correct value" in {
     DateSchema[java.util.Date]().validate(DateValue(dfmt.parse("2001-01-01"), DateCodec("yyyy-MM-dd"))) shouldBe true
+    DateSchema[java.util.Date](dfmt.parse("2001-01-01"), dfmt.parse("2001-01-02"))
+      .validate(DateValue(dfmt.parse("2001-01-01"), DateCodec("yyyy-MM-dd"))) shouldBe true
+    DateSchema[java.util.Date](Set(dfmt.parse("2001-01-01"), dfmt.parse("2001-01-02")))
+      .validate(DateValue(dfmt.parse("2001-01-01"), DateCodec("yyyy-MM-dd"))) shouldBe true
+
     DateSchema[java.util.Date]().validate(DateValue(dtfmt.parse("2001-01-01 01:02:02"),
       DateCodec("yyyy-MM-dd hh:mm:ss"))) shouldBe true
+    DateSchema[java.util.Date](dtfmt.parse("2001-01-01 01:02:02"), dtfmt.parse("2001-01-02 23:59:59"))
+      .validate(DateValue(dtfmt.parse("2001-01-01 01:02:03"), DateCodec("yyyy-MM-dd hh:mm:ss"))) shouldBe true
+    DateSchema[java.util.Date](Set(dtfmt.parse("2001-01-01 01:02:02"), dtfmt.parse("2001-01-02 23:59:59")))
+      .validate(DateValue(dtfmt.parse("2001-01-01 01:02:02"), DateCodec("yyyy-MM-dd hh:mm:ss"))) shouldBe true
+  }
+
+  it should "not validate an incorrect value" in {
+    DateSchema[java.util.Date](dfmt.parse("2001-01-01"), dfmt.parse("2001-01-02"))
+      .validate(DateValue(dfmt.parse("2001-01-03"), DateCodec("yyyy-MM-dd"))) shouldBe false
+    DateSchema[java.util.Date](Set(dfmt.parse("2001-01-01"), dfmt.parse("2001-01-02")))
+      .validate(DateValue(dfmt.parse("2001-01-03"), DateCodec("yyyy-MM-dd"))) shouldBe false
+
+    DateSchema[java.util.Date](dtfmt.parse("2001-01-01 01:02:02"), dtfmt.parse("2001-01-02 23:59:59"))
+      .validate(DateValue(dtfmt.parse("2001-01-01 01:01:02"), DateCodec("yyyy-MM-dd hh:mm:ss"))) shouldBe false
+    DateSchema[java.util.Date](Set(dtfmt.parse("2001-01-01 01:02:02"), dtfmt.parse("2001-01-02 23:59:59")))
+      .validate(DateValue(dtfmt.parse("2001-01-01 01:02:03"), DateCodec("yyyy-MM-dd hh:mm:ss"))) shouldBe false
+  }
+
+  it should "parse correctly" in {
+    DateSchema.fromShortString("date", DateCodec()) shouldBe Some(DateSchema[java.util.Date]())
+    DateSchema.fromShortString("date()", DateCodec()) shouldBe Some(DateSchema[java.util.Date]())
+    DateSchema.fromShortString("date(2001-01-01:2001-01-03)",
+      DateCodec()) shouldBe Some(DateSchema[java.util.Date](dfmt.parse("2001-01-01"), dfmt.parse("2001-01-03")))
+    DateSchema.fromShortString("date(2001-01-01,2001-01-02,2001-01-03)",
+      DateCodec()) shouldBe Some(DateSchema[java.util.Date](Set(dfmt.parse("2001-01-01"), dfmt.parse("2001-01-02"),
+        dfmt.parse("2001-01-03"))))
+
+    DateSchema.fromShortString("date(", DateCodec()) shouldBe None
+    DateSchema.fromShortString("date)", DateCodec()) shouldBe None
+    DateSchema.fromShortString("date,", DateCodec()) shouldBe None
+    DateSchema.fromShortString("date:", DateCodec()) shouldBe None
+    DateSchema.fromShortString("date(,", DateCodec()) shouldBe None
+    DateSchema.fromShortString("date,)", DateCodec()) shouldBe None
+    DateSchema.fromShortString("date(:", DateCodec()) shouldBe None
+    DateSchema.fromShortString("date:)", DateCodec()) shouldBe None
+    DateSchema.fromShortString("date:,", DateCodec()) shouldBe None
+    DateSchema.fromShortString("date,:", DateCodec()) shouldBe None
+    DateSchema.fromShortString("date(:,)", DateCodec()) shouldBe None
+    DateSchema.fromShortString("date(,:)", DateCodec()) shouldBe None
+    DateSchema.fromShortString("date(foo:2001-01-03)", DateCodec()) shouldBe None
+    DateSchema.fromShortString("date(2001-01-01:foo)", DateCodec()) shouldBe None
+    DateSchema.fromShortString("date(foo,2001-01-03)", DateCodec()) shouldBe None
+    DateSchema.fromShortString("date(2001-01-01,foo)", DateCodec()) shouldBe None
+    DateSchema.fromShortString("date(2001-01-01:2001-01-02:2001-01-03)", DateCodec()) shouldBe None
+
+    // Unfortunately java date parsing is very lenient, so the following will succeed when it shouldn't.
+    //DateSchema.fromShortString("date(2001-01-01,2001-01-02:2001-01-03)", DateCodec()) shouldBe None
+    //DateSchema.fromShortString("date(2001-01-01:2001-01-02,2001-01-03)", DateCodec()) shouldBe None
   }
 }
 

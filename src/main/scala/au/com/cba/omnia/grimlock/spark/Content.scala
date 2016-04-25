@@ -14,7 +14,8 @@
 
 package au.com.cba.omnia.grimlock.spark.content
 
-import au.com.cba.omnia.grimlock.framework.content.{ Contents => FwContents, _ }
+import au.com.cba.omnia.grimlock.framework.content.{ Contents => FwContents, IndexedContents => FwIndexedContents, _ }
+import au.com.cba.omnia.grimlock.framework.position._
 
 import au.com.cba.omnia.grimlock.spark._
 
@@ -33,5 +34,22 @@ case class Contents(data: RDD[Content]) extends FwContents with Persist[Content]
 object Contents {
   /** Converts a `RDD[Content]` to a `Contents`. */
   implicit def RDDC2RDDC(data: RDD[Content]): Contents = Contents(data)
+}
+
+/**
+ * Rich wrapper around a `RDD[(P, Content)]`.
+ *
+ * @param data The `RDD[(P, Content)]`.
+ */
+case class IndexedContents[P <: Position](
+  data: RDD[(P, Content)]
+) extends FwIndexedContents[P] with Persist[(P, Content)] {
+  def saveAsText(file: String, writer: TextWriter)(implicit ctx: C): U[(P, Content)] = saveText(file, writer)
+}
+
+/** Companion object for the Spark `IndexedContents` class. */
+object IndexedContents {
+  /** Converts a `RDD[(P, Content)]` to a `IndexedContents`. */
+  implicit def RDDIC2RDDC[P <: Position](data: RDD[(P, Content)]): IndexedContents[P] = IndexedContents[P](data)
 }
 

@@ -59,7 +59,7 @@ The position is, essentially, a list of N coordinates (__Value__). The content c
                   Schema         Value
 ```
 
-Lastly, the __Codec__ singleton objects can be used to parse and write the basic data types used in the values.
+Lastly, a __Codec__ can be used to parse and write the basic data types used in the values.
 
 ```
   Value
