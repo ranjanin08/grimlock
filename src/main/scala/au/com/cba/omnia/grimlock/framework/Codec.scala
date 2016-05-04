@@ -219,7 +219,7 @@ case object LongCodec extends Codec {
   type C = Long
 
   /** Pattern for parsing `LongCodec` from string. */
-  val Pattern = "long|int".r
+  val Pattern = "long|int|short".r
 
   def decode(str: String): Option[Value { type V = C }] = Try(LongValue(str.toLong, this)).toOption
   def encode(value: C): String = value.toString

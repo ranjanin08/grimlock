@@ -155,7 +155,7 @@ object Quantile {
   val Type1: Quantiser = (p: Double, n: Long) => {
     val (j, g) = TypeX(p, n, 0)
 
-    (j, if (g == 0) 0 else 1)
+    (j, if (math.abs(g) < 1e-6) 0 else 1)
   }
 
   /**
@@ -167,7 +167,7 @@ object Quantile {
   val Type2: Quantiser = (p: Double, n: Long) => {
     val (j, g) = TypeX(p, n, 0)
 
-    (j, if (g == 0) 0.5 else 1)
+    (j, if (math.abs(g) < 1e-6) 0.5 else 1)
   }
 
   /**
@@ -178,7 +178,7 @@ object Quantile {
   val Type3: Quantiser = (p: Double, n: Long) => {
     val (j, g) = TypeX(p, n, -0.5)
 
-    (j, if (g == 0 && j % 2 == 0) 0 else 1)
+    (j, if (math.abs(g) < 1e-6 && j % 2 == 0) 0 else 1)
   }
 
   /**
