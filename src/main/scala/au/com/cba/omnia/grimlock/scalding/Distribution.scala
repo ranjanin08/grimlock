@@ -103,5 +103,34 @@ trait ApproximateDistribution[P <: Position with CompactablePosition] extends Fw
       }
       .flatMap { case ((p, _), o) => q.present(p, o) }
   }
+
+  type TDigestQuantilesTuners[T] = T In OneOf[Default[NoParameters]]#
+    Or[Default[Reducers]]
+  def tDigestQuantiles[S <: Position with ExpandablePosition, Q <: Position, T <: Tuner : TDigestQuantilesTuners](
+    slice: Slice[P], probs: List[Double], name: Locate.FromSelectedAndOutput[S, Double, Q],
+      filter: Boolean, nan: Boolean, tuner: T = Default())(implicit ev1: slice.S =:= S, ev2: PosExpDep[slice.S, Q],
+        ev3: slice.R =:!= Position0D, ev4: ClassTag[slice.S]): U[Cell[Q]] = {
+    import com.tdunning.math.stats._
+
+    data
+      .collect {
+        case c if (!filter || c.content.schema.kind.isSpecialisationOf(Type.Numerical)) =>
+          val td = TDigest.createAvlTreeDigest(1000)
+
+          td.add(c.content.value.asDouble.get)
+
+          (slice.selected(c.position), td)
+      }
+      .group
+      .tuneReducers(tuner.parameters)
+      .reduce[TDigest] {
+        case (lt, rt) => lt.add(rt); lt
+      }
+      .flatMap {
+        case (pos, td) => probs.flatMap {
+          case q => name(pos, q).map { case p => Cell(p, Content(ContinuousSchema[Double](), td.quantile(q))) }
+        }
+      }
+  }
 }
 
