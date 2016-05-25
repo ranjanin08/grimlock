@@ -66,15 +66,10 @@ class PipelineDataPreparation(args: Args) extends Job(args) {
     .get("train")
 
   // Define descriptive statistics to be computed on the training data.
-  val dstats: List[Aggregator[Position2D, Position1D, Position2D]] = List(
-    Count().andThenRelocate(_.position.append("count").toOption),
-    Mean().andThenRelocate(_.position.append("mean").toOption),
-    StandardDeviation().andThenRelocate(_.position.append("sd").toOption),
-    Skewness().andThenRelocate(_.position.append("skewness").toOption),
-    Kurtosis().andThenRelocate(_.position.append("kurtosis").toOption),
-    Min().andThenRelocate(_.position.append("min").toOption),
-    Max().andThenRelocate(_.position.append("max").toOption),
-    MaxAbs().andThenRelocate(_.position.append("max.abs").toOption))
+  val dstats = List(Count[Position2D, Position1D]().andThenRelocate(_.position.append("count").toOption),
+    Moments[Position2D, Position1D]("mean", "sd", "skewness", "kurtosis"),
+    Limits[Position2D, Position1D]("min", "max"),
+    MaxAbs[Position2D, Position1D]().andThenRelocate(_.position.append("max.abs").toOption))
 
   // Compute descriptive statistics on the training data.
   val descriptive = train

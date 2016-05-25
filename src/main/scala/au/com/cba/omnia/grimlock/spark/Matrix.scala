@@ -74,7 +74,6 @@ import org.apache.spark.rdd.RDD
 
 import scala.collection.immutable.HashSet
 
-
 import shapeless.=:!=
 
 private[spark] object SparkImplicits {
@@ -407,7 +406,7 @@ trait Matrix[P <: Position with CompactablePosition] extends FwMatrix[P] with Pe
         })
       .flatMap {
         case (p, t) => (aggregator, t).zipped.flatMap {
-          case (a, Some(s)) => a.present(p, s.asInstanceOf[a.T])
+          case (a, Some(s)) => a.present(p, s.asInstanceOf[a.T]).toTraversableOnce
           case _ => None
         }
       }
@@ -429,7 +428,7 @@ trait Matrix[P <: Position with CompactablePosition] extends FwMatrix[P] with Pe
         })
       .flatMap {
         case (p, t) => (aggregator, t).zipped.flatMap {
-          case (a, Some(s)) => a.presentWithValue(p, s.asInstanceOf[a.T], value)
+          case (a, Some(s)) => a.presentWithValue(p, s.asInstanceOf[a.T], value).toTraversableOnce
           case _ => None
         }
       }

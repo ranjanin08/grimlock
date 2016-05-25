@@ -603,7 +603,7 @@ trait Matrix[P <: Position with CompactablePosition] extends FwMatrix[P] with Pe
       }
       .flatMap {
         case (p, t) => (aggregator, t).zipped.flatMap {
-          case (a, Some(s)) => a.present(p, s.asInstanceOf[a.T])
+          case (a, Some(s)) => a.present(p, s.asInstanceOf[a.T]).toTraversableOnce
           case _ => None
         }
       }
@@ -628,7 +628,7 @@ trait Matrix[P <: Position with CompactablePosition] extends FwMatrix[P] with Pe
       }
       .flatMapWithValue(value) {
         case ((p, t), vo) => (aggregator, t).zipped.flatMap {
-          case (a, Some(s)) => a.presentWithValue(p, s.asInstanceOf[a.T], vo.get)
+          case (a, Some(s)) => a.presentWithValue(p, s.asInstanceOf[a.T], vo.get).toTraversableOnce
           case _ => None
         }
       }
