@@ -1189,29 +1189,3 @@ class TestScalding33(args: Args) extends Job(args) {
     .toUnit
 }
 
-class TestScalding34(args: Args) extends Job(args) {
-
-  implicit val ctx = Context()
-  val tool = "scalding"
-
-  val rnd = new scala.util.Random()
-  val probs = (0.01 to 0.99 by 0.01).toList
-  val data = (1 to 10000)
-    .toList
-    .map {
-      case i => Cell(Position1D(i), Content(ContinuousSchema[Double](), rnd.nextDouble()))
-    }
-
-  val qnt = (pos: Position0D, value: Double) => pos.append("quantile=%f".format(value)).toOption
-
-  import au.com.cba.omnia.grimlock.framework.distribution.Quantile
-
-  data
-    .quantile(Along(First), probs, Quantile.Type1, qnt, false, false)
-    .saveAsText(s"./tmp.${tool}/qt1.out", Cell.toString(schema = false))
-
-  data
-    .tDigestQuantiles(Along(First), probs, qnt, false, false)
-    .saveAsText(s"./tmp.${tool}/qt2.out", Cell.toString(schema = false))
-}
-

@@ -41,7 +41,7 @@ trait ApproximateDistribution[P <: Position with CompactablePosition] extends Fw
   type HistogramTuners[T] = TP2[T]
   def histogram[S <: Position with ExpandablePosition, Q <: Position, T <: Tuner : HistogramTuners](slice: Slice[P],
     name: Locate.FromSelectedAndContent[S, Q], filter: Boolean, tuner: T = Default())(
-      implicit ev1: PosExpDep[slice.S, Q], ev2: slice.S =:= S, ev3: ClassTag[Q]): U[Cell[Q]] = {
+      implicit ev1: PosExpDep[S, Q], ev2: slice.S =:= S, ev3: ClassTag[Q]): U[Cell[Q]] = {
     data
       .filter { case c => (!filter || c.content.schema.kind.isSpecialisationOf(Type.Categorical)) }
       .flatMap { case c => name(slice.selected(c.position), c.content).map((_, 1L)) }
@@ -52,7 +52,7 @@ trait ApproximateDistribution[P <: Position with CompactablePosition] extends Fw
   type QuantileTuners[T] = TP2[T]
   def quantile[S <: Position with ExpandablePosition, Q <: Position, T <: Tuner : QuantileTuners](slice: Slice[P],
     probs: List[Double], quantiser: Quantile.Quantiser, name: Locate.FromSelectedAndOutput[S, Double, Q],
-      filter: Boolean, nan: Boolean, tuner: T = Default())(implicit ev1: slice.S =:= S, ev2: PosExpDep[slice.S, Q],
+      filter: Boolean, nan: Boolean, tuner: T = Default())(implicit ev1: slice.S =:= S, ev2: PosExpDep[S, Q],
         ev3: slice.R =:!= Position0D, ev4: ClassTag[slice.S]): U[Cell[Q]] = {
     val q = QuantileImpl[P, S, Q](probs, quantiser, name, nan)
 
@@ -77,6 +77,63 @@ trait ApproximateDistribution[P <: Position with CompactablePosition] extends Fw
             .scanLeft((t, List[q.O]())) { case ((t, _), i) => q.update(i, t, c) }
             .flatMap { case (_, o) => o.flatMap(q.present(p, _)) }
       }
+  }
+
+  type CountMapQuantilesTuners[T] = TP2[T]
+  def countMapQuantiles[S <: Position with ExpandablePosition, Q <: Position, T <: Tuner : CountMapQuantilesTuners](
+    slice: Slice[P], probs: List[Double], quantiser: Quantile.Quantiser,
+      name: Locate.FromSelectedAndOutput[S, Double, Q], filter: Boolean, nan: Boolean, tuner: T = Default())(
+        implicit ev1: slice.S =:= S, ev2: PosExpDep[S, Q], ev3: slice.R =:!= Position0D,
+          ev4: ClassTag[slice.S]): U[Cell[Q]] = {
+    data
+      .flatMap {
+        case c =>
+          if (!filter || c.content.schema.kind.isSpecialisationOf(Type.Numerical)) {
+            Some((slice.selected(c.position), CountMap.from(c.content.value.asDouble.getOrElse(Double.NaN))))
+          } else {
+            None
+          }
+      }
+      .tunedReduce(tuner.parameters, CountMap.reduce)
+      .flatMap { case (pos, t) => CountMap.toCells[S, Q](t, probs, pos, quantiser, name, nan) }
+  }
+
+  type TDigestQuantilesTuners[T] = TP2[T]
+  def tDigestQuantiles[S <: Position with ExpandablePosition, Q <: Position, T <: Tuner : TDigestQuantilesTuners](
+    slice: Slice[P], probs: List[Double], compression: Double, name: Locate.FromSelectedAndOutput[S, Double, Q],
+      filter: Boolean, nan: Boolean, tuner: T = Default())(implicit ev1: slice.S =:= S, ev2: PosExpDep[S, Q],
+        ev3: slice.R =:!= Position0D, ev4: ClassTag[slice.S]): U[Cell[Q]] = {
+    data
+      .flatMap {
+        case c =>
+          if (!filter || c.content.schema.kind.isSpecialisationOf(Type.Numerical)) {
+            c.content.value.asDouble.flatMap {
+              case d => TDigest.from(d, compression).map(td => (slice.selected(c.position), td))
+            }
+          } else {
+            None
+          }
+      }
+      .tunedReduce(tuner.parameters, TDigest.reduce)
+      .flatMap { case (pos, t) => TDigest.toCells[S, Q](t, probs, pos, name, nan) }
+  }
+
+  type UniformQuantilesTuners[T] = TP2[T]
+  def uniformQuantiles[S <: Position with ExpandablePosition, Q <: Position, T <: Tuner : UniformQuantilesTuners](
+    slice: Slice[P], count: Long, name: Locate.FromSelectedAndOutput[S, Double, Q], filter: Boolean, nan: Boolean,
+      tuner: T = Default())(implicit ev1: slice.S =:= S, ev2: PosExpDep[S, Q], ev3: slice.R =:!= Position0D,
+        ev4: ClassTag[slice.S]): U[Cell[Q]] = {
+    data
+      .flatMap {
+        case c =>
+          if (!filter || c.content.schema.kind.isSpecialisationOf(Type.Numerical)) {
+            c.content.value.asDouble.map(d =>(slice.selected(c.position), StreamingHistogram.from(d, count)))
+          } else {
+            None
+          }
+      }
+      .tunedReduce(tuner.parameters, StreamingHistogram.reduce)
+      .flatMap { case (pos, t) => StreamingHistogram.toCells[S, Q](t, count, pos, name, nan) }
   }
 }
 

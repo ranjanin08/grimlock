@@ -20,6 +20,8 @@ import au.com.cba.omnia.grimlock.framework.content.metadata._
 import au.com.cba.omnia.grimlock.framework.distribution._
 import au.com.cba.omnia.grimlock.framework.position._
 
+import au.com.cba.omnia.grimlock.library.aggregate._
+
 import au.com.cba.omnia.grimlock.scalding.Matrix._
 
 import au.com.cba.omnia.grimlock.spark.Matrix._
@@ -1057,6 +1059,1515 @@ class TestSparkQuantile extends TestQuantile {
     toRDD(data6)
       .quantile(Along(First), probs, Quantile.Type1, TestQuantile.name[Position0D], false, false, Default())
       .toList.sortBy(_.position) shouldBe result18
+  }
+}
+
+class TestScaldingCountMapQuantile extends TestQuantile {
+
+  "A quantile" should "return its first along 1 value in 1D" in {
+    toPipe(data1)
+      .countMapQuantiles(Along(First), probs, Quantile.Type1, TestQuantile.name[Position0D], true, true, Default())
+      .toList.sortBy(_.position) shouldBe result1
+
+    toPipe(data1)
+      .countMapQuantiles(Along(First), probs, Quantile.Type2, TestQuantile.name[Position0D], true, true,
+        Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result1
+
+    toPipe(data1)
+      .countMapQuantiles(Along(First), probs, Quantile.Type3, TestQuantile.name[Position0D], true, true, Default())
+      .toList.sortBy(_.position) shouldBe result1
+
+    toPipe(data1)
+      .countMapQuantiles(Along(First), probs, Quantile.Type4, TestQuantile.name[Position0D], true, true,
+        Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result1
+
+    toPipe(data1)
+      .countMapQuantiles(Along(First), probs, Quantile.Type5, TestQuantile.name[Position0D], true, true, Default())
+      .toList.sortBy(_.position) shouldBe result1
+
+    toPipe(data1)
+      .countMapQuantiles(Along(First), probs, Quantile.Type6, TestQuantile.name[Position0D], true, true,
+        Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result1
+
+    toPipe(data1)
+      .countMapQuantiles(Along(First), probs, Quantile.Type7, TestQuantile.name[Position0D], true, true, Default())
+      .toList.sortBy(_.position) shouldBe result1
+
+    toPipe(data1)
+      .countMapQuantiles(Along(First), probs, Quantile.Type8, TestQuantile.name[Position0D], true, true,
+        Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result1
+
+    toPipe(data1)
+      .countMapQuantiles(Along(First), probs, Quantile.Type9, TestQuantile.name[Position0D], true, true, Default())
+      .toList.sortBy(_.position) shouldBe result1
+  }
+
+  it should "return its first along 3 values in 1D" in {
+    toPipe(data2)
+      .countMapQuantiles(Along(First), probs, Quantile.Type1, TestQuantile.name[Position0D], true, true,
+        Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result2
+
+    toPipe(data2)
+      .countMapQuantiles(Along(First), probs, Quantile.Type2, TestQuantile.name[Position0D], true, true, Default())
+      .toList.sortBy(_.position) shouldBe result2
+
+    toPipe(data2)
+      .countMapQuantiles(Along(First), probs, Quantile.Type3, TestQuantile.name[Position0D], true, true,
+        Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result3
+
+    toPipe(data2)
+      .countMapQuantiles(Along(First), probs, Quantile.Type4, TestQuantile.name[Position0D], true, true, Default())
+      .toList.sortBy(_.position) shouldBe result4
+
+    toPipe(data2)
+      .countMapQuantiles(Along(First), probs, Quantile.Type5, TestQuantile.name[Position0D], true, true,
+        Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result5
+
+    toPipe(data2)
+      .countMapQuantiles(Along(First), probs, Quantile.Type6, TestQuantile.name[Position0D], true, true, Default())
+      .toList.sortBy(_.position) shouldBe result6
+
+    toPipe(data2)
+      .countMapQuantiles(Along(First), probs, Quantile.Type7, TestQuantile.name[Position0D], true, true,
+        Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result7
+
+    toPipe(data2)
+      .countMapQuantiles(Along(First), probs, Quantile.Type8, TestQuantile.name[Position0D], true, true, Default())
+      .toList.sortBy(_.position) shouldBe result8
+
+    toPipe(data2)
+      .countMapQuantiles(Along(First), probs, Quantile.Type9, TestQuantile.name[Position0D], true, true,
+        Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result9
+  }
+
+  it should "return its first along 3 equal values in 1D" in {
+    toPipe(data3)
+      .countMapQuantiles(Along(First), probs, Quantile.Type1, TestQuantile.name[Position0D], true, true, Default())
+      .toList.sortBy(_.position) shouldBe result1
+
+    toPipe(data3)
+      .countMapQuantiles(Along(First), probs, Quantile.Type2, TestQuantile.name[Position0D], true, true,
+        Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result1
+
+    toPipe(data3)
+      .countMapQuantiles(Along(First), probs, Quantile.Type3, TestQuantile.name[Position0D], true, true, Default())
+      .toList.sortBy(_.position) shouldBe result1
+
+    toPipe(data3)
+      .countMapQuantiles(Along(First), probs, Quantile.Type4, TestQuantile.name[Position0D], true, true,
+        Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result1
+
+    toPipe(data3)
+      .countMapQuantiles(Along(First), probs, Quantile.Type5, TestQuantile.name[Position0D], true, true, Default())
+      .toList.sortBy(_.position) shouldBe result1
+
+    toPipe(data3)
+      .countMapQuantiles(Along(First), probs, Quantile.Type6, TestQuantile.name[Position0D], true, true,
+        Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result1
+
+    toPipe(data3)
+      .countMapQuantiles(Along(First), probs, Quantile.Type7, TestQuantile.name[Position0D], true, true, Default())
+      .toList.sortBy(_.position) shouldBe result1
+
+    toPipe(data3)
+      .countMapQuantiles(Along(First), probs, Quantile.Type8, TestQuantile.name[Position0D], true, true,
+        Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result1
+
+    toPipe(data3)
+      .countMapQuantiles(Along(First), probs, Quantile.Type9, TestQuantile.name[Position0D], true, true, Default())
+      .toList.sortBy(_.position) shouldBe result1
+  }
+
+  it should "return its first along values in 2D" in {
+    toPipe(data4)
+      .countMapQuantiles(Along(First), probs, Quantile.Type1, TestQuantile.name[Position1D], true, true,
+        Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result10
+
+    toPipe(data4)
+      .countMapQuantiles(Along(First), probs, Quantile.Type2, TestQuantile.name[Position1D], true, true, Default())
+      .toList.sortBy(_.position) shouldBe result10
+
+    toPipe(data4)
+      .countMapQuantiles(Along(First), probs, Quantile.Type3, TestQuantile.name[Position1D], true, true,
+        Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result11
+
+    toPipe(data4)
+      .countMapQuantiles(Along(First), probs, Quantile.Type4, TestQuantile.name[Position1D], true, true, Default())
+      .toList.sortBy(_.position) shouldBe result12
+
+    toPipe(data4)
+      .countMapQuantiles(Along(First), probs, Quantile.Type5, TestQuantile.name[Position1D], true, true,
+        Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result13
+
+    toPipe(data4)
+      .countMapQuantiles(Along(First), probs, Quantile.Type6, TestQuantile.name[Position1D], true, true, Default())
+      .toList.sortBy(_.position) shouldBe result14
+
+    toPipe(data4)
+      .countMapQuantiles(Along(First), probs, Quantile.Type7, TestQuantile.name[Position1D], true, true,
+        Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result15
+
+    toPipe(data4)
+      .countMapQuantiles(Along(First), probs, Quantile.Type8, TestQuantile.name[Position1D], true, true, Default())
+      .toList.sortBy(_.position) shouldBe result16
+
+    toPipe(data4)
+      .countMapQuantiles(Along(First), probs, Quantile.Type9, TestQuantile.name[Position1D], true, true,
+        Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result17
+  }
+
+  it should "return its first over values in 2D" in {
+    toPipe(data5)
+      .countMapQuantiles(Over(First), probs, Quantile.Type1, TestQuantile.name[Position1D], true, true, Default())
+      .toList.sortBy(_.position) shouldBe result10
+
+    toPipe(data5)
+      .countMapQuantiles(Over(First), probs, Quantile.Type2, TestQuantile.name[Position1D], true, true,
+        Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result10
+
+    toPipe(data5)
+      .countMapQuantiles(Over(First), probs, Quantile.Type3, TestQuantile.name[Position1D], true, true, Default())
+      .toList.sortBy(_.position) shouldBe result11
+
+    toPipe(data5)
+      .countMapQuantiles(Over(First), probs, Quantile.Type4, TestQuantile.name[Position1D], true, true,
+        Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result12
+
+    toPipe(data5)
+      .countMapQuantiles(Over(First), probs, Quantile.Type5, TestQuantile.name[Position1D], true, true, Default())
+      .toList.sortBy(_.position) shouldBe result13
+
+    toPipe(data5)
+      .countMapQuantiles(Over(First), probs, Quantile.Type6, TestQuantile.name[Position1D], true, true,
+        Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result14
+
+    toPipe(data5)
+      .countMapQuantiles(Over(First), probs, Quantile.Type7, TestQuantile.name[Position1D], true, true, Default())
+      .toList.sortBy(_.position) shouldBe result15
+
+    toPipe(data5)
+      .countMapQuantiles(Over(First), probs, Quantile.Type8, TestQuantile.name[Position1D], true, true,
+        Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result16
+
+    toPipe(data5)
+      .countMapQuantiles(Over(First), probs, Quantile.Type9, TestQuantile.name[Position1D], true, true, Default())
+      .toList.sortBy(_.position) shouldBe result17
+  }
+
+  it should "return its second along values in 2D" in {
+    toPipe(data5)
+      .countMapQuantiles(Along(Second), probs, Quantile.Type1, TestQuantile.name[Position1D], true, true,
+        Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result10
+
+    toPipe(data5)
+      .countMapQuantiles(Along(Second), probs, Quantile.Type2, TestQuantile.name[Position1D], true, true, Default())
+      .toList.sortBy(_.position) shouldBe result10
+
+    toPipe(data5)
+      .countMapQuantiles(Along(Second), probs, Quantile.Type3, TestQuantile.name[Position1D], true, true,
+        Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result11
+
+    toPipe(data5)
+      .countMapQuantiles(Along(Second), probs, Quantile.Type4, TestQuantile.name[Position1D], true, true, Default())
+      .toList.sortBy(_.position) shouldBe result12
+
+    toPipe(data5)
+      .countMapQuantiles(Along(Second), probs, Quantile.Type5, TestQuantile.name[Position1D], true, true,
+        Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result13
+
+    toPipe(data5)
+      .countMapQuantiles(Along(Second), probs, Quantile.Type6, TestQuantile.name[Position1D], true, true, Default())
+      .toList.sortBy(_.position) shouldBe result14
+
+    toPipe(data5)
+      .countMapQuantiles(Along(Second), probs, Quantile.Type7, TestQuantile.name[Position1D], true, true,
+        Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result15
+
+    toPipe(data5)
+      .countMapQuantiles(Along(Second), probs, Quantile.Type8, TestQuantile.name[Position1D], true, true, Default())
+      .toList.sortBy(_.position) shouldBe result16
+
+    toPipe(data5)
+      .countMapQuantiles(Along(Second), probs, Quantile.Type9, TestQuantile.name[Position1D], true, true,
+        Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result17
+  }
+
+  it should "return its second over values in 2D" in {
+    toPipe(data4)
+      .countMapQuantiles(Over(Second), probs, Quantile.Type1, TestQuantile.name[Position1D], true, true, Default())
+      .toList.sortBy(_.position) shouldBe result10
+
+    toPipe(data4)
+      .countMapQuantiles(Over(Second), probs, Quantile.Type2, TestQuantile.name[Position1D], true, true,
+        Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result10
+
+    toPipe(data4)
+      .countMapQuantiles(Over(Second), probs, Quantile.Type3, TestQuantile.name[Position1D], true, true, Default())
+      .toList.sortBy(_.position) shouldBe result11
+
+    toPipe(data4)
+      .countMapQuantiles(Over(Second), probs, Quantile.Type4, TestQuantile.name[Position1D], true, true,
+        Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result12
+
+    toPipe(data4)
+      .countMapQuantiles(Over(Second), probs, Quantile.Type5, TestQuantile.name[Position1D], true, true, Default())
+      .toList.sortBy(_.position) shouldBe result13
+
+    toPipe(data4)
+      .countMapQuantiles(Over(Second), probs, Quantile.Type6, TestQuantile.name[Position1D], true, true,
+        Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result14
+
+    toPipe(data4)
+      .countMapQuantiles(Over(Second), probs, Quantile.Type7, TestQuantile.name[Position1D], true, true, Default())
+      .toList.sortBy(_.position) shouldBe result15
+
+    toPipe(data4)
+      .countMapQuantiles(Over(Second), probs, Quantile.Type8, TestQuantile.name[Position1D], true, true,
+        Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result16
+
+    toPipe(data4)
+      .countMapQuantiles(Over(Second), probs, Quantile.Type9, TestQuantile.name[Position1D], true, true, Default())
+      .toList.sortBy(_.position) shouldBe result17
+  }
+
+  it should "return with non-numeric data" in {
+    val res1 = toPipe(data6)
+      .countMapQuantiles(Along(First), probs, Quantile.Type1, TestQuantile.name[Position0D], false, true,
+        Default(Reducers(12)))
+      .toList.sortBy(_.position)
+    res1(0) shouldBe result18(0)
+    res1(1) shouldBe result18(1)
+    res1(2) shouldBe result18(2)
+    res1(3).position shouldBe Position1D("quantile=0.800000")
+    res1(3).content.value.asDouble.map(_.compare(Double.NaN)) shouldBe Some(0)
+
+    toPipe(data6)
+      .countMapQuantiles(Along(First), probs, Quantile.Type1, TestQuantile.name[Position0D], false, false, Default())
+      .toList.sortBy(_.position) shouldBe result18
+  }
+}
+
+class TestSparkCountMapQuantile extends TestQuantile {
+
+  "A quantile" should "return its first along 1 value in 1D" in {
+    toRDD(data1)
+      .countMapQuantiles(Along(First), probs, Quantile.Type1, TestQuantile.name[Position0D], true, true, Default())
+      .toList.sortBy(_.position) shouldBe result1
+
+    toRDD(data1)
+      .countMapQuantiles(Along(First), probs, Quantile.Type2, TestQuantile.name[Position0D], true, true,
+        Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result1
+
+    toRDD(data1)
+      .countMapQuantiles(Along(First), probs, Quantile.Type3, TestQuantile.name[Position0D], true, true, Default())
+      .toList.sortBy(_.position) shouldBe result1
+
+    toRDD(data1)
+      .countMapQuantiles(Along(First), probs, Quantile.Type4, TestQuantile.name[Position0D], true, true,
+        Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result1
+
+    toRDD(data1)
+      .countMapQuantiles(Along(First), probs, Quantile.Type5, TestQuantile.name[Position0D], true, true, Default())
+      .toList.sortBy(_.position) shouldBe result1
+
+    toRDD(data1)
+      .countMapQuantiles(Along(First), probs, Quantile.Type6, TestQuantile.name[Position0D], true, true,
+        Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result1
+
+    toRDD(data1)
+      .countMapQuantiles(Along(First), probs, Quantile.Type7, TestQuantile.name[Position0D], true, true, Default())
+      .toList.sortBy(_.position) shouldBe result1
+
+    toRDD(data1)
+      .countMapQuantiles(Along(First), probs, Quantile.Type8, TestQuantile.name[Position0D], true, true,
+        Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result1
+
+    toRDD(data1)
+      .countMapQuantiles(Along(First), probs, Quantile.Type9, TestQuantile.name[Position0D], true, true, Default())
+      .toList.sortBy(_.position) shouldBe result1
+  }
+
+  it should "return its first along 3 values in 1D" in {
+    toRDD(data2)
+      .countMapQuantiles(Along(First), probs, Quantile.Type1, TestQuantile.name[Position0D], true, true,
+        Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result2
+
+    toRDD(data2)
+      .countMapQuantiles(Along(First), probs, Quantile.Type2, TestQuantile.name[Position0D], true, true, Default())
+      .toList.sortBy(_.position) shouldBe result2
+
+    toRDD(data2)
+      .countMapQuantiles(Along(First), probs, Quantile.Type3, TestQuantile.name[Position0D], true, true,
+        Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result3
+
+    toRDD(data2)
+      .countMapQuantiles(Along(First), probs, Quantile.Type4, TestQuantile.name[Position0D], true, true, Default())
+      .toList.sortBy(_.position) shouldBe result4
+
+    toRDD(data2)
+      .countMapQuantiles(Along(First), probs, Quantile.Type5, TestQuantile.name[Position0D], true, true,
+        Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result5
+
+    toRDD(data2)
+      .countMapQuantiles(Along(First), probs, Quantile.Type6, TestQuantile.name[Position0D], true, true, Default())
+      .toList.sortBy(_.position) shouldBe result6
+
+    toRDD(data2)
+      .countMapQuantiles(Along(First), probs, Quantile.Type7, TestQuantile.name[Position0D], true, true,
+        Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result7
+
+    toRDD(data2)
+      .countMapQuantiles(Along(First), probs, Quantile.Type8, TestQuantile.name[Position0D], true, true, Default())
+      .toList.sortBy(_.position) shouldBe result8
+
+    toRDD(data2)
+      .countMapQuantiles(Along(First), probs, Quantile.Type9, TestQuantile.name[Position0D], true, true,
+        Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result9
+  }
+
+  it should "return its first along 3 equal values in 1D" in {
+    toRDD(data3)
+      .countMapQuantiles(Along(First), probs, Quantile.Type1, TestQuantile.name[Position0D], true, true, Default())
+      .toList.sortBy(_.position) shouldBe result1
+
+    toRDD(data3)
+      .countMapQuantiles(Along(First), probs, Quantile.Type2, TestQuantile.name[Position0D], true, true,
+        Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result1
+
+    toRDD(data3)
+      .countMapQuantiles(Along(First), probs, Quantile.Type3, TestQuantile.name[Position0D], true, true, Default())
+      .toList.sortBy(_.position) shouldBe result1
+
+    toRDD(data3)
+      .countMapQuantiles(Along(First), probs, Quantile.Type4, TestQuantile.name[Position0D], true, true,
+        Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result1
+
+    toRDD(data3)
+      .countMapQuantiles(Along(First), probs, Quantile.Type5, TestQuantile.name[Position0D], true, true, Default())
+      .toList.sortBy(_.position) shouldBe result1
+
+    toRDD(data3)
+      .countMapQuantiles(Along(First), probs, Quantile.Type6, TestQuantile.name[Position0D], true, true,
+        Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result1
+
+    toRDD(data3)
+      .countMapQuantiles(Along(First), probs, Quantile.Type7, TestQuantile.name[Position0D], true, true, Default())
+      .toList.sortBy(_.position) shouldBe result1
+
+    toRDD(data3)
+      .countMapQuantiles(Along(First), probs, Quantile.Type8, TestQuantile.name[Position0D], true, true,
+        Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result1
+
+    toRDD(data3)
+      .countMapQuantiles(Along(First), probs, Quantile.Type9, TestQuantile.name[Position0D], true, true, Default())
+      .toList.sortBy(_.position) shouldBe result1
+  }
+
+  it should "return its first along values in 2D" in {
+    toRDD(data4)
+      .countMapQuantiles(Along(First), probs, Quantile.Type1, TestQuantile.name[Position1D], true, true,
+        Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result10
+
+    toRDD(data4)
+      .countMapQuantiles(Along(First), probs, Quantile.Type2, TestQuantile.name[Position1D], true, true, Default())
+      .toList.sortBy(_.position) shouldBe result10
+
+    toRDD(data4)
+      .countMapQuantiles(Along(First), probs, Quantile.Type3, TestQuantile.name[Position1D], true, true,
+        Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result11
+
+    toRDD(data4)
+      .countMapQuantiles(Along(First), probs, Quantile.Type4, TestQuantile.name[Position1D], true, true, Default())
+      .toList.sortBy(_.position) shouldBe result12
+
+    toRDD(data4)
+      .countMapQuantiles(Along(First), probs, Quantile.Type5, TestQuantile.name[Position1D], true, true,
+        Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result13
+
+    toRDD(data4)
+      .countMapQuantiles(Along(First), probs, Quantile.Type6, TestQuantile.name[Position1D], true, true, Default())
+      .toList.sortBy(_.position) shouldBe result14
+
+    toRDD(data4)
+      .countMapQuantiles(Along(First), probs, Quantile.Type7, TestQuantile.name[Position1D], true, true,
+        Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result15
+
+    toRDD(data4)
+      .countMapQuantiles(Along(First), probs, Quantile.Type8, TestQuantile.name[Position1D], true, true, Default())
+      .toList.sortBy(_.position) shouldBe result16
+
+    toRDD(data4)
+      .countMapQuantiles(Along(First), probs, Quantile.Type9, TestQuantile.name[Position1D], true, true,
+        Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result17
+  }
+
+  it should "return its first over values in 2D" in {
+    toRDD(data5)
+      .countMapQuantiles(Over(First), probs, Quantile.Type1, TestQuantile.name[Position1D], true, true, Default())
+      .toList.sortBy(_.position) shouldBe result10
+
+    toRDD(data5)
+      .countMapQuantiles(Over(First), probs, Quantile.Type2, TestQuantile.name[Position1D], true, true,
+        Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result10
+
+    toRDD(data5)
+      .countMapQuantiles(Over(First), probs, Quantile.Type3, TestQuantile.name[Position1D], true, true, Default())
+      .toList.sortBy(_.position) shouldBe result11
+
+    toRDD(data5)
+      .countMapQuantiles(Over(First), probs, Quantile.Type4, TestQuantile.name[Position1D], true, true,
+        Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result12
+
+    toRDD(data5)
+      .countMapQuantiles(Over(First), probs, Quantile.Type5, TestQuantile.name[Position1D], true, true, Default())
+      .toList.sortBy(_.position) shouldBe result13
+
+    toRDD(data5)
+      .countMapQuantiles(Over(First), probs, Quantile.Type6, TestQuantile.name[Position1D], true, true,
+        Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result14
+
+    toRDD(data5)
+      .countMapQuantiles(Over(First), probs, Quantile.Type7, TestQuantile.name[Position1D], true, true, Default())
+      .toList.sortBy(_.position) shouldBe result15
+
+    toRDD(data5)
+      .countMapQuantiles(Over(First), probs, Quantile.Type8, TestQuantile.name[Position1D], true, true,
+        Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result16
+
+    toRDD(data5)
+      .countMapQuantiles(Over(First), probs, Quantile.Type9, TestQuantile.name[Position1D], true, true, Default())
+      .toList.sortBy(_.position) shouldBe result17
+  }
+
+  it should "return its second along values in 2D" in {
+    toRDD(data5)
+      .countMapQuantiles(Along(Second), probs, Quantile.Type1, TestQuantile.name[Position1D], true, true,
+        Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result10
+
+    toRDD(data5)
+      .countMapQuantiles(Along(Second), probs, Quantile.Type2, TestQuantile.name[Position1D], true, true, Default())
+      .toList.sortBy(_.position) shouldBe result10
+
+    toRDD(data5)
+      .countMapQuantiles(Along(Second), probs, Quantile.Type3, TestQuantile.name[Position1D], true, true,
+        Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result11
+
+    toRDD(data5)
+      .countMapQuantiles(Along(Second), probs, Quantile.Type4, TestQuantile.name[Position1D], true, true, Default())
+      .toList.sortBy(_.position) shouldBe result12
+
+    toRDD(data5)
+      .countMapQuantiles(Along(Second), probs, Quantile.Type5, TestQuantile.name[Position1D], true, true,
+        Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result13
+
+    toRDD(data5)
+      .countMapQuantiles(Along(Second), probs, Quantile.Type6, TestQuantile.name[Position1D], true, true, Default())
+      .toList.sortBy(_.position) shouldBe result14
+
+    toRDD(data5)
+      .countMapQuantiles(Along(Second), probs, Quantile.Type7, TestQuantile.name[Position1D], true, true,
+        Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result15
+
+    toRDD(data5)
+      .countMapQuantiles(Along(Second), probs, Quantile.Type8, TestQuantile.name[Position1D], true, true, Default())
+      .toList.sortBy(_.position) shouldBe result16
+
+    toRDD(data5)
+      .countMapQuantiles(Along(Second), probs, Quantile.Type9, TestQuantile.name[Position1D], true, true,
+        Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result17
+  }
+
+  it should "return its second over values in 2D" in {
+    toRDD(data4)
+      .countMapQuantiles(Over(Second), probs, Quantile.Type1, TestQuantile.name[Position1D], true, true, Default())
+      .toList.sortBy(_.position) shouldBe result10
+
+    toRDD(data4)
+      .countMapQuantiles(Over(Second), probs, Quantile.Type2, TestQuantile.name[Position1D], true, true,
+        Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result10
+
+    toRDD(data4)
+      .countMapQuantiles(Over(Second), probs, Quantile.Type3, TestQuantile.name[Position1D], true, true, Default())
+      .toList.sortBy(_.position) shouldBe result11
+
+    toRDD(data4)
+      .countMapQuantiles(Over(Second), probs, Quantile.Type4, TestQuantile.name[Position1D], true, true,
+        Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result12
+
+    toRDD(data4)
+      .countMapQuantiles(Over(Second), probs, Quantile.Type5, TestQuantile.name[Position1D], true, true, Default())
+      .toList.sortBy(_.position) shouldBe result13
+
+    toRDD(data4)
+      .countMapQuantiles(Over(Second), probs, Quantile.Type6, TestQuantile.name[Position1D], true, true,
+        Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result14
+
+    toRDD(data4)
+      .countMapQuantiles(Over(Second), probs, Quantile.Type7, TestQuantile.name[Position1D], true, true, Default())
+      .toList.sortBy(_.position) shouldBe result15
+
+    toRDD(data4)
+      .countMapQuantiles(Over(Second), probs, Quantile.Type8, TestQuantile.name[Position1D], true, true,
+        Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result16
+
+    toRDD(data4)
+      .countMapQuantiles(Over(Second), probs, Quantile.Type9, TestQuantile.name[Position1D], true, true, Default())
+      .toList.sortBy(_.position) shouldBe result17
+  }
+
+  it should "return with non-numeric data" in {
+    val res1 = toRDD(data6)
+      .countMapQuantiles(Along(First), probs, Quantile.Type1, TestQuantile.name[Position0D], false, true,
+        Default(Reducers(12)))
+      .toList.sortBy(_.position)
+    res1(0) shouldBe result18(0)
+    res1(1) shouldBe result18(1)
+    res1(2) shouldBe result18(2)
+    res1(3).position shouldBe Position1D("quantile=0.800000")
+    res1(3).content.value.asDouble.map(_.compare(Double.NaN)) shouldBe Some(0)
+
+    toRDD(data6)
+      .countMapQuantiles(Along(First), probs, Quantile.Type1, TestQuantile.name[Position0D], false, false, Default())
+      .toList.sortBy(_.position) shouldBe result18
+  }
+}
+
+class TestScaldingAggregateCountMapQuantile extends TestQuantile {
+
+  "A quantile" should "return its first along 1 values in 1D" in {
+    toPipe(data1)
+      .summarise(Along(First), CountMapQuantiles[Position1D, Position0D, Position1D](probs, Quantile.Type1,
+        TestQuantile.name[Position0D], true, true), Default())
+      .toList.sortBy(_.position) shouldBe result1
+
+    toPipe(data1)
+      .summarise(Along(First), CountMapQuantiles[Position1D, Position0D, Position1D](probs, Quantile.Type2,
+        TestQuantile.name[Position0D], true, true), Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result1
+
+    toPipe(data1)
+      .summarise(Along(First), CountMapQuantiles[Position1D, Position0D, Position1D](probs, Quantile.Type3,
+        TestQuantile.name[Position0D], true, true), Default())
+      .toList.sortBy(_.position) shouldBe result1
+
+    toPipe(data1)
+      .summarise(Along(First), CountMapQuantiles[Position1D, Position0D, Position1D](probs, Quantile.Type4,
+        TestQuantile.name[Position0D], true, true), Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result1
+
+    toPipe(data1)
+      .summarise(Along(First), CountMapQuantiles[Position1D, Position0D, Position1D](probs, Quantile.Type5,
+        TestQuantile.name[Position0D], true, true), Default())
+      .toList.sortBy(_.position) shouldBe result1
+
+    toPipe(data1)
+      .summarise(Along(First), CountMapQuantiles[Position1D, Position0D, Position1D](probs, Quantile.Type6,
+        TestQuantile.name[Position0D], true, true), Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result1
+
+    toPipe(data1)
+      .summarise(Along(First), CountMapQuantiles[Position1D, Position0D, Position1D](probs, Quantile.Type7,
+        TestQuantile.name[Position0D], true, true), Default())
+      .toList.sortBy(_.position) shouldBe result1
+
+    toPipe(data1)
+      .summarise(Along(First), CountMapQuantiles[Position1D, Position0D, Position1D](probs, Quantile.Type8,
+        TestQuantile.name[Position0D], true, true), Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result1
+
+    toPipe(data1)
+      .summarise(Along(First), CountMapQuantiles[Position1D, Position0D, Position1D](probs, Quantile.Type9,
+        TestQuantile.name[Position0D], true, true), Default())
+      .toList.sortBy(_.position) shouldBe result1
+  }
+
+  it should "return its first along 3 values in 1D" in {
+    toPipe(data2)
+      .summarise(Along(First), CountMapQuantiles[Position1D, Position0D, Position1D](probs, Quantile.Type1,
+        TestQuantile.name[Position0D], true, true), Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result2
+
+    toPipe(data2)
+      .summarise(Along(First), CountMapQuantiles[Position1D, Position0D, Position1D](probs, Quantile.Type2,
+        TestQuantile.name[Position0D], true, true), Default())
+      .toList.sortBy(_.position) shouldBe result2
+
+    toPipe(data2)
+      .summarise(Along(First), CountMapQuantiles[Position1D, Position0D, Position1D](probs, Quantile.Type3,
+        TestQuantile.name[Position0D], true, true), Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result3
+
+    toPipe(data2)
+      .summarise(Along(First), CountMapQuantiles[Position1D, Position0D, Position1D](probs, Quantile.Type4,
+        TestQuantile.name[Position0D], true, true), Default())
+      .toList.sortBy(_.position) shouldBe result4
+
+    toPipe(data2)
+      .summarise(Along(First), CountMapQuantiles[Position1D, Position0D, Position1D](probs, Quantile.Type5,
+        TestQuantile.name[Position0D], true, true), Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result5
+
+    toPipe(data2)
+      .summarise(Along(First), CountMapQuantiles[Position1D, Position0D, Position1D](probs, Quantile.Type6,
+        TestQuantile.name[Position0D], true, true), Default())
+      .toList.sortBy(_.position) shouldBe result6
+
+    toPipe(data2)
+      .summarise(Along(First), CountMapQuantiles[Position1D, Position0D, Position1D](probs, Quantile.Type7,
+        TestQuantile.name[Position0D], true, true), Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result7
+
+    toPipe(data2)
+      .summarise(Along(First), CountMapQuantiles[Position1D, Position0D, Position1D](probs, Quantile.Type8,
+        TestQuantile.name[Position0D], true, true), Default())
+      .toList.sortBy(_.position) shouldBe result8
+
+    toPipe(data2)
+      .summarise(Along(First), CountMapQuantiles[Position1D, Position0D, Position1D](probs, Quantile.Type9,
+        TestQuantile.name[Position0D], true, true), Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result9
+  }
+
+  it should "return its first along 3 equal values in 1D" in {
+    toPipe(data3)
+      .summarise(Along(First), CountMapQuantiles[Position1D, Position0D, Position1D](probs, Quantile.Type1,
+        TestQuantile.name[Position0D], true, true), Default())
+      .toList.sortBy(_.position) shouldBe result1
+
+    toPipe(data3)
+      .summarise(Along(First), CountMapQuantiles[Position1D, Position0D, Position1D](probs, Quantile.Type2,
+        TestQuantile.name[Position0D], true, true), Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result1
+
+    toPipe(data3)
+      .summarise(Along(First), CountMapQuantiles[Position1D, Position0D, Position1D](probs, Quantile.Type3,
+        TestQuantile.name[Position0D], true, true), Default())
+      .toList.sortBy(_.position) shouldBe result1
+
+    toPipe(data3)
+      .summarise(Along(First), CountMapQuantiles[Position1D, Position0D, Position1D](probs, Quantile.Type4,
+        TestQuantile.name[Position0D], true, true), Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result1
+
+    toPipe(data3)
+      .summarise(Along(First), CountMapQuantiles[Position1D, Position0D, Position1D](probs, Quantile.Type5,
+        TestQuantile.name[Position0D], true, true), Default())
+      .toList.sortBy(_.position) shouldBe result1
+
+    toPipe(data3)
+      .summarise(Along(First), CountMapQuantiles[Position1D, Position0D, Position1D](probs, Quantile.Type6,
+        TestQuantile.name[Position0D], true, true), Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result1
+
+    toPipe(data3)
+      .summarise(Along(First), CountMapQuantiles[Position1D, Position0D, Position1D](probs, Quantile.Type7,
+        TestQuantile.name[Position0D], true, true), Default())
+      .toList.sortBy(_.position) shouldBe result1
+
+    toPipe(data3)
+      .summarise(Along(First), CountMapQuantiles[Position1D, Position0D, Position1D](probs, Quantile.Type8,
+        TestQuantile.name[Position0D], true, true), Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result1
+
+    toPipe(data3)
+      .summarise(Along(First), CountMapQuantiles[Position1D, Position0D, Position1D](probs, Quantile.Type9,
+        TestQuantile.name[Position0D], true, true), Default())
+      .toList.sortBy(_.position) shouldBe result1
+  }
+
+  it should "return its first along values in 2D" in {
+    toPipe(data4)
+      .summarise(Along(First), CountMapQuantiles[Position2D, Position1D, Position2D](probs, Quantile.Type1,
+        TestQuantile.name[Position1D], true, true), Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result10
+
+    toPipe(data4)
+      .summarise(Along(First), CountMapQuantiles[Position2D, Position1D, Position2D](probs, Quantile.Type2,
+        TestQuantile.name[Position1D], true, true), Default())
+      .toList.sortBy(_.position) shouldBe result10
+
+    toPipe(data4)
+      .summarise(Along(First), CountMapQuantiles[Position2D, Position1D, Position2D](probs, Quantile.Type3,
+        TestQuantile.name[Position1D], true, true), Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result11
+
+    toPipe(data4)
+      .summarise(Along(First), CountMapQuantiles[Position2D, Position1D, Position2D](probs, Quantile.Type4,
+        TestQuantile.name[Position1D], true, true), Default())
+      .toList.sortBy(_.position) shouldBe result12
+
+    toPipe(data4)
+      .summarise(Along(First), CountMapQuantiles[Position2D, Position1D, Position2D](probs, Quantile.Type5,
+        TestQuantile.name[Position1D], true, true), Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result13
+
+    toPipe(data4)
+      .summarise(Along(First), CountMapQuantiles[Position2D, Position1D, Position2D](probs, Quantile.Type6,
+        TestQuantile.name[Position1D], true, true), Default())
+      .toList.sortBy(_.position) shouldBe result14
+
+    toPipe(data4)
+      .summarise(Along(First), CountMapQuantiles[Position2D, Position1D, Position2D](probs, Quantile.Type7,
+        TestQuantile.name[Position1D], true, true), Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result15
+
+    toPipe(data4)
+      .summarise(Along(First), CountMapQuantiles[Position2D, Position1D, Position2D](probs, Quantile.Type8,
+        TestQuantile.name[Position1D], true, true), Default())
+      .toList.sortBy(_.position) shouldBe result16
+
+    toPipe(data4)
+      .summarise(Along(First), CountMapQuantiles[Position2D, Position1D, Position2D](probs, Quantile.Type9,
+        TestQuantile.name[Position1D], true, true), Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result17
+  }
+
+  it should "return its first over values in 2D" in {
+    toPipe(data5)
+      .summarise(Over(First), CountMapQuantiles[Position2D, Position1D, Position2D](probs, Quantile.Type1,
+        TestQuantile.name[Position1D], true, true), Default())
+      .toList.sortBy(_.position) shouldBe result10
+
+    toPipe(data5)
+      .summarise(Over(First), CountMapQuantiles[Position2D, Position1D, Position2D](probs, Quantile.Type2,
+        TestQuantile.name[Position1D], true, true), Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result10
+
+    toPipe(data5)
+      .summarise(Over(First), CountMapQuantiles[Position2D, Position1D, Position2D](probs, Quantile.Type3,
+        TestQuantile.name[Position1D], true, true), Default())
+      .toList.sortBy(_.position) shouldBe result11
+
+    toPipe(data5)
+      .summarise(Over(First), CountMapQuantiles[Position2D, Position1D, Position2D](probs, Quantile.Type4,
+        TestQuantile.name[Position1D], true, true), Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result12
+
+    toPipe(data5)
+      .summarise(Over(First), CountMapQuantiles[Position2D, Position1D, Position2D](probs, Quantile.Type5,
+        TestQuantile.name[Position1D], true, true), Default())
+      .toList.sortBy(_.position) shouldBe result13
+
+    toPipe(data5)
+      .summarise(Over(First), CountMapQuantiles[Position2D, Position1D, Position2D](probs, Quantile.Type6,
+        TestQuantile.name[Position1D], true, true), Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result14
+
+    toPipe(data5)
+      .summarise(Over(First), CountMapQuantiles[Position2D, Position1D, Position2D](probs, Quantile.Type7,
+        TestQuantile.name[Position1D], true, true), Default())
+      .toList.sortBy(_.position) shouldBe result15
+
+    toPipe(data5)
+      .summarise(Over(First), CountMapQuantiles[Position2D, Position1D, Position2D](probs, Quantile.Type8,
+        TestQuantile.name[Position1D], true, true), Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result16
+
+    toPipe(data5)
+      .summarise(Over(First), CountMapQuantiles[Position2D, Position1D, Position2D](probs, Quantile.Type9,
+        TestQuantile.name[Position1D], true, true), Default())
+      .toList.sortBy(_.position) shouldBe result17
+  }
+
+  it should "return its second along values in 2D" in {
+    toPipe(data5)
+      .summarise(Along(Second), CountMapQuantiles[Position2D, Position1D, Position2D](probs, Quantile.Type1,
+        TestQuantile.name[Position1D], true, true), Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result10
+
+    toPipe(data5)
+      .summarise(Along(Second), CountMapQuantiles[Position2D, Position1D, Position2D](probs, Quantile.Type2,
+        TestQuantile.name[Position1D], true, true), Default())
+      .toList.sortBy(_.position) shouldBe result10
+
+    toPipe(data5)
+      .summarise(Along(Second), CountMapQuantiles[Position2D, Position1D, Position2D](probs, Quantile.Type3,
+        TestQuantile.name[Position1D], true, true), Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result11
+
+    toPipe(data5)
+      .summarise(Along(Second), CountMapQuantiles[Position2D, Position1D, Position2D](probs, Quantile.Type4,
+        TestQuantile.name[Position1D], true, true), Default())
+      .toList.sortBy(_.position) shouldBe result12
+
+    toPipe(data5)
+      .summarise(Along(Second), CountMapQuantiles[Position2D, Position1D, Position2D](probs, Quantile.Type5,
+        TestQuantile.name[Position1D], true, true), Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result13
+
+    toPipe(data5)
+      .summarise(Along(Second), CountMapQuantiles[Position2D, Position1D, Position2D](probs, Quantile.Type6,
+        TestQuantile.name[Position1D], true, true), Default())
+      .toList.sortBy(_.position) shouldBe result14
+
+    toPipe(data5)
+      .summarise(Along(Second), CountMapQuantiles[Position2D, Position1D, Position2D](probs, Quantile.Type7,
+        TestQuantile.name[Position1D], true, true), Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result15
+
+    toPipe(data5)
+      .summarise(Along(Second), CountMapQuantiles[Position2D, Position1D, Position2D](probs, Quantile.Type8,
+        TestQuantile.name[Position1D], true, true), Default())
+      .toList.sortBy(_.position) shouldBe result16
+
+    toPipe(data5)
+      .summarise(Along(Second), CountMapQuantiles[Position2D, Position1D, Position2D](probs, Quantile.Type9,
+        TestQuantile.name[Position1D], true, true), Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result17
+  }
+
+  it should "return its second over values in 2D" in {
+    toPipe(data4)
+      .summarise(Over(Second), CountMapQuantiles[Position2D, Position1D, Position2D](probs, Quantile.Type1,
+        TestQuantile.name[Position1D], true, true), Default())
+      .toList.sortBy(_.position) shouldBe result10
+
+    toPipe(data4)
+      .summarise(Over(Second), CountMapQuantiles[Position2D, Position1D, Position2D](probs, Quantile.Type2,
+        TestQuantile.name[Position1D], true, true), Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result10
+
+    toPipe(data4)
+      .summarise(Over(Second), CountMapQuantiles[Position2D, Position1D, Position2D](probs, Quantile.Type3,
+        TestQuantile.name[Position1D], true, true), Default())
+      .toList.sortBy(_.position) shouldBe result11
+
+    toPipe(data4)
+      .summarise(Over(Second), CountMapQuantiles[Position2D, Position1D, Position2D](probs, Quantile.Type4,
+        TestQuantile.name[Position1D], true, true), Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result12
+
+    toPipe(data4)
+      .summarise(Over(Second), CountMapQuantiles[Position2D, Position1D, Position2D](probs, Quantile.Type5,
+        TestQuantile.name[Position1D], true, true), Default())
+      .toList.sortBy(_.position) shouldBe result13
+
+    toPipe(data4)
+      .summarise(Over(Second), CountMapQuantiles[Position2D, Position1D, Position2D](probs, Quantile.Type6,
+        TestQuantile.name[Position1D], true, true), Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result14
+
+    toPipe(data4)
+      .summarise(Over(Second), CountMapQuantiles[Position2D, Position1D, Position2D](probs, Quantile.Type7,
+        TestQuantile.name[Position1D], true, true), Default())
+      .toList.sortBy(_.position) shouldBe result15
+
+    toPipe(data4)
+      .summarise(Over(Second), CountMapQuantiles[Position2D, Position1D, Position2D](probs, Quantile.Type8,
+        TestQuantile.name[Position1D], true, true), Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result16
+
+    toPipe(data4)
+      .summarise(Over(Second), CountMapQuantiles[Position2D, Position1D, Position2D](probs, Quantile.Type9,
+        TestQuantile.name[Position1D], true, true), Default())
+      .toList.sortBy(_.position) shouldBe result17
+  }
+
+  it should "return with non-numeric data" in {
+    val res1 = toPipe(data6)
+      .summarise(Along(First), CountMapQuantiles[Position1D, Position0D, Position1D](probs, Quantile.Type1,
+        TestQuantile.name[Position0D], false, true), Default(Reducers(12)))
+      .toList.sortBy(_.position)
+    res1(0) shouldBe result18(0)
+    res1(1) shouldBe result18(1)
+    res1(2) shouldBe result18(2)
+    res1(3).position shouldBe Position1D("quantile=0.800000")
+    res1(3).content.value.asDouble.map(_.compare(Double.NaN)) shouldBe Some(0)
+
+    toPipe(data6)
+      .summarise(Along(First), CountMapQuantiles[Position1D, Position0D, Position1D](probs, Quantile.Type1,
+        TestQuantile.name[Position0D], false, false), Default())
+      .toList.sortBy(_.position) shouldBe result18
+  }
+}
+
+class TestSparkAggregateCountMapQuantile extends TestQuantile {
+
+  "A quantile" should "return its first along 1 value in 1D" in {
+    toRDD(data1)
+      .summarise(Along(First), CountMapQuantiles[Position1D, Position0D, Position1D](probs, Quantile.Type1,
+        TestQuantile.name[Position0D], true, true), Default())
+      .toList.sortBy(_.position) shouldBe result1
+
+    toRDD(data1)
+      .summarise(Along(First), CountMapQuantiles[Position1D, Position0D, Position1D](probs, Quantile.Type2,
+        TestQuantile.name[Position0D], true, true), Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result1
+
+    toRDD(data1)
+      .summarise(Along(First), CountMapQuantiles[Position1D, Position0D, Position1D](probs, Quantile.Type3,
+        TestQuantile.name[Position0D], true, true), Default())
+      .toList.sortBy(_.position) shouldBe result1
+
+    toRDD(data1)
+      .summarise(Along(First), CountMapQuantiles[Position1D, Position0D, Position1D](probs, Quantile.Type4,
+        TestQuantile.name[Position0D], true, true), Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result1
+
+    toRDD(data1)
+      .summarise(Along(First), CountMapQuantiles[Position1D, Position0D, Position1D](probs, Quantile.Type5,
+        TestQuantile.name[Position0D], true, true), Default())
+      .toList.sortBy(_.position) shouldBe result1
+
+    toRDD(data1)
+      .summarise(Along(First), CountMapQuantiles[Position1D, Position0D, Position1D](probs, Quantile.Type6,
+        TestQuantile.name[Position0D], true, true), Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result1
+
+    toRDD(data1)
+      .summarise(Along(First), CountMapQuantiles[Position1D, Position0D, Position1D](probs, Quantile.Type7,
+        TestQuantile.name[Position0D], true, true), Default())
+      .toList.sortBy(_.position) shouldBe result1
+
+    toRDD(data1)
+      .summarise(Along(First), CountMapQuantiles[Position1D, Position0D, Position1D](probs, Quantile.Type8,
+        TestQuantile.name[Position0D], true, true), Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result1
+
+    toRDD(data1)
+      .summarise(Along(First), CountMapQuantiles[Position1D, Position0D, Position1D](probs, Quantile.Type9,
+        TestQuantile.name[Position0D], true, true), Default())
+      .toList.sortBy(_.position) shouldBe result1
+  }
+
+  it should "return its first along 3 values in 1D" in {
+    toRDD(data2)
+      .summarise(Along(First), CountMapQuantiles[Position1D, Position0D, Position1D](probs, Quantile.Type1,
+        TestQuantile.name[Position0D], true, true), Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result2
+
+    toRDD(data2)
+      .summarise(Along(First), CountMapQuantiles[Position1D, Position0D, Position1D](probs, Quantile.Type2,
+        TestQuantile.name[Position0D], true, true), Default())
+      .toList.sortBy(_.position) shouldBe result2
+
+    toRDD(data2)
+      .summarise(Along(First), CountMapQuantiles[Position1D, Position0D, Position1D](probs, Quantile.Type3,
+        TestQuantile.name[Position0D], true, true), Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result3
+
+    toRDD(data2)
+      .summarise(Along(First), CountMapQuantiles[Position1D, Position0D, Position1D](probs, Quantile.Type4,
+        TestQuantile.name[Position0D], true, true), Default())
+      .toList.sortBy(_.position) shouldBe result4
+
+    toRDD(data2)
+      .summarise(Along(First), CountMapQuantiles[Position1D, Position0D, Position1D](probs, Quantile.Type5,
+        TestQuantile.name[Position0D], true, true), Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result5
+
+    toRDD(data2)
+      .summarise(Along(First), CountMapQuantiles[Position1D, Position0D, Position1D](probs, Quantile.Type6,
+        TestQuantile.name[Position0D], true, true), Default())
+      .toList.sortBy(_.position) shouldBe result6
+
+    toRDD(data2)
+      .summarise(Along(First), CountMapQuantiles[Position1D, Position0D, Position1D](probs, Quantile.Type7,
+        TestQuantile.name[Position0D], true, true), Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result7
+
+    toRDD(data2)
+      .summarise(Along(First), CountMapQuantiles[Position1D, Position0D, Position1D](probs, Quantile.Type8,
+        TestQuantile.name[Position0D], true, true), Default())
+      .toList.sortBy(_.position) shouldBe result8
+
+    toRDD(data2)
+      .summarise(Along(First), CountMapQuantiles[Position1D, Position0D, Position1D](probs, Quantile.Type9,
+        TestQuantile.name[Position0D], true, true), Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result9
+  }
+
+  it should "return its first along 3 equal values in 1D" in {
+    toRDD(data3)
+      .summarise(Along(First), CountMapQuantiles[Position1D, Position0D, Position1D](probs, Quantile.Type1,
+        TestQuantile.name[Position0D], true, true), Default())
+      .toList.sortBy(_.position) shouldBe result1
+
+    toRDD(data3)
+      .summarise(Along(First), CountMapQuantiles[Position1D, Position0D, Position1D](probs, Quantile.Type2,
+        TestQuantile.name[Position0D], true, true), Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result1
+
+    toRDD(data3)
+      .summarise(Along(First), CountMapQuantiles[Position1D, Position0D, Position1D](probs, Quantile.Type3,
+        TestQuantile.name[Position0D], true, true), Default())
+      .toList.sortBy(_.position) shouldBe result1
+
+    toRDD(data3)
+      .summarise(Along(First), CountMapQuantiles[Position1D, Position0D, Position1D](probs, Quantile.Type4,
+        TestQuantile.name[Position0D], true, true), Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result1
+
+    toRDD(data3)
+      .summarise(Along(First), CountMapQuantiles[Position1D, Position0D, Position1D](probs, Quantile.Type5,
+        TestQuantile.name[Position0D], true, true), Default())
+      .toList.sortBy(_.position) shouldBe result1
+
+    toRDD(data3)
+      .summarise(Along(First), CountMapQuantiles[Position1D, Position0D, Position1D](probs, Quantile.Type6,
+        TestQuantile.name[Position0D], true, true), Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result1
+
+    toRDD(data3)
+      .summarise(Along(First), CountMapQuantiles[Position1D, Position0D, Position1D](probs, Quantile.Type7,
+        TestQuantile.name[Position0D], true, true), Default())
+      .toList.sortBy(_.position) shouldBe result1
+
+    toRDD(data3)
+      .summarise(Along(First), CountMapQuantiles[Position1D, Position0D, Position1D](probs, Quantile.Type8,
+        TestQuantile.name[Position0D], true, true), Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result1
+
+    toRDD(data3)
+      .summarise(Along(First), CountMapQuantiles[Position1D, Position0D, Position1D](probs, Quantile.Type9,
+        TestQuantile.name[Position0D], true, true), Default())
+      .toList.sortBy(_.position) shouldBe result1
+  }
+
+  it should "return its first along values in 2D" in {
+    toRDD(data4)
+      .summarise(Along(First), CountMapQuantiles[Position2D, Position1D, Position2D](probs, Quantile.Type1,
+        TestQuantile.name[Position1D], true, true), Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result10
+
+    toRDD(data4)
+      .summarise(Along(First), CountMapQuantiles[Position2D, Position1D, Position2D](probs, Quantile.Type2,
+        TestQuantile.name[Position1D], true, true), Default())
+      .toList.sortBy(_.position) shouldBe result10
+
+    toRDD(data4)
+      .summarise(Along(First), CountMapQuantiles[Position2D, Position1D, Position2D](probs, Quantile.Type3,
+        TestQuantile.name[Position1D], true, true), Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result11
+
+    toRDD(data4)
+      .summarise(Along(First), CountMapQuantiles[Position2D, Position1D, Position2D](probs, Quantile.Type4,
+        TestQuantile.name[Position1D], true, true), Default())
+      .toList.sortBy(_.position) shouldBe result12
+
+    toRDD(data4)
+      .summarise(Along(First), CountMapQuantiles[Position2D, Position1D, Position2D](probs, Quantile.Type5,
+        TestQuantile.name[Position1D], true, true), Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result13
+
+    toRDD(data4)
+      .summarise(Along(First), CountMapQuantiles[Position2D, Position1D, Position2D](probs, Quantile.Type6,
+        TestQuantile.name[Position1D], true, true), Default())
+      .toList.sortBy(_.position) shouldBe result14
+
+    toRDD(data4)
+      .summarise(Along(First), CountMapQuantiles[Position2D, Position1D, Position2D](probs, Quantile.Type7,
+        TestQuantile.name[Position1D], true, true), Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result15
+
+    toRDD(data4)
+      .summarise(Along(First), CountMapQuantiles[Position2D, Position1D, Position2D](probs, Quantile.Type8,
+        TestQuantile.name[Position1D], true, true), Default())
+      .toList.sortBy(_.position) shouldBe result16
+
+    toRDD(data4)
+      .summarise(Along(First), CountMapQuantiles[Position2D, Position1D, Position2D](probs, Quantile.Type9,
+        TestQuantile.name[Position1D], true, true), Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result17
+  }
+
+  it should "return its first over values in 2D" in {
+    toRDD(data5)
+      .summarise(Over(First), CountMapQuantiles[Position2D, Position1D, Position2D](probs, Quantile.Type1,
+        TestQuantile.name[Position1D], true, true), Default())
+      .toList.sortBy(_.position) shouldBe result10
+
+    toRDD(data5)
+      .summarise(Over(First), CountMapQuantiles[Position2D, Position1D, Position2D](probs, Quantile.Type2,
+        TestQuantile.name[Position1D], true, true), Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result10
+
+    toRDD(data5)
+      .summarise(Over(First), CountMapQuantiles[Position2D, Position1D, Position2D](probs, Quantile.Type3,
+        TestQuantile.name[Position1D], true, true), Default())
+      .toList.sortBy(_.position) shouldBe result11
+
+    toRDD(data5)
+      .summarise(Over(First), CountMapQuantiles[Position2D, Position1D, Position2D](probs, Quantile.Type4,
+        TestQuantile.name[Position1D], true, true), Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result12
+
+    toRDD(data5)
+      .summarise(Over(First), CountMapQuantiles[Position2D, Position1D, Position2D](probs, Quantile.Type5,
+        TestQuantile.name[Position1D], true, true), Default())
+      .toList.sortBy(_.position) shouldBe result13
+
+    toRDD(data5)
+      .summarise(Over(First), CountMapQuantiles[Position2D, Position1D, Position2D](probs, Quantile.Type6,
+        TestQuantile.name[Position1D], true, true), Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result14
+
+    toRDD(data5)
+      .summarise(Over(First), CountMapQuantiles[Position2D, Position1D, Position2D](probs, Quantile.Type7,
+        TestQuantile.name[Position1D], true, true), Default())
+      .toList.sortBy(_.position) shouldBe result15
+
+    toRDD(data5)
+      .summarise(Over(First), CountMapQuantiles[Position2D, Position1D, Position2D](probs, Quantile.Type8,
+        TestQuantile.name[Position1D], true, true), Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result16
+
+    toRDD(data5)
+      .summarise(Over(First), CountMapQuantiles[Position2D, Position1D, Position2D](probs, Quantile.Type9,
+        TestQuantile.name[Position1D], true, true), Default())
+      .toList.sortBy(_.position) shouldBe result17
+  }
+
+  it should "return its second along values in 2D" in {
+    toRDD(data5)
+      .summarise(Along(Second), CountMapQuantiles[Position2D, Position1D, Position2D](probs, Quantile.Type1,
+        TestQuantile.name[Position1D], true, true), Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result10
+
+    toRDD(data5)
+      .summarise(Along(Second), CountMapQuantiles[Position2D, Position1D, Position2D](probs, Quantile.Type2,
+        TestQuantile.name[Position1D], true, true), Default())
+      .toList.sortBy(_.position) shouldBe result10
+
+    toRDD(data5)
+      .summarise(Along(Second), CountMapQuantiles[Position2D, Position1D, Position2D](probs, Quantile.Type3,
+        TestQuantile.name[Position1D], true, true), Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result11
+
+    toRDD(data5)
+      .summarise(Along(Second), CountMapQuantiles[Position2D, Position1D, Position2D](probs, Quantile.Type4,
+        TestQuantile.name[Position1D], true, true), Default())
+      .toList.sortBy(_.position) shouldBe result12
+
+    toRDD(data5)
+      .summarise(Along(Second), CountMapQuantiles[Position2D, Position1D, Position2D](probs, Quantile.Type5,
+        TestQuantile.name[Position1D], true, true), Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result13
+
+    toRDD(data5)
+      .summarise(Along(Second), CountMapQuantiles[Position2D, Position1D, Position2D](probs, Quantile.Type6,
+        TestQuantile.name[Position1D], true, true), Default())
+      .toList.sortBy(_.position) shouldBe result14
+
+    toRDD(data5)
+      .summarise(Along(Second), CountMapQuantiles[Position2D, Position1D, Position2D](probs, Quantile.Type7,
+        TestQuantile.name[Position1D], true, true), Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result15
+
+    toRDD(data5)
+      .summarise(Along(Second), CountMapQuantiles[Position2D, Position1D, Position2D](probs, Quantile.Type8,
+        TestQuantile.name[Position1D], true, true), Default())
+      .toList.sortBy(_.position) shouldBe result16
+
+    toRDD(data5)
+      .summarise(Along(Second), CountMapQuantiles[Position2D, Position1D, Position2D](probs, Quantile.Type9,
+        TestQuantile.name[Position1D], true, true), Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result17
+  }
+
+  it should "return its second over values in 2D" in {
+    toRDD(data4)
+      .summarise(Over(Second), CountMapQuantiles[Position2D, Position1D, Position2D](probs, Quantile.Type1,
+        TestQuantile.name[Position1D], true, true), Default())
+      .toList.sortBy(_.position) shouldBe result10
+
+    toRDD(data4)
+      .summarise(Over(Second), CountMapQuantiles[Position2D, Position1D, Position2D](probs, Quantile.Type2,
+        TestQuantile.name[Position1D], true, true), Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result10
+
+    toRDD(data4)
+      .summarise(Over(Second), CountMapQuantiles[Position2D, Position1D, Position2D](probs, Quantile.Type3,
+        TestQuantile.name[Position1D], true, true), Default())
+      .toList.sortBy(_.position) shouldBe result11
+
+    toRDD(data4)
+      .summarise(Over(Second), CountMapQuantiles[Position2D, Position1D, Position2D](probs, Quantile.Type4,
+        TestQuantile.name[Position1D], true, true), Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result12
+
+    toRDD(data4)
+      .summarise(Over(Second), CountMapQuantiles[Position2D, Position1D, Position2D](probs, Quantile.Type5,
+        TestQuantile.name[Position1D], true, true), Default())
+      .toList.sortBy(_.position) shouldBe result13
+
+    toRDD(data4)
+      .summarise(Over(Second), CountMapQuantiles[Position2D, Position1D, Position2D](probs, Quantile.Type6,
+        TestQuantile.name[Position1D], true, true), Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result14
+
+    toRDD(data4)
+      .summarise(Over(Second), CountMapQuantiles[Position2D, Position1D, Position2D](probs, Quantile.Type7,
+        TestQuantile.name[Position1D], true, true), Default())
+      .toList.sortBy(_.position) shouldBe result15
+
+    toRDD(data4)
+      .summarise(Over(Second), CountMapQuantiles[Position2D, Position1D, Position2D](probs, Quantile.Type8,
+        TestQuantile.name[Position1D], true, true), Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result16
+
+    toRDD(data4)
+      .summarise(Over(Second), CountMapQuantiles[Position2D, Position1D, Position2D](probs, Quantile.Type9,
+        TestQuantile.name[Position1D], true, true), Default())
+      .toList.sortBy(_.position) shouldBe result17
+  }
+
+  it should "return with non-numeric data" in {
+    val res1 = toRDD(data6)
+      .summarise(Along(First), CountMapQuantiles[Position1D, Position0D, Position1D](probs, Quantile.Type1,
+        TestQuantile.name[Position0D], false, true), Default(Reducers(12)))
+      .toList.sortBy(_.position)
+    res1(0) shouldBe result18(0)
+    res1(1) shouldBe result18(1)
+    res1(2) shouldBe result18(2)
+    res1(3).position shouldBe Position1D("quantile=0.800000")
+    res1(3).content.value.asDouble.map(_.compare(Double.NaN)) shouldBe Some(0)
+
+    toRDD(data6)
+      .summarise(Along(First), CountMapQuantiles[Position1D, Position0D, Position1D](probs, Quantile.Type1,
+        TestQuantile.name[Position0D], false, false), Default())
+      .toList.sortBy(_.position) shouldBe result18
+  }
+}
+
+trait TestApproximateQuantile extends TestGrimlock {
+
+  val rnd = new scala.util.Random(1234)
+
+  val probs = (0.1 to 0.9 by 0.1).toList
+
+  // Simple Gaussian for algorithms that struggle with sparsly populated regions
+  val data1 = (1 to 6000)
+    .map(_ => rnd.nextGaussian())
+    .toList
+    .map(d => Cell(Position1D("not.used"), Content(ContinuousSchema[Double], d)))
+
+  val data2 = ((1 to 6000).map(_ => rnd.nextGaussian()    ) ++
+               (1 to 4000).map(_ => rnd.nextGaussian() + 2) ++
+               (1 to  500).map(_ => rnd.nextGaussian() - 8))
+    .toList
+    .map(d => Cell(Position1D("not.used"), Content(ContinuousSchema[Double], d)))
+
+}
+
+object TestApproximateQuantile {
+
+  def name[S <: Position with ExpandablePosition] = {
+    (pos: S, value: Double) => pos.append("quantile=%f".format(value)).toOption
+  }
+}
+
+class TestScaldingTDigestQuantile extends TestApproximateQuantile {
+
+  "An approximate quantile" should "return reasonably close t-digest aggregates" in {
+    val ref = toPipe(data2)
+      .summarise(Along(First), CountMapQuantiles[Position1D, Position0D, Position1D](probs, Quantile.Type1,
+        TestApproximateQuantile.name[Position0D], false, true), Default())
+      .toList
+      .map(_.content.value.asDouble.get)
+      .sorted
+
+    val res = toPipe(data2)
+      .summarise(Along(First), TDigestQuantiles[Position1D, Position0D, Position1D](probs, 100,
+        TestApproximateQuantile.name[Position0D], false, true), Default())
+      .toList
+      .map(_.content.value.asDouble.get)
+      .sorted
+
+    res.zip(ref).foreach { case (t, c) => t shouldBe c +- 5e-3 }
+  }
+
+  it should "return reasonably close t-digest quantiles" in {
+    val ref = toPipe(data2)
+      .summarise(Along(First), CountMapQuantiles[Position1D, Position0D, Position1D](probs, Quantile.Type1,
+        TestApproximateQuantile.name[Position0D], false, true), Default())
+      .toList
+      .map(_.content.value.asDouble.get)
+      .sorted
+
+    val res = toPipe(data2)
+      .tDigestQuantiles(Along(First), probs, 100, TestApproximateQuantile.name[Position0D], false, true, Default())
+      .toList
+      .map(_.content.value.asDouble.get)
+      .sorted
+
+    res.zip(ref).foreach { case (t, c) => t shouldBe c +- 5e-3 }
+  }
+}
+
+class TestSparkTDigestQuantile extends TestApproximateQuantile {
+
+  "An approximate quantile" should "return reasonably close t-digest aggregates" in {
+    val ref = toRDD(data2)
+      .summarise(Along(First), CountMapQuantiles[Position1D, Position0D, Position1D](probs, Quantile.Type1,
+        TestApproximateQuantile.name[Position0D], false, true), Default())
+      .toList
+      .map(_.content.value.asDouble.get)
+      .sorted
+
+    val res = toRDD(data2)
+      .summarise(Along(First), TDigestQuantiles[Position1D, Position0D, Position1D](probs, 100,
+        TestApproximateQuantile.name[Position0D], false, true), Default())
+      .toList
+      .map(_.content.value.asDouble.get)
+      .sorted
+
+    res.zip(ref).foreach { case (t, c) => t shouldBe c +- 5e-3 }
+  }
+
+  it should "return reasonably close t-digest quantiles" in {
+    val ref = toRDD(data2)
+      .summarise(Along(First), CountMapQuantiles[Position1D, Position0D, Position1D](probs, Quantile.Type1,
+        TestApproximateQuantile.name[Position0D], false, true), Default())
+      .toList
+      .map(_.content.value.asDouble.get)
+      .sorted
+
+    val res = toRDD(data2)
+      .tDigestQuantiles(Along(First), probs, 100, TestApproximateQuantile.name[Position0D], false, true, Default())
+      .toList
+      .map(_.content.value.asDouble.get)
+      .sorted
+
+    res.zip(ref).foreach { case (t, c) => t shouldBe c +- 5e-3 }
+  }
+}
+
+class TestScaldingUniformQuantile extends TestApproximateQuantile {
+
+  "An approximate quantile" should "return reasonably close uniform aggregates" in {
+    val ref = toPipe(data1)
+      .summarise(Along(First), CountMapQuantiles[Position1D, Position0D, Position1D](probs, Quantile.Type1,
+        TestApproximateQuantile.name[Position0D], false, true), Default())
+      .toList
+      .map(_.content.value.asDouble.get)
+      .sorted
+
+    val res = toPipe(data1)
+      .summarise(Along(First), UniformQuantiles[Position1D, Position0D, Position1D](probs.size + 1,
+        TestApproximateQuantile.name[Position0D], false, true), Default())
+      .toList
+      .map(_.content.value.asDouble.get)
+      .sorted
+
+    res.zip(ref).foreach { case (t, c) => t shouldBe c +- 5e-2 }
+  }
+
+  it should "return reasonably close uniform quantiles" in {
+    val ref = toPipe(data1)
+      .summarise(Along(First), CountMapQuantiles[Position1D, Position0D, Position1D](probs, Quantile.Type1,
+        TestApproximateQuantile.name[Position0D], false, true), Default())
+      .toList
+      .map(_.content.value.asDouble.get)
+      .sorted
+
+    val res = toPipe(data1)
+      .uniformQuantiles(Along(First), probs.size + 1, TestApproximateQuantile.name[Position0D], false, true, Default())
+      .toList
+      .map(_.content.value.asDouble.get)
+      .sorted
+
+    res.zip(ref).foreach { case (t, c) => t shouldBe c +- 5e-2 }
+  }
+}
+
+class TestSparkUniformQuantile extends TestApproximateQuantile {
+
+  "An approximate quantile" should "return reasonably close uniform aggregates" in {
+    val ref = toRDD(data1)
+      .summarise(Along(First), CountMapQuantiles[Position1D, Position0D, Position1D](probs, Quantile.Type1,
+        TestApproximateQuantile.name[Position0D], false, true), Default())
+      .toList
+      .map(_.content.value.asDouble.get)
+      .sorted
+
+    val res = toRDD(data1)
+      .summarise(Along(First), UniformQuantiles[Position1D, Position0D, Position1D](probs.size + 1,
+        TestApproximateQuantile.name[Position0D], false, true), Default())
+      .toList
+      .map(_.content.value.asDouble.get)
+      .sorted
+
+    res.zip(ref).foreach { case (t, c) => t shouldBe c +- 5e-2 }
+  }
+
+  it should "return reasonably close uniform quantiles" in {
+    val ref = toRDD(data1)
+      .summarise(Along(First), CountMapQuantiles[Position1D, Position0D, Position1D](probs, Quantile.Type1,
+        TestApproximateQuantile.name[Position0D], false, true), Default())
+      .toList
+      .map(_.content.value.asDouble.get)
+      .sorted
+
+    val res = toRDD(data1)
+      .uniformQuantiles(Along(First), probs.size + 1, TestApproximateQuantile.name[Position0D], false, true, Default())
+      .toList
+      .map(_.content.value.asDouble.get)
+      .sorted
+
+    res.zip(ref).foreach { case (t, c) => t shouldBe c +- 5e-2 }
   }
 }
 

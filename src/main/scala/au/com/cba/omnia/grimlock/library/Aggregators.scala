@@ -18,6 +18,7 @@ import au.com.cba.omnia.grimlock.framework._
 import au.com.cba.omnia.grimlock.framework.aggregate._
 import au.com.cba.omnia.grimlock.framework.content._
 import au.com.cba.omnia.grimlock.framework.content.metadata._
+import au.com.cba.omnia.grimlock.framework.distribution._
 import au.com.cba.omnia.grimlock.framework.encoding._
 import au.com.cba.omnia.grimlock.framework.position._
 
@@ -312,36 +313,6 @@ case class Kurtosis[P <: Position, S <: Position with ExpandablePosition](excess
 }
 
 /**
- * Minimum value reduction.
- *
- * @param filter Indicates if only numerical types should be aggregated. Is set then all categorical values are
- *               filtered prior to aggregation.
- * @param strict Indicates if strict data handling is required. If so then any non-numeric value fails the reduction.
- *               If not then non-numeric values are silently ignored.
- * @param nan    Indicator if 'NaN' string should be output if the reduction failed (for example due to non-numeric
- *               data).
- */
-case class Min[P <: Position, S <: Position with ExpandablePosition](filter: Boolean = true, strict: Boolean = true,
-  nan: Boolean = false) extends Aggregator[P, S, S] with DoubleAggregator[P, S] {
-  protected def reduction(lt: T, rt: T): T = math.min(lt, rt)
-}
-
-/**
- * Maximum value reduction.
- *
- * @param filter Indicates if only numerical types should be aggregated. Is set then all categorical values are
- *               filtered prior to aggregation.
- * @param strict Indicates if strict data handling is required. If so then any non-numeric value fails the reduction.
- *               If not then non-numeric values are silently ignored.
- * @param nan    Indicator if 'NaN' string should be output if the reduction failed (for example due to non-numeric
- *               data).
- */
-case class Max[P <: Position, S <: Position with ExpandablePosition](filter: Boolean = true, strict: Boolean = true,
-  nan: Boolean = false) extends Aggregator[P, S, S] with DoubleAggregator[P, S] {
-  protected def reduction(lt: T, rt: T): T = math.max(lt, rt)
-}
-
-/**
  * Limits (minimum/maximum value) reduction.
  *
  * @param min    The name for the minimum value.
@@ -375,6 +346,36 @@ case class Limits[P <: Position, S <: Position with ExpandablePosition](min: Str
 
   protected def invalid(t: T): Boolean = t._1.isNaN || t._2.isNaN
   protected def reduction(lt: T, rt: T): T = (math.min(lt._1, rt._1), math.max(lt._2, rt._2))
+}
+
+/**
+ * Minimum value reduction.
+ *
+ * @param filter Indicates if only numerical types should be aggregated. Is set then all categorical values are
+ *               filtered prior to aggregation.
+ * @param strict Indicates if strict data handling is required. If so then any non-numeric value fails the reduction.
+ *               If not then non-numeric values are silently ignored.
+ * @param nan    Indicator if 'NaN' string should be output if the reduction failed (for example due to non-numeric
+ *               data).
+ */
+case class Min[P <: Position, S <: Position with ExpandablePosition](filter: Boolean = true, strict: Boolean = true,
+  nan: Boolean = false) extends Aggregator[P, S, S] with DoubleAggregator[P, S] {
+  protected def reduction(lt: T, rt: T): T = math.min(lt, rt)
+}
+
+/**
+ * Maximum value reduction.
+ *
+ * @param filter Indicates if only numerical types should be aggregated. Is set then all categorical values are
+ *               filtered prior to aggregation.
+ * @param strict Indicates if strict data handling is required. If so then any non-numeric value fails the reduction.
+ *               If not then non-numeric values are silently ignored.
+ * @param nan    Indicator if 'NaN' string should be output if the reduction failed (for example due to non-numeric
+ *               data).
+ */
+case class Max[P <: Position, S <: Position with ExpandablePosition](filter: Boolean = true, strict: Boolean = true,
+  nan: Boolean = false) extends Aggregator[P, S, S] with DoubleAggregator[P, S] {
+  protected def reduction(lt: T, rt: T): T = math.max(lt, rt)
 }
 
 /**
@@ -512,5 +513,82 @@ case class FrequencyRatio[P <: Position, S <: Position with ExpandablePosition](
 
   protected def missing(t: T): Boolean = t._1 == 1
   protected def asDouble(t: T): Double = t._2 / t._3
+}
+
+/**
+ * Compute approximate quantiles using a t-digest.
+ *
+ * @param probs       The quantile probabilities to compute.
+ * @param compression The t-digest compression parameter.
+ * @param name        Names each quantile output.
+ * @param filter      Indicates if only numerical types should be aggregated. Is set then all categorical values are
+ *                    filtered prior to aggregation.
+ * @param nan         Indicator if 'NaN' string should be output if the reduction failed (for example due to non-numeric
+ *                    data).
+ *
+ * @see https://github.com/tdunning/t-digest
+ */
+case class TDigestQuantiles[P <: Position, S <: Position with ExpandablePosition, Q <: Position](probs: List[Double],
+  compression: Double, name: Locate.FromSelectedAndOutput[S, Double, Q], filter: Boolean = true, nan: Boolean = false)(
+    implicit ev: PosExpDep[S, Q]) extends Aggregator[P, S, Q] with PrepareDouble[P] {
+  type T = TDigest.T
+  type O[A] = Multiple[A]
+
+  def prepare(cell: Cell[P]): Option[T] = prepareDouble(cell).flatMap(TDigest.from(_, compression))
+
+  def reduce(lt: T, rt: T): T = TDigest.reduce(lt, rt)
+
+  def present(pos: S, t: T): O[Cell[Q]] = Multiple(TDigest.toCells(t, probs, pos, name, nan))
+}
+
+/**
+ * Compute quantiles using a count map.
+ *
+ * @param probs     The quantile probabilities to compute.
+ * @param quantiser Function that determines the quantile indices into the order statistics.
+ * @param name      Names each quantile output.
+ * @param filter    Indicates if only numerical types should be aggregated. Is set then all categorical values are
+ *                  filtered prior to aggregation.
+ * @param nan       Indicator if 'NaN' string should be output if the reduction failed (for example due to non-numeric
+ *                  data).
+ *
+ * @note Only use this if all distinct values and their counts fit in memory.
+ */
+case class CountMapQuantiles[P <: Position, S <: Position with ExpandablePosition, Q <: Position](probs: List[Double],
+  quantiser: Quantile.Quantiser, name: Locate.FromSelectedAndOutput[S, Double, Q], filter: Boolean = true,
+    nan: Boolean = false)(implicit ev: PosExpDep[S, Q]) extends Aggregator[P, S, Q] with PrepareDouble[P] {
+  type T = CountMap.T
+  type O[A] = Multiple[A]
+
+  def prepare(cell: Cell[P]): Option[T] = prepareDouble(cell).map(CountMap.from(_))
+
+  def reduce(lt: T, rt: T): T = CountMap.reduce(lt, rt)
+
+  def present(pos: S, t: T): O[Cell[Q]] = Multiple(CountMap.toCells(t, probs, pos, quantiser, name, nan))
+}
+
+/**
+ * Compute `count` uniformly spaced approximate quantiles using an online streaming parallel histogram.
+ *
+ * @param count  The number of quantiles to compute.
+ * @param name   Names each quantile output.
+ * @param filter Indicates if only numerical types should be aggregated. Is set then all categorical values are
+ *               filtered prior to aggregation.
+ * @param nan    Indicator if 'NaN' string should be output if the reduction failed (for example due to non-numeric
+ *               data).
+ *
+ * @see http://www.jmlr.org/papers/volume11/ben-haim10a/ben-haim10a.pdf
+ */
+sealed case class UniformQuantiles[P <: Position, S <: Position with ExpandablePosition, Q <: Position](count: Long,
+  name: Locate.FromSelectedAndOutput[S, Double, Q], filter: Boolean = true, nan: Boolean = false)(
+    implicit ev: PosExpDep[S, Q]) extends Aggregator[P, S, Q] with PrepareDouble[P] {
+  type T = StreamingHistogram.T
+  type O[A] = Multiple[A]
+
+  def prepare(cell: Cell[P]): Option[T] = prepareDouble(cell).map(d => StreamingHistogram.from(d, count))
+
+  def reduce(lt: T, rt: T): T = StreamingHistogram.reduce(lt, rt)
+
+  def present(pos: S, t: T): O[Cell[Q]] = Multiple(StreamingHistogram.toCells(t, count, pos, name, nan))
 }
 

@@ -281,6 +281,12 @@ Cell(Position1D(StringValue(skewness,StringCodec)),Content(ContinuousSchema[Doub
 Cell(Position1D(StringValue(kurtosis,StringCodec)),Content(ContinuousSchema[Double](),DoubleValue(-0.8057851239669427,DoubleCodec)))
 ```
 
+Computing the moments can also be achieved more concisely as follows:
+
+```
+scala> counts.summarise(Along(First), Moments[Position1D, Position0D]("mean", "sd", "skewness", "kurtosis"))
+```
+
 For more examples see [BasicOperations.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/scalding/examples/BasicOperations.scala), [Conditional.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/scalding/examples/Conditional.scala), [DataAnalysis.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/scalding/examples/DataAnalysis.scala), [DerivedData.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/scalding/examples/DerivedData.scala), [Ensemble.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/scalding/examples/Ensemble.scala), [Event.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/scalding/examples/Event.scala), [LabelWeighting.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/scalding/examples/LabelWeighting.scala), [MutualInformation.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/scalding/examples/MutualInformation.scala), [PipelineDataPreparation.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/scalding/examples/PipelineDataPreparation.scala) or [Scoring.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/scalding/examples/Scoring.scala).
 
 Usage - Spark
@@ -414,6 +420,12 @@ Cell(Position1D(StringValue(mean,StringCodec)),Content(ContinuousSchema[Double](
 Cell(Position1D(StringValue(sd,StringCodec)),Content(ContinuousSchema[Double](),DoubleValue(1.5634719199411433,DoubleCodec)))
 Cell(Position1D(StringValue(skewness,StringCodec)),Content(ContinuousSchema[Double](),DoubleValue(0.348873899490999,DoubleCodec)))
 Cell(Position1D(StringValue(kurtosis,StringCodec)),Content(ContinuousSchema[Double](),DoubleValue(-0.8057851239669427,DoubleCodec)))
+```
+
+Computing the moments can also be achieved more concisely as follows:
+
+```
+scala> counts.summarise(Along(First), Moments[Position1D, Position0D]("mean", "sd", "skewness", "kurtosis"))
 ```
 
 For more examples see [BasicOperations.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/spark/examples/BasicOperations.scala), [Conditional.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/spark/examples/Conditional.scala), [DataAnalysis.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/spark/examples/DataAnalysis.scala), [DerivedData.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/spark/examples/DerivedData.scala), [Ensemble.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/spark/examples/Ensemble.scala), [Event.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/spark/examples/Event.scala), [LabelWeighting.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/spark/examples/LabelWeighting.scala), [MutualInformation.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/spark/examples/MutualInformation.scala), [PipelineDataPreparation.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/spark/examples/PipelineDataPreparation.scala) or [Scoring.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/spark/examples/Scoring.scala).

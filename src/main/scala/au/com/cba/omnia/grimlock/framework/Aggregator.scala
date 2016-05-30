@@ -18,30 +18,56 @@ import au.com.cba.omnia.grimlock.framework._
 import au.com.cba.omnia.grimlock.framework.content._
 import au.com.cba.omnia.grimlock.framework.position._
 
+/** Base trait that encapsulates the result of an aggregation. */
 trait Result[A, T[X] <: Result[X, T]] {
+  /** Map over result. */
   def map[B](f: (A) => B): T[B]
+
+  /** FlatMap over result. */
   def flatMap[B](f: (A) => Option[B]): T[B]
+
+  /** Return result as a `TraversableOnce`. */
   def toTraversableOnce: TraversableOnce[A]
 }
 
-case class Single[A] private (result: Option[A]) extends Result[A, Single] {
+/**
+ * Aggregation result that consists of at most 1 value.
+ *
+ * @param result The result of the aggregation.
+ */
+case class Single[A](result: Option[A]) extends Result[A, Single] {
   def map[B](f: (A) => B): Single[B] = Single(result.map(f(_)))
   def flatMap[B](f: (A) => Option[B]): Single[B] = Single(result.flatMap(f(_)))
   def toTraversableOnce: TraversableOnce[A] = result
 }
 
+/** Companion object to `Single`. */
 object Single {
+  /** Create an empty result. */
   def apply[A](): Single[A] = Single[A](None)
+
+  /**
+   * Aggregation result that consists of 1 value.
+   *
+   * @param result The result of the aggregation.
+   */
   def apply[A](result: A): Single[A] = Single[A](Some(result))
 }
 
+/**
+ * Aggregation result that consists of arbitrary many values.
+ *
+ * @param result The results of the aggregation.
+ */
 case class Multiple[A](result: TraversableOnce[A]) extends Result[A, Multiple] {
   def map[B](f: (A) => B): Multiple[B] = Multiple(result.map(f(_)))
   def flatMap[B](f: (A) => Option[B]): Multiple[B] = Multiple(result.flatMap(f(_)))
   def toTraversableOnce: TraversableOnce[A] = result
 }
 
+/** Companion object to `Multiple`. */
 object Multiple {
+  /** Create an empty result. */
   def apply[A](): Multiple[A] = Multiple[A](List())
 }
 
