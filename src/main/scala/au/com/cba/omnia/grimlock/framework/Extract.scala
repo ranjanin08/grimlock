@@ -138,7 +138,8 @@ case class ExtractWithPositionAndKey[P <: Position, R](
 }
 
 /** Extract from a `Map[slice.S, R]` using the selected position(s) of the cell. */
-trait ExtractWithSelected[P <: Position, T <: Position with ExpandablePosition, R] extends Extract[P, Map[T, R], R] {
+trait ExtractWithSelected[P <: Position with ReduceablePosition, T <: Position with ExpandablePosition, R]
+  extends Extract[P, Map[T, R], R] {
   /** The slice used to extract the selected position(s) from the cell which are used as the key into the map. */
   val slice: Slice[P] { type S = T }
 
@@ -153,16 +154,17 @@ object ExtractWithSelected {
    * @param slice The slice used to extract the selected position(s) from the cell which are used as the key
    *              into the map.
    */
-  def apply[P <: Position, R](slice: Slice[P]): ExtractWithSelected[P, slice.S, R] = ExtractWithSelectedImpl(slice)
+  def apply[P <: Position with ReduceablePosition, R](slice: Slice[P]): ExtractWithSelected[P, slice.S, R] = {
+    ExtractWithSelectedImpl(slice)
+  }
 }
 
-private case class ExtractWithSelectedImpl[P <: Position, T <: Position with ExpandablePosition, R](
-  slice: Slice[P] { type S = T }) extends ExtractWithSelected[P, T, R]
+private case class ExtractWithSelectedImpl[P <: Position with ReduceablePosition, T <: Position with ExpandablePosition, R](slice: Slice[P] { type S = T }) extends ExtractWithSelected[P, T, R]
 
 /**
  * Extract from a `Map[slice.S, Map[Position1D, R]]` using the selected position(s) of the cell and the provided key.
  */
-trait ExtractWithSelectedAndKey[P <: Position, T <: Position with ExpandablePosition, R]
+trait ExtractWithSelectedAndKey[P <: Position with ReduceablePosition, T <: Position with ExpandablePosition, R]
   extends Extract[P, Map[T, Map[Position1D, R]], R] {
   /** The slice used to extract the selected position(s) from the cell which are used as the key into the map. */
   val slice: Slice[P] { type S = T }
@@ -182,16 +184,14 @@ object ExtractWithSelectedAndKey {
    *              into the map.
    * @param key   The key used for extracting from the inner map.
    */
-  def apply[P <: Position, R](slice: Slice[P],
+  def apply[P <: Position with ReduceablePosition, R](slice: Slice[P],
     key: Positionable[Position1D]): ExtractWithSelectedAndKey[P, slice.S, R] = ExtractWithSelectedAndKeyImpl(slice, key)
 }
 
-private case class ExtractWithSelectedAndKeyImpl[P <: Position, T <: Position with ExpandablePosition, R](
-  slice: Slice[P] { type S = T }, key: Positionable[Position1D]) extends ExtractWithSelectedAndKey[P, T, R]
+private case class ExtractWithSelectedAndKeyImpl[P <: Position with ReduceablePosition, T <: Position with ExpandablePosition, R](slice: Slice[P] { type S = T }, key: Positionable[Position1D]) extends ExtractWithSelectedAndKey[P, T, R]
 
 /** Extract from a `Map[slice.S, Map[slice.R, R]]` using the selected and remainder position(s) of the cell. */
-trait ExtractWithSlice[P <: Position, T <: Position with ExpandablePosition, U <: Position with ExpandablePosition, R]
-  extends Extract[P, Map[T, Map[U, R]], R] {
+trait ExtractWithSlice[P <: Position with ReduceablePosition, T <: Position with ExpandablePosition, U <: Position with ExpandablePosition, R] extends Extract[P, Map[T, Map[U, R]], R] {
   /**
    * The slice used to extract the selected and remainder position(s) from the cell which are used as the keys
    * into the outer and inner maps.
@@ -211,8 +211,10 @@ object ExtractWithSlice {
    * @param slice The slice used to extract the selected and remainder position(s) from the cell which are used
    *              as the keys into the outer and inner maps.
    */
-  def apply[P <: Position, R](slice: Slice[P]): ExtractWithSlice[P, slice.S, slice.R, R] = ExtractWithSliceImpl(slice)
+  def apply[P <: Position with ReduceablePosition, R](slice: Slice[P]): ExtractWithSlice[P, slice.S, slice.R, R] = {
+    ExtractWithSliceImpl(slice)
+  }
 }
 
-private case class ExtractWithSliceImpl[P <: Position, T <: Position with ExpandablePosition, U <: Position with ExpandablePosition, R](slice: Slice[P] { type S = T; type R = U }) extends ExtractWithSlice[P, T, U, R]
+private case class ExtractWithSliceImpl[P <: Position with ReduceablePosition, T <: Position with ExpandablePosition, U <: Position with ExpandablePosition, R](slice: Slice[P] { type S = T; type R = U }) extends ExtractWithSlice[P, T, U, R]
 

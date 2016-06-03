@@ -35,7 +35,7 @@ import shapeless.=:!=
  *
  * @param data The `RDD[Position]`.
  */
-case class Positions[P <: Position](data: RDD[P]) extends FwPositions[P] with Persist[P] {
+case class Positions[P <: Position with ReduceablePosition](data: RDD[P]) extends FwPositions[P] with Persist[P] {
 
   import SparkImplicits._
 
@@ -55,7 +55,7 @@ case class Positions[P <: Position](data: RDD[P]) extends FwPositions[P] with Pe
 /** Companion object for the Spark `Positions` class. */
 object Positions {
   /** Converts a `RDD[Position]` to a Spark `Positions`. */
-  implicit def RDDP2RDDP[P <: Position](data: RDD[P]): Positions[P] = Positions(data)
+  implicit def RDDP2RDDP[P <: Position with ReduceablePosition](data: RDD[P]): Positions[P] = Positions(data)
 }
 
 /** Spark Companion object for the `PositionDistributable` type class. */

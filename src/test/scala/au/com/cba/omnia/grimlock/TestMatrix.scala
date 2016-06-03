@@ -4885,9 +4885,13 @@ trait TestMatrixPairwise extends TestMatrix {
     Cell(Position2D("(qux|1+baz|1)", "xyz"), Content(ContinuousSchema[Double](), 12.56 + 4 + 1)),
     Cell(Position2D("(qux|1+baz|2)", "xyz"), Content(ContinuousSchema[Double](), 12.56 + 5 + 1)))
 
-  def plus[P <: Position](slice: Slice[P]) = Locate.PrependPairwiseSelectedStringToRemainder[P](slice, "(%1$s+%2$s)")
+  def plus[P <: Position with ReduceablePosition](slice: Slice[P]) = {
+    Locate.PrependPairwiseSelectedStringToRemainder[P](slice, "(%1$s+%2$s)")
+  }
 
-  def minus[P <: Position](slice: Slice[P]) = Locate.PrependPairwiseSelectedStringToRemainder[P](slice, "(%1$s-%2$s)")
+  def minus[P <: Position with ReduceablePosition](slice: Slice[P]) = {
+    Locate.PrependPairwiseSelectedStringToRemainder[P](slice, "(%1$s-%2$s)")
+  }
 }
 
 object TestMatrixPairwise {
@@ -8742,30 +8746,30 @@ class TestSparkMatrixMaterialise extends TestMatrixMaterialise {
 
 trait TestMatrixToText extends TestMatrix {
 
-  val result1 = data1.map(_.toString(":", true, true)).sorted
+  val result1 = data1.map(_.toString()).sorted
 
-  val result2 = data2.map(_.toString("|", false, false)).sorted
+  val result2 = data2.map(_.toShortString("|", false)).sorted
 
-  val result3 = data3.map(_.toString("/", false, true)).sorted
+  val result3 = data3.map(_.toShortString("/", true)).sorted
 }
 
 class TestScaldingMatrixToText extends TestMatrixToText {
 
   "A Matrix.toText" should "return its strings for 1D" in {
     toPipe(data1)
-      .toText(Cell.toString(":", true, true))
+      .toText(Cell.toString(true))
       .toList.sorted shouldBe result1
   }
 
   "A Matrix.toText" should "return its strings for 2D" in {
     toPipe(data2)
-      .toText(Cell.toString("|", false, false))
+      .toText(Cell.toString(false, "|", false))
       .toList.sorted shouldBe result2
   }
 
   "A Matrix.toText" should "return its strings for 3D" in {
     toPipe(data3)
-      .toText(Cell.toString("/", false, true))
+      .toText(Cell.toString(false, "/", true))
       .toList.sorted shouldBe result3
   }
 }
@@ -8774,19 +8778,19 @@ class TestSparkMatrixToText extends TestMatrixToText {
 
   "A Matrix.toText" should "return its strings for 1D" in {
     toRDD(data1)
-      .toText(Cell.toString(":", true, true))
+      .toText(Cell.toString(true))
       .toList.sorted shouldBe result1
   }
 
   "A Matrix.toText" should "return its strings for 2D" in {
     toRDD(data2)
-      .toText(Cell.toString("|", false, false))
+      .toText(Cell.toString(false, "|", false))
       .toList.sorted shouldBe result2
   }
 
   "A Matrix.toText" should "return its strings for 3D" in {
     toRDD(data3)
-      .toText(Cell.toString("/", false, true))
+      .toText(Cell.toString(false, "/", true))
       .toList.sorted shouldBe result3
   }
 }

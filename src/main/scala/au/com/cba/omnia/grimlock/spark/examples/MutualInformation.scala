@@ -52,7 +52,7 @@ object MutualInformation {
     // Define implicit context.
     implicit val ctx = Context(new SparkContext(args(0), "Grimlock Spark Demo", new SparkConf()))
 
-    // Path to data files
+    // Path to data files, output folder
     val path = if (args.length > 1) args(1) else "../../data"
     val output = "spark"
 

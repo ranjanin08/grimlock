@@ -32,27 +32,21 @@ trait Content {
   /** The value of the variable. */
   val value: Value { type V = T }
 
-  /** Check if the content is valid according to its schema. */
-  def isValid() = schema.validate(value)
-
   override def toString(): String = "Content(" + schema.toString + "," + value.toString + ")"
 
   /**
    * Converts the content to a consise (terse) string.
    *
-   * @return Short string representation.
-   */
-  def toShortString(): String = value.toShortString
-
-  /**
-   * Converts the content to a consise (terse) string.
-   *
    * @param separator The separator to use between the fields.
+   * @param codec     Indicator if codec is required or not.
+   * @param schema    Indicator if schema is required or not.
    *
    * @return Short string representation.
    */
-  def toShortString(separator: String): String = {
-    value.codec.toShortString + separator + schema.toShortString(value.codec) + separator + value.toShortString
+  def toShortString(separator: String, codec: Boolean = true, schema: Boolean = true): String = {
+    (if (codec) { value.codec.toShortString + separator } else { "" }) +
+      (if (schema) { this.schema.toShortString(value.codec) + separator } else { "" }) +
+        value.toShortString
   }
 }
 
@@ -122,11 +116,14 @@ object Content {
   /**
    * Return string representation of a content.
    *
-   * @param separator   The separator to use between various fields.
    * @param descriptive Indicator if descriptive string is required or not.
+   * @param separator   The separator to use between various fields (only used if descriptive is `false`).
+   * @param codec       Indicator if codec is required or not (only used if descriptive is `false`).
+   * @param schema      Indicator if schema is required or not (only used if descriptive is `false`).
    */
-  def toString(separator: String = "|", descriptive: Boolean = false): (Content) => TraversableOnce[String] = {
-    (t: Content) => if (descriptive) { Some(t.toString) } else { Some(t.toShortString(separator)) }
+  def toString(descriptive: Boolean = false, separator: String = "|", codec: Boolean = true,
+    schema: Boolean = true): (Content) => TraversableOnce[String] = {
+    (t: Content) => if (descriptive) { Some(t.toString) } else { Some(t.toShortString(separator, codec, schema)) }
   }
 }
 
@@ -165,14 +162,19 @@ object IndexedContent {
   /**
    * Return string representation of an indexed content.
    *
-   * @param separator   The separator to use between various fields.
    * @param descriptive Indicator if descriptive string is required or not.
+   * @param separator   The separator to use between various fields (only used if descriptive is `false`).
+   * @param codec       Indicator if codec is required or not (only used if descriptive is `false`).
+   * @param schema      Indicator if schema is required or not (only used if descriptive is `false`).
    */
-  def toString[P <: Position](separator: String = "|",
-    descriptive: Boolean = false): ((P, Content)) => TraversableOnce[String] = {
+  def toString[P <: Position](descriptive: Boolean = false, separator: String = "|", codec: Boolean = true,
+    schema: Boolean = true): ((P, Content)) => TraversableOnce[String] = {
     (t: (P, Content)) => Some(
-      if (descriptive) t.toString else t._1.toShortString(separator) + separator + t._2.toShortString
-    )
+      if (descriptive) {
+        t.toString
+      } else {
+        t._1.toShortString(separator) + separator + t._2.toShortString(separator, codec, schema)
+      })
   }
 }
 

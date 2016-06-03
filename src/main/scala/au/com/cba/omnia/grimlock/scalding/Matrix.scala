@@ -159,7 +159,8 @@ private[scalding] object ScaldingImplicits {
 }
 
 /** Base trait for matrix operations using a `TypedPipe[Cell[P]]`. */
-trait Matrix[P <: Position with CompactablePosition] extends FwMatrix[P] with Persist[Cell[P]] with UserData {
+trait Matrix[P <: Position with CompactablePosition with ReduceablePosition] extends FwMatrix[P] with Persist[Cell[P]]
+  with UserData {
   type M = Matrix[P]
 
   import ScaldingImplicits._

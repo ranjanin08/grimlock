@@ -33,8 +33,8 @@ import scala.reflect.ClassTag
 
 import shapeless.=:!=
 
-trait ApproximateDistribution[P <: Position with CompactablePosition] extends FwApproximateDistribution[P] {
-  self: Matrix[P] =>
+trait ApproximateDistribution[P <: Position with CompactablePosition with ReduceablePosition]
+  extends FwApproximateDistribution[P] { self: Matrix[P] =>
 
   import SparkImplicits._
 

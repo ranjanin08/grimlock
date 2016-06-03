@@ -17,7 +17,7 @@ package au.com.cba.omnia.grimlock.framework
 import au.com.cba.omnia.grimlock.framework.position._
 
 /** Trait for compacting a cell to a `Map`. */
-trait Compactable[P <: Position with CompactablePosition] extends java.io.Serializable {
+trait Compactable[P <: Position with CompactablePosition with ReduceablePosition] extends java.io.Serializable {
   /**
    * Convert a single cell to a `Map`.
    *

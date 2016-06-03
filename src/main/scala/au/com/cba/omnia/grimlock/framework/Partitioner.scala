@@ -145,13 +145,15 @@ object Partition {
   /**
    * Return function that returns a string representation of a partition.
    *
-   * @param separator   The separator to use between various fields.
    * @param descriptive Indicator if descriptive string is required or not.
+   * @param separator   The separator to use between various fields (only used if descriptive is `false`).
+   * @param codec       Indicator if codec is required or not (only used if descriptive is `false`).
    * @param schema      Indicator if schema is required or not (only used if descriptive is `false`).
    */
-  def toString[I, P <: Position](separator: String = "|", descriptive: Boolean = false,
+  def toString[I, P <: Position](descriptive: Boolean = false, separator: String = "|", codec: Boolean = true,
     schema: Boolean = true): ((I, Cell[P])) => TraversableOnce[String] = {
-    (p: (I, Cell[P])) => Some(p._1.toString + separator + p._2.toString(separator, descriptive, schema))
+    (p: (I, Cell[P])) => Some(p._1.toString + separator +
+      (if (descriptive) { p._2.toString } else { p._2.toShortString(separator, codec, schema) }))
   }
 }
 

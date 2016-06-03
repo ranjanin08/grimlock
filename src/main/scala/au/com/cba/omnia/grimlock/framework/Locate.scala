@@ -91,8 +91,8 @@ object Locate {
    *
    * @note If a position is returned then it's always right cell's remainder with an additional coordinate prepended.
    */
-  def PrependPairwiseSelectedStringToRemainder[P <: Position](slice: Slice[P], pattern: String, all: Boolean = false,
-    separator: String = "|"): FromPairwiseCells[P, slice.R#M] = {
+  def PrependPairwiseSelectedStringToRemainder[P <: Position with ReduceablePosition](slice: Slice[P], pattern: String,
+    all: Boolean = false, separator: String = "|"): FromPairwiseCells[P, slice.R#M] = {
     (left: Cell[P], right: Cell[P]) =>
       {
         val reml = slice.remainder(left.position)

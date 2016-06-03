@@ -30,7 +30,7 @@ import scala.reflect.ClassTag
 import shapeless.=:!=
 
 /** Trait for computing approximate distributions from a matrix. */
-trait ApproximateDistribution[P <: Position with CompactablePosition] { self: Matrix[P] =>
+trait ApproximateDistribution[P <: Position with CompactablePosition with ReduceablePosition] { self: Matrix[P] =>
 
   /** Specifies tuners permitted on a call to `histogram`. */
   type HistogramTuners[_]
@@ -43,7 +43,7 @@ trait ApproximateDistribution[P <: Position with CompactablePosition] { self: Ma
    * @param filter    Indicator if numerical values shoud be filtered or not.
    * @param tuner     The tuner for the job.
    *
-   * @return A `U[Cell[Q]]' with the histogram.
+   * @return A `U[Cell[Q]]` with the histogram.
    *
    * @note The histogram is computed on the positions returned by `position`.
    */
@@ -65,7 +65,7 @@ trait ApproximateDistribution[P <: Position with CompactablePosition] { self: Ma
    * @param nan       Indicator if NaN quantiles should be output or not.
    * @param tuner     The tuner for the job.
    *
-   * @return A `U[Cell[Q]]' with the quantiles.
+   * @return A `U[Cell[Q]]` with the quantiles.
    *
    * @note Non numeric values result in `NaN` quantiles, while missing counts result in no quantiles.
    */
@@ -88,7 +88,7 @@ trait ApproximateDistribution[P <: Position with CompactablePosition] { self: Ma
    * @param nan       Indicator if NaN quantiles should be output or not.
    * @param tuner     The tuner for the job.
    *
-   * @return A `U[Cell[Q]]' with the quantiles.
+   * @return A `U[Cell[Q]]` with the quantiles.
    *
    * @note Only use this if all distinct values and their counts fit in memory.
    */
@@ -112,7 +112,7 @@ trait ApproximateDistribution[P <: Position with CompactablePosition] { self: Ma
    * @param nan         Indicator if NaN quantiles should be output or not.
    * @param tuner       The tuner for the job.
    *
-   * @return A `U[Cell[Q]]' with the approximate quantiles.
+   * @return A `U[Cell[Q]]` with the approximate quantiles.
    *
    * @see https://github.com/tdunning/t-digest
    */
@@ -134,7 +134,7 @@ trait ApproximateDistribution[P <: Position with CompactablePosition] { self: Ma
    * @param nan         Not used.
    * @param tuner       The tuner for the job.
    *
-   * @return A `U[Cell[Q]]' with the approximate quantiles.
+   * @return A `U[Cell[Q]]` with the approximate quantiles.
    *
    * @see http://www.jmlr.org/papers/volume11/ben-haim10a/ben-haim10a.pdf
    */

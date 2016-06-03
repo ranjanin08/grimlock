@@ -1095,7 +1095,7 @@ object TestSpark30 {
       ("iid:H", Content(schema, 7)))
 
     data
-      .stream("Rscript double.R", List("double.R"), Cell.toString("|", false, true),
+      .stream("Rscript double.R", List("double.R"), Cell.toString(false, "|", true, true),
         Cell.parse2D("#", StringCodec, LongCodec))
       .data
       .saveAsText(s"./tmp.${tool}/strm.out")

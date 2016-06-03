@@ -139,15 +139,11 @@ case class Cell[P <: Position](position: P, content: Content) {
    * Return string representation of a cell.
    *
    * @param separator   The separator to use between various fields.
-   * @param descriptive Indicator if descriptive string is required or not.
-   * @param schema      Indicator if schema is required or not (only used if descriptive is `false`).
+   * @param codec       Indicator if codec is required or not.
+   * @param schema      Indicator if schema is required or not.
    */
-  def toString(separator: String, descriptive: Boolean, schema: Boolean = true): String = {
-    (descriptive, schema) match {
-      case (true, _) => position.toString + separator + content.toString
-      case (false, true) => position.toShortString(separator) + separator + content.toShortString(separator)
-      case (false, false) => position.toShortString(separator) + separator + content.toShortString()
-    }
+  def toShortString(separator: String, codec: Boolean = true, schema: Boolean = true): String = {
+    position.toShortString(separator) + separator + content.toShortString(separator, codec, schema)
   }
 }
 
@@ -434,13 +430,14 @@ object Cell {
   /**
    * Return function that returns a string representation of a cell.
    *
-   * @param separator   The separator to use between various fields.
    * @param descriptive Indicator if descriptive string is required or not.
+   * @param separator   The separator to use between various fields (only used if descriptive is `false`).
+   * @param codec       Indicator if codec is required or not (only used if descriptive is `false`).
    * @param schema      Indicator if schema is required or not (only used if descriptive is `false`).
    */
-  def toString[P <: Position](separator: String = "|", descriptive: Boolean = false,
-    schema: Boolean = true): (Cell[P]) => TraversableOnce[String] = {
-    (t: Cell[P]) => Some(t.toString(separator, descriptive, schema))
+  def toString[P <: Position](descriptive: Boolean = false, separator: String = "|",
+    codec: Boolean = true, schema: Boolean = true): (Cell[P]) => TraversableOnce[String] = {
+    (t: Cell[P]) => Some(if (descriptive) t.toString else t.toShortString(separator, codec, schema))
   }
 
   private def parseXD[R <: Position, P <: Product](split: Int, separator: String = "|", codecs: P, line: String)(

@@ -76,16 +76,17 @@ object Type {
   /**
    * Return function that returns a string representation of a type.
    *
-   * @param separator   The separator to use between various fields.
    * @param descriptive Indicator if descriptive string is required or not.
+   * @param separator   The separator to use between various fields (only used if descriptive is `false`).
    */
-  def toString[P <: Position](separator: String = "|",
-    descriptive: Boolean = false): ((P, Type)) => TraversableOnce[String] = {
-    (t: (P, Type)) =>
-      descriptive match {
-        case true => Some(t._1.toString + separator + t._2.toString)
-        case false => Some(t._1.toShortString(separator) + separator + t._2.name)
-      }
+  def toString[P <: Position](descriptive: Boolean = false,
+    separator: String = "|"): ((P, Type)) => TraversableOnce[String] = {
+    (t: (P, Type)) => Some(
+      if (descriptive) {
+        t._1.toString + separator + t._2.toString
+      } else {
+        t._1.toShortString(separator) + separator + t._2.name
+      })
   }
 }
 
