@@ -18,9 +18,10 @@ import au.com.cba.omnia.grimlock.framework.content._
 import au.com.cba.omnia.grimlock.framework.encoding._
 import au.com.cba.omnia.grimlock.framework.position._
 
+import com.twitter.scrooge.ThriftStruct
+
 import java.util.regex.Pattern
 
-import com.twitter.scrooge.ThriftStruct
 import org.apache.hadoop.io.Writable
 
 import scala.util.Try

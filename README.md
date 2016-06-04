@@ -276,9 +276,9 @@ scala> val aggregators: List[Aggregator[Position1D, Position0D, Position1D]] = L
 
 scala> counts.summarise(Along(First), aggregators).dump
 Cell(Position1D(StringValue(mean,StringCodec)),Content(ContinuousSchema[Double](),DoubleValue(4.0,DoubleCodec)))
-Cell(Position1D(StringValue(sd,StringCodec)),Content(ContinuousSchema[Double](),DoubleValue(1.5634719199411433,DoubleCodec)))
+Cell(Position1D(StringValue(sd,StringCodec)),Content(ContinuousSchema[Double](),DoubleValue(1.6583123951777,DoubleCodec)))
 Cell(Position1D(StringValue(skewness,StringCodec)),Content(ContinuousSchema[Double](),DoubleValue(0.348873899490999,DoubleCodec)))
-Cell(Position1D(StringValue(kurtosis,StringCodec)),Content(ContinuousSchema[Double](),DoubleValue(-0.8057851239669427,DoubleCodec)))
+Cell(Position1D(StringValue(kurtosis,StringCodec)),Content(ContinuousSchema[Double](),DoubleValue(2.194214876033058,DoubleCodec)))
 ```
 
 Computing the moments can also be achieved more concisely as follows:
@@ -417,9 +417,9 @@ scala> val aggregators: List[Aggregator[Position1D, Position0D, Position1D]] = L
 
 scala> counts.summarise(Along(First), aggregators).foreach(println)
 Cell(Position1D(StringValue(mean,StringCodec)),Content(ContinuousSchema[Double](),DoubleValue(4.0,DoubleCodec)))
-Cell(Position1D(StringValue(sd,StringCodec)),Content(ContinuousSchema[Double](),DoubleValue(1.5634719199411433,DoubleCodec)))
+Cell(Position1D(StringValue(sd,StringCodec)),Content(ContinuousSchema[Double](),DoubleValue(1.6583123951777,DoubleCodec)))
 Cell(Position1D(StringValue(skewness,StringCodec)),Content(ContinuousSchema[Double](),DoubleValue(0.348873899490999,DoubleCodec)))
-Cell(Position1D(StringValue(kurtosis,StringCodec)),Content(ContinuousSchema[Double](),DoubleValue(-0.8057851239669427,DoubleCodec)))
+Cell(Position1D(StringValue(kurtosis,StringCodec)),Content(ContinuousSchema[Double](),DoubleValue(2.194214876033058,DoubleCodec)))
 ```
 
 Computing the moments can also be achieved more concisely as follows:
