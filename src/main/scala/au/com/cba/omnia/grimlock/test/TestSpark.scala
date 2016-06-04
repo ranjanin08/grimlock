@@ -304,7 +304,7 @@ object TestSpark8 {
     loadText(path + "/mutualInputfile.txt", Cell.parse2D())
       .data
       .uniqueByPosition(Over(Second))
-      .saveAsText(s"./tmp.${tool}/uni2.out")
+      .saveAsText(s"./tmp.${tool}/uni2.out", IndexedContent.toString(codec = false, schema = false))
       .toUnit
 
     data
@@ -418,7 +418,7 @@ object TestSpark10 {
     val aggregators: List[Aggregator[Position2D, Position1D, Position2D]] = List(
       Count().andThenRelocate(_.position.append("count").toOption),
       Mean().andThenRelocate(_.position.append("mean").toOption),
-      StandardDeviation().andThenRelocate(_.position.append("sd").toOption),
+      StandardDeviation(biased = true).andThenRelocate(_.position.append("sd").toOption),
       Skewness().andThenRelocate(_.position.append("skewness").toOption),
       Kurtosis().andThenRelocate(_.position.append("kurtosis").toOption),
       Min().andThenRelocate(_.position.append("min").toOption),
@@ -993,7 +993,7 @@ object TestSpark28 {
       Min().andThenRelocate(_.position.append("min").toOption),
       Max().andThenRelocate(_.position.append("max").toOption),
       Mean().andThenRelocate(_.position.append("mean").toOption),
-      StandardDeviation().andThenRelocate(_.position.append("sd").toOption),
+      StandardDeviation(biased = true).andThenRelocate(_.position.append("sd").toOption),
       Skewness().andThenRelocate(_.position.append("skewness").toOption))
 
     val stats = data

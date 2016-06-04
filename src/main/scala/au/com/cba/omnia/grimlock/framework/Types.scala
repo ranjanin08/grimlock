@@ -77,7 +77,7 @@ object Type {
    * Return function that returns a string representation of a type.
    *
    * @param descriptive Indicator if descriptive string is required or not.
-   * @param separator   The separator to use between various fields (only used if descriptive is `false`).
+   * @param separator   The separator to use between various fields.
    */
   def toString[P <: Position](descriptive: Boolean = false,
     separator: String = "|"): ((P, Type)) => TraversableOnce[String] = {

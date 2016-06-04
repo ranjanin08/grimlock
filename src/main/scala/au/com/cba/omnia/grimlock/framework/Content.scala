@@ -123,7 +123,7 @@ object Content {
    */
   def toString(descriptive: Boolean = false, separator: String = "|", codec: Boolean = true,
     schema: Boolean = true): (Content) => TraversableOnce[String] = {
-    (t: Content) => if (descriptive) { Some(t.toString) } else { Some(t.toShortString(separator, codec, schema)) }
+    (t: Content) => Some(if (descriptive) { t.toString } else { t.toShortString(separator, codec, schema) })
   }
 }
 

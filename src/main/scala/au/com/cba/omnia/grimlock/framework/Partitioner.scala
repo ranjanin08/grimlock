@@ -146,7 +146,7 @@ object Partition {
    * Return function that returns a string representation of a partition.
    *
    * @param descriptive Indicator if descriptive string is required or not.
-   * @param separator   The separator to use between various fields (only used if descriptive is `false`).
+   * @param separator   The separator to use between various fields.
    * @param codec       Indicator if codec is required or not (only used if descriptive is `false`).
    * @param schema      Indicator if schema is required or not (only used if descriptive is `false`).
    */

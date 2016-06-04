@@ -156,7 +156,7 @@ private[aggregate] object MomentsPresent {
    * @param biased Indicates if the biased estimate should be return or not.
    */
   def sd(t: AlgeMoments, biased: Boolean): Double = {
-    if (biased) t.stddev else if (t.count > 1) t.stddev * math.sqrt(t.count / (t.count - 1.0)) else Double.NaN
+    if (t.count > 1) { if (biased) t.stddev else t.stddev * math.sqrt(t.count / (t.count - 1.0)) } else Double.NaN
   }
 
   /**

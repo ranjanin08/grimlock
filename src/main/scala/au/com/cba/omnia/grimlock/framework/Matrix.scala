@@ -27,6 +27,7 @@ import au.com.cba.omnia.grimlock.framework.squash._
 import au.com.cba.omnia.grimlock.framework.transform._
 import au.com.cba.omnia.grimlock.framework.utility._
 import au.com.cba.omnia.grimlock.framework.window._
+
 import com.twitter.scalding.typed.TypedPipe
 import com.twitter.scrooge.ThriftStruct
 

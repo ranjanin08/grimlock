@@ -296,7 +296,7 @@ class TestScalding8(args : Args) extends Job(args) {
   loadText(path + "/mutualInputfile.txt", Cell.parse2D())
     .data
     .uniqueByPosition(Over(Second))
-    .saveAsText(s"./tmp.${tool}/uni2.out")
+    .saveAsText(s"./tmp.${tool}/uni2.out", IndexedContent.toString(codec = false, schema = false))
     .toUnit
 
   data
@@ -408,7 +408,7 @@ class TestScalding10(args : Args) extends Job(args) {
   val aggregators: List[Aggregator[Position2D, Position1D, Position2D]] = List(
     Count().andThenRelocate(_.position.append("count").toOption),
     Mean().andThenRelocate(_.position.append("mean").toOption),
-    StandardDeviation().andThenRelocate(_.position.append("sd").toOption),
+    StandardDeviation(biased = true).andThenRelocate(_.position.append("sd").toOption),
     Skewness().andThenRelocate(_.position.append("skewness").toOption),
     Kurtosis().andThenRelocate(_.position.append("kurtosis").toOption),
     Min().andThenRelocate(_.position.append("min").toOption),
@@ -965,7 +965,7 @@ class TestScalding28(args: Args) extends Job(args) {
     Min().andThenRelocate(_.position.append("min").toOption),
     Max().andThenRelocate(_.position.append("max").toOption),
     Mean().andThenRelocate(_.position.append("mean").toOption),
-    StandardDeviation().andThenRelocate(_.position.append("sd").toOption),
+    StandardDeviation(biased = true).andThenRelocate(_.position.append("sd").toOption),
     Skewness().andThenRelocate(_.position.append("skewness").toOption))
 
   val stats = data

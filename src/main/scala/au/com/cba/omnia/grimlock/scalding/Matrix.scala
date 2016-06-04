@@ -15,6 +15,7 @@
 package au.com.cba.omnia.grimlock.scalding
 
 import au.com.cba.omnia.ebenezer.scrooge.ParquetScroogeSource
+
 import au.com.cba.omnia.grimlock.framework.{
   Cell,
   Collate,
@@ -68,6 +69,7 @@ import au.com.cba.omnia.grimlock.scalding.environment._
 
 import com.twitter.scalding.{ TextLine, WritableSequenceFile }
 import com.twitter.scalding.typed.{ IterablePipe, Grouped, TypedPipe, TypedSink, ValuePipe }
+import com.twitter.scrooge.ThriftStruct
 
 import java.io.{ File, OutputStreamWriter, PrintWriter }
 import java.lang.{ ProcessBuilder, Thread }
@@ -75,7 +77,6 @@ import java.nio.charset.StandardCharsets.UTF_8
 import java.nio.file.attribute.PosixFilePermissions
 import java.nio.file.{ Files, Paths }
 
-import com.twitter.scrooge.ThriftStruct
 import org.apache.hadoop.io.Writable
 
 import scala.collection.immutable.HashSet
