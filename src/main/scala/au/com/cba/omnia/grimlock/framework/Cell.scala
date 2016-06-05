@@ -96,7 +96,7 @@ private object CellFactory {
     }
   }
 
-  implicit def makeCell[R <: Position, P <: Product, L <: HList, CO <: HList, MC <: HList, AO <: HList, FO <: HList](
+  implicit def makeCell[R <: Position[R], P <: Product, L <: HList, CO <: HList, MC <: HList, AO <: HList, FO <: HList](
     implicit gen: Generic.Aux[P, L], cm: ConstMapper.Aux[String, L, CO], tr: FromTraversable[CO],
       ma: Mapper.Aux[toFns.type, L, MC], za: ZipApply.Aux[MC, CO, AO],
         f: LeftFolder.Aux[AO, Option[HNil.type], Sequence.type, Option[FO]],
@@ -121,13 +121,13 @@ private object CellFactory {
  * @param position The position of the cell in the matri.
  * @param content  The contents of the cell.
  */
-case class Cell[P <: Position](position: P, content: Content) {
+case class Cell[P <: Position[P]](position: P, content: Content) {
   /**
    * Relocate this cell.
    *
    * @param relocator Function that returns the new position for this cell.
    */
-  def relocate[Q <: Position](relocator: (Cell[P]) => Q): Cell[Q] = Cell(relocator(this), content)
+  def relocate[Q <: Position[Q]](relocator: (Cell[P]) => Q): Cell[Q] = Cell(relocator(this), content)
 
   /**
    * Mutate the content of this cell.
@@ -151,16 +151,17 @@ case class Cell[P <: Position](position: P, content: Content) {
 /** Companion object to the Cell class. */
 object Cell {
   /** Predicate used in, for example, the `which` methods of a matrix for finding content. */
-  type Predicate[P <: Position] = Cell[P] => Boolean
+  type Predicate[P <: Position[P]] = Cell[P] => Boolean
 
   /** Type for parsing a string into either a `Cell[P]` or an error message. */
-  type TextParser[P <: Position] = (String) => TraversableOnce[Either[String, Cell[P]]]
+  type TextParser[P <: Position[P]] = (String) => TraversableOnce[Either[String, Cell[P]]]
 
   /** Type for parsing a key value tuple into either a `Cell[P]` or an error message. */
-  type SequenceParser[K <: Writable, V <: Writable, P <: Position] = (K, V) => TraversableOnce[Either[String, Cell[P]]]
+  type SequenceParser[K <: Writable, V <: Writable, P <: Position[P]] =
+    (K, V) => TraversableOnce[Either[String, Cell[P]]]
 
   /** Type for parsing Parquet data. */
-  type ParquetParser[T <: ThriftStruct, P <: Position] = (T) => TraversableOnce[Either[String, Cell[P]]]
+  type ParquetParser[T <: ThriftStruct, P <: Position[P]] = (T) => TraversableOnce[Either[String, Cell[P]]]
 
   /**
    * Parse a line into a `Cell[Position1D]`.
@@ -436,12 +437,12 @@ object Cell {
    * @param codec       Indicator if codec is required or not (only used if descriptive is `false`).
    * @param schema      Indicator if schema is required or not (only used if descriptive is `false`).
    */
-  def toString[P <: Position](descriptive: Boolean = false, separator: String = "|",
+  def toString[P <: Position[P]](descriptive: Boolean = false, separator: String = "|",
     codec: Boolean = true, schema: Boolean = true): (Cell[P]) => TraversableOnce[String] = {
     (t: Cell[P]) => List(if (descriptive) { t.toString } else { t.toShortString(separator, codec, schema) })
   }
 
-  private def parseXD[R <: Position, P <: Product](split: Int, separator: String = "|", codecs: P, line: String)(
+  private def parseXD[R <: Position[R], P <: Product](split: Int, separator: String = "|", codecs: P, line: String)(
     implicit mc: CellFactory.Aux[P, Option[Cell[R]]]): Option[Either[String, Cell[R]]] =
     line.trim.split(Pattern.quote(separator), split + 3).splitAt(split) match {
       case (pos, Array(c, s, v)) =>
@@ -450,7 +451,7 @@ object Cell {
       case _ => Some(Left("Unable to split: '" + line + "'"))
     }
 
-  private def parseXDWithSchema[R <: Position, P <: Product](split: Int, schema: Content.Parser,
+  private def parseXDWithSchema[R <: Position[R], P <: Product](split: Int, schema: Content.Parser,
     separator: String = "|", codecs: P, line: String)(
       implicit mc: CellFactory.Aux[P, Option[Cell[R]]]): Option[Either[String, Cell[R]]] = {
     line.trim.split(Pattern.quote(separator), split + 1).splitAt(split) match {
@@ -461,7 +462,7 @@ object Cell {
     }
   }
 
-  private def parseXDWithDictionary[R <: Position, P <: Product, D <: Dimension](split: Int, dim: D,
+  private def parseXDWithDictionary[R <: Position[R], P <: Product, D <: Dimension](split: Int, dim: D,
     dict: Map[String, Content.Parser], separator: String = "|", codecs: P, line: String)(
       implicit mc: CellFactory.Aux[P, Option[Cell[R]]]): Option[Either[String, Cell[R]]] = {
     def getD(positions: Array[String]): Option[Content.Parser] = for {

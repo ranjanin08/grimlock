@@ -30,13 +30,21 @@ import scala.reflect.ClassTag
  *
  * @param data The `TypedPipe[(I, Cell[P])]`.
  */
-case class Partitions[P <: Position, I: Ordering](data: TypedPipe[(I, Cell[P])]) extends FwPartitions[P, I]
+case class Partitions[P <: Position[P], I: Ordering](data: TypedPipe[(I, Cell[P])]) extends FwPartitions[P, I]
   with Persist[(I, Cell[P])] {
   def add(id: I, partition: U[Cell[P]]): U[(I, Cell[P])] = data ++ (partition.map { case c => (id, c) })
 
   type ForAllTuners[T] = T In OneOf[Default[Execution]]#Or[Default[Sequence2[Reducers, Execution]]]
-  def forAll[Q <: Position, T <: Tuner : ForAllTuners](fn: (I, U[Cell[P]]) => U[Cell[Q]], exclude: List[I], tuner: T)(
-    implicit ev1: ClassTag[I]): U[(I, Cell[Q])] = {
+  def forAll[
+    Q <: Position[Q],
+    T <: Tuner : ForAllTuners
+  ](
+    fn: (I, U[Cell[P]]) => U[Cell[Q]],
+    exclude: List[I],
+    tuner: T
+  )(implicit
+    ev1: ClassTag[I]
+  ): U[(I, Cell[Q])] = {
     val (context, identifiers) = tuner.parameters match {
       case Execution(ctx) => (ctx, ids(Default()))
       case Sequence2(r @ Reducers(_), Execution(ctx)) => (ctx, ids(Default(r)))
@@ -52,7 +60,7 @@ case class Partitions[P <: Position, I: Ordering](data: TypedPipe[(I, Cell[P])])
     forEach(keys, fn)
   }
 
-  def forEach[Q <: Position](ids: List[I], fn: (I, U[Cell[P]]) => U[Cell[Q]]): U[(I, Cell[Q])] = {
+  def forEach[Q <: Position[Q]](ids: List[I], fn: (I, U[Cell[P]]) => U[Cell[Q]]): U[(I, Cell[Q])] = {
     ids
       .map { case i => fn(i, get(i)).map { case c => (i, c) } }
       .reduce[U[(I, Cell[Q])]]((x, y) => x ++ y)
@@ -80,6 +88,8 @@ case class Partitions[P <: Position, I: Ordering](data: TypedPipe[(I, Cell[P])])
 /** Companion object for the Scalding `Partitions` class. */
 object Partitions {
   /** Conversion from `TypedPipe[(I, Cell[P])]` to a Scalding `Partitions`. */
-  implicit def TPTC2TPP[P <: Position, I: Ordering](data: TypedPipe[(I, Cell[P])]): Partitions[P, I] = Partitions(data)
+  implicit def TPTC2TPP[P <: Position[P], I: Ordering](data: TypedPipe[(I, Cell[P])]): Partitions[P, I] = {
+    Partitions(data)
+  }
 }
 

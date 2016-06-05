@@ -35,14 +35,28 @@ import shapeless.=:!=
  *
  * @param data The `RDD[Position]`.
  */
-case class Positions[P <: Position with ReduceablePosition](data: RDD[P]) extends FwPositions[P] with Persist[P] {
+case class Positions[
+  L <: Position[L] with ExpandablePosition[L, P],
+  P <: Position[P] with ReduceablePosition[P, L]
+](
+  data: RDD[P]
+) extends FwPositions[L, P] with Persist[P] {
 
   import SparkImplicits._
 
   type NamesTuners[T] = T In OneOf[Default[NoParameters]]#Or[Default[Reducers]]
-  def names[T <: Tuner : NamesTuners](slice: Slice[P], tuner: T = Default())(implicit ev1: slice.S =:!= Position0D,
-    ev2: ClassTag[slice.S]): U[slice.S] = {
-    data.map { case p => slice.selected(p) }.tunedDistinct(tuner.parameters)(Position.Ordering[slice.S]())
+  def names[
+    S <: Position[S] with ExpandablePosition[S, _],
+    R <: Position[R] with ExpandablePosition[R, _],
+    T <: Tuner : NamesTuners
+  ](
+    slice: Slice[L, P, S, R],
+    tuner: T = Default()
+  )(implicit
+    ev1: S =:!= Position0D,
+    ev2: ClassTag[S]
+  ): U[S] = {
+    data.map { case p => slice.selected(p) }.tunedDistinct(tuner.parameters)(Position.Ordering[S]())
   }
 
   def saveAsText(file: String, writer: TextWriter)(implicit ctx: C): U[P] = saveText(file, writer)
@@ -55,27 +69,42 @@ case class Positions[P <: Position with ReduceablePosition](data: RDD[P]) extend
 /** Companion object for the Spark `Positions` class. */
 object Positions {
   /** Converts a `RDD[Position]` to a Spark `Positions`. */
-  implicit def RDDP2RDDP[P <: Position with ReduceablePosition](data: RDD[P]): Positions[P] = Positions(data)
+  implicit def RDDP2RDDP[
+    L <: Position[L] with ReduceablePosition[L, P],
+    P <: Position[P] with ReduceablePosition[P, L]
+  ](
+    data: RDD[P]
+  ): Positions[L, P] = Positions(data)
 }
 
 /** Spark Companion object for the `PositionDistributable` type class. */
 object PositionDistributable {
   /** Converts a `RDD[Position]` to a `RDD[Position]`; that is, it's a pass through. */
-  implicit def RDDP2RDDPD[P <: Position]: FwPositionDistributable[RDD[P], P, RDD] = {
+  implicit def RDDP2RDDPD[P <: Position[P]]: FwPositionDistributable[RDD[P], P, RDD] = {
     new FwPositionDistributable[RDD[P], P, RDD] { def convert(t: RDD[P]): RDD[P] = t }
   }
 
   /** Converts a `List[Positionable]` to a `RDD[Position]`. */
-  implicit def LP2RDDPD[T <% Positionable[P], P <: Position](implicit ctx: Context,
-    ct: ClassTag[P]): FwPositionDistributable[List[T], P, RDD] = {
+  implicit def LP2RDDPD[
+    T <% Positionable[P],
+    P <: Position[P]
+  ](implicit
+    ctx: Context,
+    ct: ClassTag[P]
+  ): FwPositionDistributable[List[T], P, RDD] = {
     new FwPositionDistributable[List[T], P, RDD] {
       def convert(t: List[T]): RDD[P] = ctx.context.parallelize(t.map { case p => p() })
     }
   }
 
   /** Converts a `Positionable` to a `RDD[Position]`. */
-  implicit def P2RDDPD[T <% Positionable[P], P <: Position](implicit ctx: Context,
-    ct: ClassTag[P]): FwPositionDistributable[T, P, RDD] = {
+  implicit def P2RDDPD[
+    T <% Positionable[P],
+    P <: Position[P]
+  ](implicit
+    ctx: Context,
+    ct: ClassTag[P]
+  ): FwPositionDistributable[T, P, RDD] = {
     new FwPositionDistributable[T, P, RDD] { def convert(t: T): RDD[P] = ctx.context.parallelize(List(t())) }
   }
 }

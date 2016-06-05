@@ -30,7 +30,9 @@ import scala.reflect.ClassTag
 import shapeless.=:!=
 
 /** Trait for computing approximate distributions from a matrix. */
-trait ApproximateDistribution[P <: Position with CompactablePosition with ReduceablePosition] { self: Matrix[P] =>
+trait ApproximateDistribution[
+  L <: Position[L] with ExpandablePosition[L, P],
+  P <: Position[P] with ReduceablePosition[P, L] with CompactablePosition[P]] { self: Matrix[L, P] =>
 
   /** Specifies tuners permitted on a call to `histogram`. */
   type HistogramTuners[_]
@@ -47,9 +49,20 @@ trait ApproximateDistribution[P <: Position with CompactablePosition with Reduce
    *
    * @note The histogram is computed on the positions returned by `position`.
    */
-  def histogram[S <: Position with ExpandablePosition, Q <: Position, T <: Tuner : HistogramTuners](slice: Slice[P],
-    position: Locate.FromSelectedAndContent[S, Q], filter: Boolean = true, tuner: T)(
-      implicit ev1: PosExpDep[S, Q], ev2: slice.S =:= S, ev3: ClassTag[Q]): U[Cell[Q]]
+  def histogram[
+    S <: Position[S] with ExpandablePosition[S, _],
+    R <: Position[R] with ExpandablePosition[R, _],
+    Q <: Position[Q],
+    T <: Tuner : HistogramTuners
+  ](
+    slice: Slice[L, P, S, R],
+    position: Locate.FromSelectedAndContent[S, Q],
+    filter: Boolean = true,
+    tuner: T
+  )(implicit
+    ev1: PosExpDep[S, Q],
+    ev2: ClassTag[Q]
+  ): U[Cell[Q]]
 
   /** Specifies tuners permitted on a call to `quantile`. */
   type QuantileTuners[_]
@@ -69,10 +82,24 @@ trait ApproximateDistribution[P <: Position with CompactablePosition with Reduce
    *
    * @note Non numeric values result in `NaN` quantiles, while missing counts result in no quantiles.
    */
-  def quantile[S <: Position with ExpandablePosition, Q <: Position, T <: Tuner : QuantileTuners](slice: Slice[P],
-    probs: List[Double], quantiser: Quantile.Quantiser, name: Locate.FromSelectedAndOutput[S, Double, Q],
-      filter: Boolean = true, nan: Boolean = false, tuner: T)(implicit ev1: slice.S =:= S, ev2: PosExpDep[S, Q],
-        ev3: slice.R =:!= Position0D, ev4: ClassTag[slice.S]): U[Cell[Q]]
+  def quantile[
+    S <: Position[S] with ExpandablePosition[S, _],
+    R <: Position[R] with ExpandablePosition[R, _],
+    Q <: Position[Q],
+    T <: Tuner : QuantileTuners
+  ](
+    slice: Slice[L, P, S, R],
+    probs: List[Double],
+    quantiser: Quantile.Quantiser,
+    name: Locate.FromSelectedAndOutput[S, Double, Q],
+    filter: Boolean = true,
+    nan: Boolean = false,
+    tuner: T
+  )(implicit
+    ev1: PosExpDep[S, Q],
+    ev2: R =:!= Position0D,
+    ev3: ClassTag[S]
+  ): U[Cell[Q]]
 
   /** Specifies tuners permitted on a call to `countMapQuantiles`. */
   type CountMapQuantilesTuners[_]
@@ -92,11 +119,24 @@ trait ApproximateDistribution[P <: Position with CompactablePosition with Reduce
    *
    * @note Only use this if all distinct values and their counts fit in memory.
    */
-  def countMapQuantiles[S <: Position with ExpandablePosition, Q <: Position, T <: Tuner : CountMapQuantilesTuners](
-    slice: Slice[P], probs: List[Double], quantiser: Quantile.Quantiser,
-      name: Locate.FromSelectedAndOutput[S, Double, Q], filter: Boolean = true, nan: Boolean = false, tuner: T)(
-        implicit ev1: slice.S =:= S, ev2: PosExpDep[S, Q], ev3: slice.R =:!= Position0D,
-          ev4: ClassTag[slice.S]): U[Cell[Q]]
+  def countMapQuantiles[
+    S <: Position[S] with ExpandablePosition[S, _],
+    R <: Position[R] with ExpandablePosition[R, _],
+    Q <: Position[Q],
+    T <: Tuner : CountMapQuantilesTuners
+  ](
+    slice: Slice[L, P, S, R],
+    probs: List[Double],
+    quantiser: Quantile.Quantiser,
+    name: Locate.FromSelectedAndOutput[S, Double, Q],
+    filter: Boolean = true,
+    nan: Boolean = false,
+    tuner: T
+  )(implicit
+    ev1: PosExpDep[S, Q],
+    ev2: R =:!= Position0D,
+    ev3: ClassTag[S]
+  ): U[Cell[Q]]
 
   /** Specifies tuners permitted on a call to `tDigestQuantiles`. */
   type TDigestQuantilesTuners[_]
@@ -116,10 +156,24 @@ trait ApproximateDistribution[P <: Position with CompactablePosition with Reduce
    *
    * @see https://github.com/tdunning/t-digest
    */
-  def tDigestQuantiles[S <: Position with ExpandablePosition, Q <: Position, T <: Tuner : TDigestQuantilesTuners](
-    slice: Slice[P], probs: List[Double], compression: Double, name: Locate.FromSelectedAndOutput[S, Double, Q],
-      filter: Boolean = true, nan: Boolean = false, tuner: T)(implicit ev1: slice.S =:= S, ev2: PosExpDep[S, Q],
-        ev3: slice.R =:!= Position0D, ev4: ClassTag[slice.S]): U[Cell[Q]]
+  def tDigestQuantiles[
+    S <: Position[S] with ExpandablePosition[S, _],
+    R <: Position[R] with ExpandablePosition[R, _],
+    Q <: Position[Q],
+    T <: Tuner : TDigestQuantilesTuners
+  ](
+    slice: Slice[L, P, S, R],
+    probs: List[Double],
+    compression: Double,
+    name: Locate.FromSelectedAndOutput[S, Double, Q],
+    filter: Boolean = true,
+    nan: Boolean = false,
+    tuner: T
+  )(implicit
+    ev1: PosExpDep[S, Q],
+    ev2: R =:!= Position0D,
+    ev3: ClassTag[S]
+  ): U[Cell[Q]]
 
   /** Specifies tuners permitted on a call to `uniformQuantiles`. */
   type UniformQuantilesTuners[_]
@@ -138,10 +192,23 @@ trait ApproximateDistribution[P <: Position with CompactablePosition with Reduce
    *
    * @see http://www.jmlr.org/papers/volume11/ben-haim10a/ben-haim10a.pdf
    */
-  def uniformQuantiles[S <: Position with ExpandablePosition, Q <: Position, T <: Tuner : UniformQuantilesTuners](
-    slice: Slice[P], count: Long, name: Locate.FromSelectedAndOutput[S, Double, Q], filter: Boolean = true,
-      nan: Boolean = false, tuner: T)(implicit ev1: slice.S =:= S, ev2: PosExpDep[S, Q], ev3: slice.R =:!= Position0D,
-        ev4: ClassTag[slice.S]): U[Cell[Q]]
+  def uniformQuantiles[
+    S <: Position[S] with ExpandablePosition[S, _],
+    R <: Position[R] with ExpandablePosition[R, _],
+    Q <: Position[Q],
+    T <: Tuner : UniformQuantilesTuners
+  ](
+    slice: Slice[L, P, S, R],
+    count: Long,
+    name: Locate.FromSelectedAndOutput[S, Double, Q],
+    filter: Boolean = true,
+    nan: Boolean = false,
+    tuner: T
+  )(implicit
+    ev1: PosExpDep[S, Q],
+    ev2: R =:!= Position0D,
+    ev3: ClassTag[S]
+  ): U[Cell[Q]]
 }
 
 object Quantile {
@@ -237,9 +304,16 @@ object Quantile {
   }
 }
 
-private[grimlock] case class QuantileImpl[P <: Position, S <: Position with ExpandablePosition, Q <: Position](
-  probs: List[Double], quantiser: Quantile.Quantiser, position: Locate.FromSelectedAndOutput[S, Double, Q],
-    nan: Boolean) {
+private[grimlock] case class QuantileImpl[
+  P <: Position[P],
+  S <: Position[S] with ExpandablePosition[S, _],
+  Q <: Position[Q]
+](
+  probs: List[Double],
+  quantiser: Quantile.Quantiser,
+  position: Locate.FromSelectedAndOutput[S, Double, Q],
+  nan: Boolean
+) {
   type C = (Long, List[(Long, Double, Double)])
   type T = (Double, Long, Long)
   type O = (Double, Double)
@@ -375,18 +449,36 @@ private[grimlock] object CountMap {
    *
    * @return A list of cells, one for each requested quantile probability.
    */
-  def toCells[S <: Position with ExpandablePosition, Q <: Position](t: T, probs: List[Double], pos: S,
-    quantiser: Quantile.Quantiser, name: Locate.FromSelectedAndOutput[S, Double, Q], nan: Boolean)(
-      implicit ev: PosExpDep[S, Q]): List[Cell[Q]] = {
+  def toCells[
+    S <: Position[S] with ExpandablePosition[S, _],
+    Q <: Position[Q]
+  ](
+    t: T,
+    probs: List[Double],
+    pos: S,
+    quantiser: Quantile.Quantiser,
+    name: Locate.FromSelectedAndOutput[S, Double, Q],
+    nan: Boolean
+  )(implicit
+    ev: PosExpDep[S, Q]
+  ): List[Cell[Q]] = {
     val (values, counts) = t.toList.sorted.unzip
     val cumsum = counts.scan(0L)(_ + _).tail
 
     QuantileImpl.boundaries(probs, quantiser, cumsum.last).flatMap(toCell(pos, _, values, cumsum, name, nan))
   }
 
-  private def toCell[S <: Position with ExpandablePosition, Q <: Position](pos: S, boundary: (Long, Double, Double),
-    values: List[Double], cumsum: List[Long], name: Locate.FromSelectedAndOutput[S, Double, Q],
-      nan: Boolean): Option[Cell[Q]] = {
+  private def toCell[
+    S <: Position[S] with ExpandablePosition[S, _],
+    Q <: Position[Q]
+  ](
+    pos: S,
+    boundary: (Long, Double, Double),
+    values: List[Double],
+    cumsum: List[Long],
+    name: Locate.FromSelectedAndOutput[S, Double, Q],
+    nan: Boolean
+  ): Option[Cell[Q]] = {
     val (j, g, q) = boundary
 
     val value = if (j == 0) {
@@ -465,8 +557,18 @@ private[grimlock] object TDigest {
    *
    * @return A list of cells, one for each requested quantile probability.
    */
-  def toCells[S <: Position with ExpandablePosition, Q <: Position](t: T, probs: List[Double], pos: S,
-    name: Locate.FromSelectedAndOutput[S, Double, Q], nan: Boolean)(implicit ev: PosExpDep[S, Q]): List[Cell[Q]] = {
+  def toCells[
+    S <: Position[S] with ExpandablePosition[S, _],
+    Q <: Position[Q]
+  ](
+    t: T,
+    probs: List[Double],
+    pos: S,
+    name: Locate.FromSelectedAndOutput[S, Double, Q],
+    nan: Boolean
+  )(implicit
+    ev: PosExpDep[S, Q]
+  ): List[Cell[Q]] = {
     val td = deserialise(t)
 
     for {
@@ -653,8 +755,18 @@ private[grimlock] object StreamingHistogram {
    *
    * @return A list of cells, of `bins` uniformly spaced quantiles.
    */
-  def toCells[S <: Position with ExpandablePosition, Q <: Position](t: T, bins: Long, pos: S,
-    name: Locate.FromSelectedAndOutput[S, Double, Q], nan: Boolean)(implicit ev: PosExpDep[S, Q]): List[Cell[Q]] = {
+  def toCells[
+    S <: Position[S] with ExpandablePosition[S, _],
+    Q <: Position[Q]
+  ](
+    t: T,
+    bins: Long,
+    pos: S,
+    name: Locate.FromSelectedAndOutput[S, Double, Q],
+    nan: Boolean
+  )(implicit
+    ev: PosExpDep[S, Q]
+  ): List[Cell[Q]] = {
     t
       .uniform(bins)
       .zipWithIndex

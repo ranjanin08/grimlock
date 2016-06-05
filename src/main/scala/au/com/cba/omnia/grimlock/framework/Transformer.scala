@@ -19,7 +19,7 @@ import au.com.cba.omnia.grimlock.framework.content._
 import au.com.cba.omnia.grimlock.framework.position._
 
 /** Base trait for transformations from `P` to `Q`. */
-trait Transformer[P <: Position, Q <: Position] extends TransformerWithValue[P, Q] { self =>
+trait Transformer[P <: Position[P], Q <: Position[Q]] extends TransformerWithValue[P, Q] { self =>
   type V = Any
 
   def presentWithValue(cell: Cell[P], ext: V): TraversableOnce[Cell[Q]] = present(cell)
@@ -40,7 +40,7 @@ trait Transformer[P <: Position, Q <: Position] extends TransformerWithValue[P, 
    *
    * @return A transformer that runs `this` and then `that`.
    */
-  def andThen[R <: Position](that: Transformer[Q, R]) = {
+  def andThen[R <: Position[R]](that: Transformer[Q, R]) = {
     new Transformer[P, R] {
       def present(cell: Cell[P]): TraversableOnce[Cell[R]] = self.present(cell).flatMap { case c => that.present(c) }
     }
@@ -81,7 +81,7 @@ trait Transformer[P <: Position, Q <: Position] extends TransformerWithValue[P, 
    *
    * @return A transformer that runs `this` and then relocates the contents.
    */
-  override def andThenRelocate[R <: Position](locate: Locate.FromCell[Q, R])(implicit ev: PosIncDep[Q, R]) = {
+  override def andThenRelocate[R <: Position[R]](locate: Locate.FromCell[Q, R])(implicit ev: PosIncDep[Q, R]) = {
     new Transformer[P, R] {
       def present(cell: Cell[P]): TraversableOnce[Cell[R]] = {
         self.present(cell).flatMap { case c => locate(c).map(Cell(_, c.content)) }
@@ -91,7 +91,7 @@ trait Transformer[P <: Position, Q <: Position] extends TransformerWithValue[P, 
 }
 
 /** Base trait for transformations from `P` to `Q` that use a user supplied value. */
-trait TransformerWithValue[P <: Position, Q <: Position] extends java.io.Serializable { self =>
+trait TransformerWithValue[P <: Position[P], Q <: Position[Q]] extends java.io.Serializable { self =>
   /** Type of the external value. */
   type V
 
@@ -112,7 +112,7 @@ trait TransformerWithValue[P <: Position, Q <: Position] extends java.io.Seriali
    *
    * @return A transformer that runs `this` and then `that`.
    */
-  def andThenWithValue[R <: Position](that: TransformerWithValue[Q, R] { type V >: self.V }) = {
+  def andThenWithValue[R <: Position[R]](that: TransformerWithValue[Q, R] { type V >: self.V }) = {
     new TransformerWithValue[P, R] {
       type V = self.V
 
@@ -163,7 +163,7 @@ trait TransformerWithValue[P <: Position, Q <: Position] extends java.io.Seriali
    *
    * @return A transformer that runs `this` and then relocates the contents.
    */
-  def andThenRelocate[R <: Position](locate: Locate.FromCell[Q, R])(implicit ev: PosIncDep[Q, R]) = {
+  def andThenRelocate[R <: Position[R]](locate: Locate.FromCell[Q, R])(implicit ev: PosIncDep[Q, R]) = {
     new TransformerWithValue[P, R] {
       type V = self.V
 
@@ -214,7 +214,7 @@ trait TransformerWithValue[P <: Position, Q <: Position] extends java.io.Seriali
    *
    * @return A transformer that runs `this` and then relocates the contents.
    */
-  def andThenRelocateWithValue[R <: Position](locate: Locate.FromCellWithValue[Q, R, V])(
+  def andThenRelocateWithValue[R <: Position[R]](locate: Locate.FromCellWithValue[Q, R, V])(
     implicit ev: PosIncDep[Q, R]) = {
     new TransformerWithValue[P, R] {
       type V = self.V
@@ -227,7 +227,7 @@ trait TransformerWithValue[P <: Position, Q <: Position] extends java.io.Seriali
 }
 
 /** Trait for transforming a type `T` to a `Transformer[P, Q]`. */
-trait Transformable[P <: Position, Q <: Position] extends java.io.Serializable {
+trait Transformable[P <: Position[P], Q <: Position[Q]] extends java.io.Serializable {
   /** Returns a `Transformer[P, Q]` for this type `T`. */
   def apply(): Transformer[P, Q]
 }
@@ -235,7 +235,7 @@ trait Transformable[P <: Position, Q <: Position] extends java.io.Serializable {
 /** Companion object for the `Transformable` type class. */
 object Transformable {
   /** Converts a `(Cell[P]) => Cell[Q]` to a `Transformer[P, Q]`. */
-  implicit def CQ2T[P <: Position, Q <: Position](t: (Cell[P]) => Cell[Q]): Transformable[P, Q] = {
+  implicit def CQ2T[P <: Position[P], Q <: Position[Q]](t: (Cell[P]) => Cell[Q]): Transformable[P, Q] = {
     new Transformable[P, Q] {
       def apply(): Transformer[P, Q] = {
         new Transformer[P, Q] { def present(cell: Cell[P]): TraversableOnce[Cell[Q]] = Some(t(cell)) }
@@ -244,7 +244,7 @@ object Transformable {
   }
 
   /** Converts a `(Cell[P]) => List[Cell[Q]]` to a `Transformer[P, Q]`. */
-  implicit def LCQ2T[P <: Position, Q <: Position](t: (Cell[P]) => List[Cell[Q]]): Transformable[P, Q] = {
+  implicit def LCQ2T[P <: Position[P], Q <: Position[Q]](t: (Cell[P]) => List[Cell[Q]]): Transformable[P, Q] = {
     new Transformable[P, Q] {
       def apply(): Transformer[P, Q] = {
         new Transformer[P, Q] { def present(cell: Cell[P]): TraversableOnce[Cell[Q]] = t(cell) }
@@ -253,12 +253,12 @@ object Transformable {
   }
 
   /** Converts a `Transformer[P, Q]` to a `Transformer[P, Q]`; that is, it is a pass through. */
-  implicit def T2T[P <: Position, Q <: Position](t: Transformer[P, Q]): Transformable[P, Q] = {
+  implicit def T2T[P <: Position[P], Q <: Position[Q]](t: Transformer[P, Q]): Transformable[P, Q] = {
     new Transformable[P, Q] { def apply(): Transformer[P, Q] = t }
   }
 
   /** Converts a `List[Transformer[P, Q]]` to a single `Transformer[P, Q]`. */
-  implicit def LT2T[P <: Position, Q <: Position](t: List[Transformer[P, Q]]): Transformable[P, Q] = {
+  implicit def LT2T[P <: Position[P], Q <: Position[Q]](t: List[Transformer[P, Q]]): Transformable[P, Q] = {
     new Transformable[P, Q] {
       def apply(): Transformer[P, Q] = {
         new Transformer[P, Q] {
@@ -270,7 +270,7 @@ object Transformable {
 }
 
 /** Trait for transforming a type `T` to a `TransformerWithValue[P, Q]`. */
-trait TransformableWithValue[P <: Position, Q <: Position, W] extends java.io.Serializable {
+trait TransformableWithValue[P <: Position[P], Q <: Position[Q], W] extends java.io.Serializable {
   /** Returns a `TransformerWithValue[P, Q]` for this type `T`. */
   def apply(): TransformerWithValue[P, Q] { type V >: W }
 }
@@ -278,7 +278,7 @@ trait TransformableWithValue[P <: Position, Q <: Position, W] extends java.io.Se
 /** Companion object for the `TransformableWithValue` trait. */
 object TransformableWithValue {
   /** Converts a `(Cell[P], W) => Cell[Q]` to a `TransformerWithValue[P, Q] { type V >: W }`. */
-  implicit def CQW2TWV[P <: Position, Q <: Position, W](
+  implicit def CQW2TWV[P <: Position[P], Q <: Position[Q], W](
     t: (Cell[P], W) => Cell[Q]): TransformableWithValue[P, Q, W] = {
     new TransformableWithValue[P, Q, W] {
       def apply(): TransformerWithValue[P, Q] { type V >: W } = {
@@ -292,7 +292,7 @@ object TransformableWithValue {
   }
 
   /** Converts a `(Cell[P], W) => List[Cell[Q]]` to a `TransformerWithValue[P, Q] { type V >: W }`. */
-  implicit def LCQW2TWV[P <: Position, Q <: Position, W](
+  implicit def LCQW2TWV[P <: Position[P], Q <: Position[Q], W](
     t: (Cell[P], W) => List[Cell[Q]]): TransformableWithValue[P, Q, W] = {
     new TransformableWithValue[P, Q, W] {
       def apply(): TransformerWithValue[P, Q] { type V >: W } = {
@@ -309,7 +309,7 @@ object TransformableWithValue {
    * Converts a `TransformerWithValue[P, Q] { type V >: W }` to a `TransformerWithValue[P, Q] { type V >: W }`;
    * that is, it is a pass through.
    */
-  implicit def TWV2TWV[P <: Position, Q <: Position, W](
+  implicit def TWV2TWV[P <: Position[P], Q <: Position[Q], W](
     t: TransformerWithValue[P, Q] { type V >: W }): TransformableWithValue[P, Q, W] = {
     new TransformableWithValue[P, Q, W] { def apply(): TransformerWithValue[P, Q] { type V >: W } = t }
   }
@@ -318,7 +318,7 @@ object TransformableWithValue {
    * Converts a `List[TransformerWithValue[P, Q] { type V >: W }]` to a single
    * `TransformerWithValue[P, Q] { type V >: W }`.
    */
-  implicit def LTWV2TWV[P <: Position, Q <: Position, W](
+  implicit def LTWV2TWV[P <: Position[P], Q <: Position[Q], W](
     t: List[TransformerWithValue[P, Q] { type V >: W }]): TransformableWithValue[P, Q, W] = {
     new TransformableWithValue[P, Q, W] {
       def apply(): TransformerWithValue[P, Q] { type V >: W } = {

@@ -30,7 +30,7 @@ import scala.reflect.ClassTag
  *
  * @param data The `RDD[(I, Cell[P])]`.
  */
-case class Partitions[P <: Position, I: Ordering](data: RDD[(I, Cell[P])]) extends FwPartitions[P, I]
+case class Partitions[P <: Position[P], I: Ordering](data: RDD[(I, Cell[P])]) extends FwPartitions[P, I]
   with Persist[(I, Cell[P])] {
 
   import SparkImplicits._
@@ -38,12 +38,20 @@ case class Partitions[P <: Position, I: Ordering](data: RDD[(I, Cell[P])]) exten
   def add(id: I, partition: U[Cell[P]]): U[(I, Cell[P])] = data ++ (partition.map { case c => (id, c) })
 
   type ForAllTuners[T] = T In OneOf[Default[NoParameters]]#Or[Default[Reducers]]
-  def forAll[Q <: Position, T <: Tuner : ForAllTuners](fn: (I, U[Cell[P]]) => U[Cell[Q]], exclude: List[I],
-    tuner: T = Default())(implicit ev1: ClassTag[I]): U[(I, Cell[Q])] = {
+  def forAll[
+    Q <: Position[Q],
+    T <: Tuner : ForAllTuners
+  ](
+    fn: (I, U[Cell[P]]) => U[Cell[Q]],
+    exclude: List[I],
+    tuner: T = Default()
+  )(implicit
+    ev1: ClassTag[I]
+  ): U[(I, Cell[Q])] = {
     forEach(ids(tuner).toLocalIterator.toList.filter(!exclude.contains(_)), fn)
   }
 
-  def forEach[Q <: Position](ids: List[I], fn: (I, U[Cell[P]]) => U[Cell[Q]]): U[(I, Cell[Q])] = {
+  def forEach[Q <: Position[Q]](ids: List[I], fn: (I, U[Cell[P]]) => U[Cell[Q]]): U[(I, Cell[Q])] = {
     ids
       .map { case i => fn(i, get(i)).map { case c => (i, c) } }
       .reduce[U[(I, Cell[Q])]]((x, y) => x ++ y)
@@ -66,6 +74,6 @@ case class Partitions[P <: Position, I: Ordering](data: RDD[(I, Cell[P])]) exten
 /** Companion object for the Spark `Partitions` class. */
 object Partitions {
   /** Conversion from `RDD[(I, Cell[P])]` to a Spark `Partitions`. */
-  implicit def RDDTC2RDDP[P <: Position, I: Ordering](data: RDD[(I, Cell[P])]): Partitions[P, I] = Partitions(data)
+  implicit def RDDTC2RDDP[P <: Position[P], I: Ordering](data: RDD[(I, Cell[P])]): Partitions[P, I] = Partitions(data)
 }
 

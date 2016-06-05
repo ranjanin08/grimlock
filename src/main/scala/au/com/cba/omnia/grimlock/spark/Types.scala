@@ -26,13 +26,13 @@ import org.apache.spark.rdd.RDD
  *
  * @note This class represents the variable type along the dimensions of a matrix.
  */
-case class Types[P <: Position](data: RDD[(P, Type)]) extends FwTypes[P] with Persist[(P, Type)] {
+case class Types[P <: Position[P]](data: RDD[(P, Type)]) extends FwTypes[P] with Persist[(P, Type)] {
   def saveAsText(file: String, writer: TextWriter)(implicit ctx: C): U[(P, Type)] = saveText(file, writer)
 }
 
 /** Companion object for the Spark `Types` class. */
 object Types {
   /** Conversion from `RDD[(Position, Type)]` to a `Types`. */
-  implicit def RDDPT2RDDT[P <: Position](data: RDD[(P, Type)]): Types[P] = Types(data)
+  implicit def RDDPT2RDDT[P <: Position[P]](data: RDD[(P, Type)]): Types[P] = Types(data)
 }
 

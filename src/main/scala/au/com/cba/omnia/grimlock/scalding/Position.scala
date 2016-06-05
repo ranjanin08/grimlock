@@ -36,12 +36,24 @@ import shapeless.=:!=
  *
  * @param data The `TypedPipe[Position]`.
  */
-case class Positions[P <: Position with ReduceablePosition](data: TypedPipe[P]) extends FwPositions[P] with Persist[P] {
+case class Positions[
+  L <: Position[L] with ExpandablePosition[L, P],
+  P <: Position[P] with ReduceablePosition[P, L]
+](
+  data: TypedPipe[P]
+) extends FwPositions[L, P] with Persist[P] {
   type NamesTuners[T] = T Is Default[NoParameters]
-  def names[T <: Tuner : NamesTuners](slice: Slice[P], tuner: T = Default())(implicit ev1: slice.S =:!= Position0D,
-    ev2: ClassTag[slice.S]): U[slice.S] = {
-    data.map { case p => slice.selected(p) }.distinct(Position.Ordering[slice.S]())
-  }
+  def names[
+    S <: Position[S] with ExpandablePosition[S, _],
+    R <: Position[R] with ExpandablePosition[R, _],
+    T <: Tuner : NamesTuners
+  ](
+    slice: Slice[L, P, S, R],
+    tuner: T = Default()
+  )(implicit
+    ev1: S =:!= Position0D,
+    ev2: ClassTag[S]
+  ): U[S] = data.map { case p => slice.selected(p) }.distinct(Position.Ordering[S]())
 
   def saveAsText(file: String, writer: TextWriter)(implicit ctx: C): U[P] = saveText(file, writer)
 
@@ -53,25 +65,30 @@ case class Positions[P <: Position with ReduceablePosition](data: TypedPipe[P]) 
 /** Companion object for the Scalding `Positions` class. */
 object Positions {
   /** Converts a `TypedPipe[Position]` to a `Positions`. */
-  implicit def TPP2TPP[P <: Position with ReduceablePosition](data: TypedPipe[P]): Positions[P] = Positions(data)
+  implicit def TPP2TPP[
+    L <: Position[L] with ExpandablePosition[L, P],
+    P <: Position[P] with ReduceablePosition[P, L]
+  ](
+    data: TypedPipe[P]
+  ): Positions[L, P] = Positions(data)
 }
 
 /** Scalding companion object for the `PositionDistributable` type class. */
 object PositionDistributable {
   /** Converts a `TypedPipe[Position]` to a `TypedPipe[Position]`; that is, it's a pass through. */
-  implicit def TPP2TPPD[P <: Position]: FwPositionDistributable[TypedPipe[P], P, TypedPipe] = {
+  implicit def TPP2TPPD[P <: Position[P]]: FwPositionDistributable[TypedPipe[P], P, TypedPipe] = {
     new FwPositionDistributable[TypedPipe[P], P, TypedPipe] { def convert(t: TypedPipe[P]): TypedPipe[P] = t }
   }
 
   /** Converts a `List[Positionable]` to a `TypedPipe[Position]`. */
-  implicit def LP2TPPD[T <% Positionable[P], P <: Position]: FwPositionDistributable[List[T], P, TypedPipe] = {
+  implicit def LP2TPPD[T <% Positionable[P], P <: Position[P]]: FwPositionDistributable[List[T], P, TypedPipe] = {
     new FwPositionDistributable[List[T], P, TypedPipe] {
       def convert(t: List[T]): TypedPipe[P] = IterablePipe(t.map { case p => p() })
     }
   }
 
   /** Converts a `Positionable` to a `TypedPipe[Position]`. */
-  implicit def P2TPPD[T <% Positionable[P], P <: Position]: FwPositionDistributable[T, P, TypedPipe] = {
+  implicit def P2TPPD[T <% Positionable[P], P <: Position[P]]: FwPositionDistributable[T, P, TypedPipe] = {
     new FwPositionDistributable[T, P, TypedPipe] {
       def convert(t: T): TypedPipe[P] = IterablePipe(List(t()))
     }

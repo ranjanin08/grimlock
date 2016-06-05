@@ -24,7 +24,7 @@ import scala.util.matching.Regex
 import shapeless.=:!=
 
 /** Base trait for dealing with positions. */
-trait Position {
+trait Position[P <: Position[P]] {
   /** List of coordinates of the position. */
   val coordinates: List[Value]
 
@@ -43,9 +43,7 @@ trait Position {
    *
    * @return A position of the same size as `this` but with `value` set at index `dim`.
    */
-  def update(dim: Dimension, value: Valueable): this.type = {
-    same(coordinates.updated(getIndex(dim), value())).asInstanceOf[this.type]
-  }
+  def update(dim: Dimension, value: Valueable): P = same(coordinates.updated(getIndex(dim), value()))
 
   /**
    * Converts the position to a consise (terse) string.
@@ -71,7 +69,7 @@ trait Position {
    * @note If the comparison is between two positions with different dimensions, then a comparison on the number of
    *       dimensions is performed.
    */
-  def compare(that: Position): Int = {
+  def compare(that: Position[_]): Int = {
     (coordinates.length == that.coordinates.length) match {
       case true =>
         val cmp = coordinates.zip(that.coordinates).map { case (m, t) => Value.Ordering.compare(m, t) }
@@ -84,24 +82,21 @@ trait Position {
     }
   }
 
-  /** Type for positions of same number of dimensions. */
-  protected type S <: Position
-
-  protected def same(cl: List[Value]): S
+  protected def same(cl: List[Value]): P
 
   protected def getIndex(dim: Dimension): Int = if (dim.index < 0) coordinates.length - 1 else dim.index
 }
 
 /** Trait for capturing the dependency between a position and its expansion. */
-trait PosExpDep[A <: Position, B <: Position] extends java.io.Serializable
+trait PosExpDep[P <: Position[P], Q <: Position[Q]] extends java.io.Serializable
 
 /** Trait for capturing the dependency between a position and its increment (which may be the same). */
-trait PosIncDep[A <: Position, B <: Position] extends java.io.Serializable
+trait PosIncDep[P <: Position[P], Q <: Position[Q]] extends java.io.Serializable
 
 object Position {
   /** Define an ordering between 2 position. Only use with position of the same type coordinates. */
-  def Ordering[T <: Position](ascending: Boolean = true): Ordering[T] = {
-    new Ordering[T] { def compare(x: T, y: T): Int = x.compare(y) * (if (ascending) { 1 } else { -1 }) }
+  def Ordering[P <: Position[P]](ascending: Boolean = true): Ordering[P] = {
+    new Ordering[P] { def compare(x: P, y: P): Int = x.compare(y) * (if (ascending) { 1 } else { -1 }) }
   }
 
   /**
@@ -110,7 +105,7 @@ object Position {
    * @param descriptive Indicator if descriptive string is required or not.
    * @param separator   The separator to use between various fields (only used if descriptive is `false`).
    */
-  def toString[P <: Position](descriptive: Boolean = false,
+  def toString[P <: Position[P]](descriptive: Boolean = false,
     separator: String = "|"): (P) => TraversableOnce[String] = {
     (t: P) => List(if (descriptive) { t.toString } else { t.toShortString(separator) })
   }
@@ -215,7 +210,10 @@ object Position {
   implicit object P8EP9 extends PosExpDep[Position8D, Position9D]
 
   /** Define dependency between an expandable position and its expansion. */
-  implicit def PEPM[P <: Position with ExpandablePosition] = new PosExpDep[P, P#M] {}
+  implicit def PEPM[
+    P <: Position[P] with ExpandablePosition[P, M],
+    M <: Position[M] with ReduceablePosition[M, P]
+  ] = new PosExpDep[P, M] {}
 
   /** Define dependency between an increase from `Position0D` to `Position1D`. */
   implicit object P0IP1 extends PosIncDep[Position0D, Position1D]
@@ -336,14 +334,16 @@ object Position {
   implicit object P9IP9 extends PosIncDep[Position9D, Position9D]
 
   /** Define dependency between an increase from `P` to `P`. */
-  implicit def PIP[P <: Position] = new PosIncDep[P, P] {}
+  implicit def PIP[P <: Position[P]] = new PosIncDep[P, P] {}
 
-  /** Define dependency between an increase from `P` to `P#M`. */
-  implicit def PIPM[P <: Position with ExpandablePosition] = new PosIncDep[P, P#M] {}
+  /** Define dependency between an increase from `P` to `M`. */
+  implicit def PIPM[
+    P <: Position[P] with ExpandablePosition[P, M],
+    M <: Position[M] with ReduceablePosition[M, P]] = new PosIncDep[P, M] {}
 }
 
 /** Trait for compacting position and content. */
-trait CompactablePosition { self: Position =>
+trait CompactablePosition[P <: Position[P]] { self: Position[P] =>
   /** Type of the compacted position and content. */
   type C[_]
 
@@ -355,14 +355,13 @@ trait CompactablePosition { self: Position =>
    *
    * @return The compacted position and content.
    */
-  def toMapValue[R <: Position](rem: R, con: Content): C[R]
+  def toMapValue[R <: Position[R] with ExpandablePosition[R, _]](rem: R, con: Content): C[R]
 }
 
 /** Trait for operations that expand a position by one dimension. */
-trait ExpandablePosition { self: Position =>
-  /** Type for positions of one more number of dimensions. */
-  type M <: Position with ReduceablePosition
-
+trait ExpandablePosition[
+  P <: Position[P] with ExpandablePosition[P, M],
+  M <: Position[M] with ReduceablePosition[M, P]] { self: Position[P] =>
   /**
    * Prepend a coordinate to the position.
    *
@@ -385,7 +384,7 @@ trait ExpandablePosition { self: Position =>
 }
 
 /** Trait for operations that modify a position (but keep the number of dimensions the same). */
-trait PermutablePosition { self: Position =>
+trait PermutablePosition[P <: Position[P]] { self: Position[P] =>
   /**
    * Permute the order of coordinates.
    *
@@ -395,16 +394,13 @@ trait PermutablePosition { self: Position =>
    *
    * @note The ordering must contain each dimension exactly once.
    */
-  def permute(order: List[Dimension]): this.type = {
-    same(order.map { case d => coordinates(getIndex(d)) }).asInstanceOf[this.type]
-  }
+  def permute(order: List[Dimension]): P = same(order.map { case d => coordinates(getIndex(d)) })
 }
 
 /** Trait for operations that reduce a position by one dimension. */
-trait ReduceablePosition { self: Position =>
-  /** Type for positions of one less number of dimensions. */
-  type L <: Position with ExpandablePosition
-
+trait ReduceablePosition[
+  P <: Position[P] with ReduceablePosition[P, L],
+  L <: Position[L] with ExpandablePosition[L, P]] { self: Position[P] =>
   /**
    * Remove the coordinate at dimension `dim`.
    *
@@ -449,30 +445,25 @@ trait ReduceablePosition { self: Position =>
  *
  * @note Position0D exists so things like `names(Over(First))` work.
  */
-case class Position0D() extends Position with ExpandablePosition {
-  type M = Position1D
-
+case class Position0D() extends Position[Position0D] with ExpandablePosition[Position0D, Position1D] {
   val coordinates = List()
 
-  protected type S = Position0D
-
-  protected def same(cl: List[Value]): S = Position0D()
-  protected def more(cl: List[Value]): M = Position1DImpl(cl)
+  protected def same(cl: List[Value]): Position0D = Position0D()
+  protected def more(cl: List[Value]): Position1D = Position1DImpl(cl)
 }
 
 /** Position for 1 dimensional data. */
-trait Position1D extends Position with CompactablePosition with ExpandablePosition with ReduceablePosition {
+trait Position1D extends Position[Position1D]
+  with CompactablePosition[Position1D]
+  with ExpandablePosition[Position1D, Position2D]
+  with ReduceablePosition[Position1D, Position0D] {
   type C[_] = Content
-  type L = Position0D
-  type M = Position2D
 
-  def toMapValue[R <: Position](rem: R, con: Content): C[R] = con
+  def toMapValue[R <: Position[R] with ExpandablePosition[R, _]](rem: R, con: Content): C[R] = con
 
-  protected type S = Position1D
-
-  protected def less(cl: List[Value]): L = Position0D()
-  protected def same(cl: List[Value]): S = Position1DImpl(cl)
-  protected def more(cl: List[Value]): M = Position2DImpl(cl)
+  protected def less(cl: List[Value]): Position0D = Position0D()
+  protected def same(cl: List[Value]): Position1D = Position1DImpl(cl)
+  protected def more(cl: List[Value]): Position2D = Position2DImpl(cl)
 }
 
 /** Companion object to `Position1D`. */
@@ -495,19 +486,18 @@ object Position1D {
 private case class Position1DImpl(coordinates: List[Value]) extends Position1D
 
 /** Position for 2 dimensional data. */
-trait Position2D extends Position with CompactablePosition with ExpandablePosition with PermutablePosition
-  with ReduceablePosition {
+trait Position2D extends Position[Position2D]
+  with CompactablePosition[Position2D]
+  with ExpandablePosition[Position2D, Position3D]
+  with PermutablePosition[Position2D]
+  with ReduceablePosition[Position2D, Position1D] {
   type C[R] = Map[R, Content]
-  type L = Position1D
-  type M = Position3D
 
-  def toMapValue[R <: Position](rem: R, con: Content): C[R] = Map(rem -> con)
+  def toMapValue[R <: Position[R] with ExpandablePosition[R, _]](rem: R, con: Content): C[R] = Map(rem -> con)
 
-  protected type S = Position2D
-
-  protected def less(cl: List[Value]): L = Position1DImpl(cl)
-  protected def same(cl: List[Value]): S = Position2DImpl(cl)
-  protected def more(cl: List[Value]): M = Position3DImpl(cl)
+  protected def less(cl: List[Value]): Position1D = Position1DImpl(cl)
+  protected def same(cl: List[Value]): Position2D = Position2DImpl(cl)
+  protected def more(cl: List[Value]): Position3D = Position3DImpl(cl)
 }
 
 /** Companion object to `Position2D`. */
@@ -531,19 +521,18 @@ object Position2D {
 private case class Position2DImpl(coordinates: List[Value]) extends Position2D
 
 /** Position for 3 dimensional data. */
-trait Position3D extends Position with CompactablePosition with ExpandablePosition with PermutablePosition
-  with ReduceablePosition {
+trait Position3D extends Position[Position3D]
+  with CompactablePosition[Position3D]
+  with ExpandablePosition[Position3D, Position4D]
+  with PermutablePosition[Position3D]
+  with ReduceablePosition[Position3D, Position2D] {
   type C[R] = Map[R, Content]
-  type L = Position2D
-  type M = Position4D
 
-  def toMapValue[R <: Position](rem: R, con: Content): C[R] = Map(rem -> con)
+  def toMapValue[R <: Position[R] with ExpandablePosition[R, _]](rem: R, con: Content): C[R] = Map(rem -> con)
 
-  protected type S = Position3D
-
-  protected def less(cl: List[Value]): L = Position2DImpl(cl)
-  protected def same(cl: List[Value]): S = Position3DImpl(cl)
-  protected def more(cl: List[Value]): M = Position4DImpl(cl)
+  protected def less(cl: List[Value]): Position2D = Position2DImpl(cl)
+  protected def same(cl: List[Value]): Position3D = Position3DImpl(cl)
+  protected def more(cl: List[Value]): Position4D = Position4DImpl(cl)
 }
 
 /** Companion object to `Position3D`. */
@@ -570,19 +559,18 @@ object Position3D {
 private case class Position3DImpl(coordinates: List[Value]) extends Position3D
 
 /** Position for 4 dimensional data. */
-trait Position4D extends Position with CompactablePosition with ExpandablePosition with PermutablePosition
-  with ReduceablePosition {
+trait Position4D extends Position[Position4D]
+  with CompactablePosition[Position4D]
+  with ExpandablePosition[Position4D, Position5D]
+  with PermutablePosition[Position4D]
+  with ReduceablePosition[Position4D, Position3D] {
   type C[R] = Map[R, Content]
-  type L = Position3D
-  type M = Position5D
 
-  def toMapValue[R <: Position](rem: R, con: Content): C[R] = Map(rem -> con)
+  def toMapValue[R <: Position[R] with ExpandablePosition[R, _]](rem: R, con: Content): C[R] = Map(rem -> con)
 
-  protected type S = Position4D
-
-  protected def less(cl: List[Value]): L = Position3DImpl(cl)
-  protected def same(cl: List[Value]): S = Position4DImpl(cl)
-  protected def more(cl: List[Value]): M = Position5DImpl(cl)
+  protected def less(cl: List[Value]): Position3D = Position3DImpl(cl)
+  protected def same(cl: List[Value]): Position4D = Position4DImpl(cl)
+  protected def more(cl: List[Value]): Position5D = Position5DImpl(cl)
 }
 
 /** Companion object to `Position4D`. */
@@ -610,19 +598,18 @@ object Position4D {
 private case class Position4DImpl(coordinates: List[Value]) extends Position4D
 
 /** Position for 5 dimensional data. */
-trait Position5D extends Position with CompactablePosition with ExpandablePosition with PermutablePosition
-  with ReduceablePosition {
+trait Position5D extends Position[Position5D]
+  with CompactablePosition[Position5D]
+  with ExpandablePosition[Position5D, Position6D]
+  with PermutablePosition[Position5D]
+  with ReduceablePosition[Position5D, Position4D] {
   type C[R] = Map[R, Content]
-  type L = Position4D
-  type M = Position6D
 
-  def toMapValue[R <: Position](rem: R, con: Content): C[R] = Map(rem -> con)
+  def toMapValue[R <: Position[R] with ExpandablePosition[R, _]](rem: R, con: Content): C[R] = Map(rem -> con)
 
-  protected type S = Position5D
-
-  protected def less(cl: List[Value]): L = Position4DImpl(cl)
-  protected def same(cl: List[Value]): S = Position5DImpl(cl)
-  protected def more(cl: List[Value]): M = Position6DImpl(cl)
+  protected def less(cl: List[Value]): Position4D = Position4DImpl(cl)
+  protected def same(cl: List[Value]): Position5D = Position5DImpl(cl)
+  protected def more(cl: List[Value]): Position6D = Position6DImpl(cl)
 }
 
 /** Companion object to `Position5D`. */
@@ -653,19 +640,18 @@ object Position5D {
 private case class Position5DImpl(coordinates: List[Value]) extends Position5D
 
 /** Position for 6 dimensional data. */
-trait Position6D extends Position with CompactablePosition with ExpandablePosition with PermutablePosition
-  with ReduceablePosition {
+trait Position6D extends Position[Position6D]
+  with CompactablePosition[Position6D]
+  with ExpandablePosition[Position6D, Position7D]
+  with PermutablePosition[Position6D]
+  with ReduceablePosition[Position6D, Position5D] {
   type C[R] = Map[R, Content]
-  type L = Position5D
-  type M = Position7D
 
-  def toMapValue[R <: Position](rem: R, con: Content): C[R] = Map(rem -> con)
+  def toMapValue[R <: Position[R] with ExpandablePosition[R, _]](rem: R, con: Content): C[R] = Map(rem -> con)
 
-  protected type S = Position6D
-
-  protected def less(cl: List[Value]): L = Position5DImpl(cl)
-  protected def same(cl: List[Value]): S = Position6DImpl(cl)
-  protected def more(cl: List[Value]): M = Position7DImpl(cl)
+  protected def less(cl: List[Value]): Position5D = Position5DImpl(cl)
+  protected def same(cl: List[Value]): Position6D = Position6DImpl(cl)
+  protected def more(cl: List[Value]): Position7D = Position7DImpl(cl)
 }
 
 /** Companion object to `Position6D`. */
@@ -696,19 +682,18 @@ object Position6D {
 private case class Position6DImpl(coordinates: List[Value]) extends Position6D
 
 /** Position for 7 dimensional data. */
-trait Position7D extends Position with CompactablePosition with ExpandablePosition with PermutablePosition
-  with ReduceablePosition {
+trait Position7D extends Position[Position7D]
+  with CompactablePosition[Position7D]
+  with ExpandablePosition[Position7D, Position8D]
+  with PermutablePosition[Position7D]
+  with ReduceablePosition[Position7D, Position6D] {
   type C[R] = Map[R, Content]
-  type L = Position6D
-  type M = Position8D
 
-  def toMapValue[R <: Position](rem: R, con: Content): C[R] = Map(rem -> con)
+  def toMapValue[R <: Position[R] with ExpandablePosition[R, _]](rem: R, con: Content): C[R] = Map(rem -> con)
 
-  protected type S = Position7D
-
-  protected def less(cl: List[Value]): L = Position6DImpl(cl)
-  protected def same(cl: List[Value]): S = Position7DImpl(cl)
-  protected def more(cl: List[Value]): M = Position8DImpl(cl)
+  protected def less(cl: List[Value]): Position6D = Position6DImpl(cl)
+  protected def same(cl: List[Value]): Position7D = Position7DImpl(cl)
+  protected def more(cl: List[Value]): Position8D = Position8DImpl(cl)
 }
 
 /** Companion object to `Position7D`. */
@@ -742,19 +727,18 @@ object Position7D {
 private case class Position7DImpl(coordinates: List[Value]) extends Position7D
 
 /** Position for 8 dimensional data. */
-trait Position8D extends Position with CompactablePosition with ExpandablePosition with PermutablePosition
-  with ReduceablePosition {
+trait Position8D extends Position[Position8D]
+  with CompactablePosition[Position8D]
+  with ExpandablePosition[Position8D, Position9D]
+  with PermutablePosition[Position8D]
+  with ReduceablePosition[Position8D, Position7D] {
   type C[R] = Map[R, Content]
-  type L = Position7D
-  type M = Position9D
 
-  def toMapValue[R <: Position](rem: R, con: Content): C[R] = Map(rem -> con)
+  def toMapValue[R <: Position[R] with ExpandablePosition[R, _]](rem: R, con: Content): C[R] = Map(rem -> con)
 
-  protected type S = Position8D
-
-  protected def less(cl: List[Value]): L = Position7DImpl(cl)
-  protected def same(cl: List[Value]): S = Position8DImpl(cl)
-  protected def more(cl: List[Value]): M = Position9DImpl(cl)
+  protected def less(cl: List[Value]): Position7D = Position7DImpl(cl)
+  protected def same(cl: List[Value]): Position8D = Position8DImpl(cl)
+  protected def more(cl: List[Value]): Position9D = Position9DImpl(cl)
 }
 
 /** Companion object to `Position8D`. */
@@ -789,16 +773,16 @@ object Position8D {
 private case class Position8DImpl(coordinates: List[Value]) extends Position8D
 
 /** Position for 9 dimensional data.  */
-trait Position9D extends Position with CompactablePosition with PermutablePosition with ReduceablePosition {
+trait Position9D extends Position[Position9D]
+  with CompactablePosition[Position9D]
+  with PermutablePosition[Position9D]
+  with ReduceablePosition[Position9D, Position8D] {
   type C[R] = Map[R, Content]
-  type L = Position8D
 
-  def toMapValue[R <: Position](rem: R, con: Content): C[R] = Map(rem -> con)
+  def toMapValue[R <: Position[R] with ExpandablePosition[R, _]](rem: R, con: Content): C[R] = Map(rem -> con)
 
-  protected type S = Position9D
-
-  protected def less(cl: List[Value]): L = Position8DImpl(cl)
-  protected def same(cl: List[Value]): S = Position9DImpl(cl)
+  protected def less(cl: List[Value]): Position8D = Position8DImpl(cl)
+  protected def same(cl: List[Value]): Position9D = Position9DImpl(cl)
 }
 
 /** Companion object to `Position9D`. */
@@ -834,7 +818,9 @@ object Position9D {
 private case class Position9DImpl(coordinates: List[Value]) extends Position9D
 
 /** Base trait that represents the positions of a matrix. */
-trait Positions[P <: Position with ReduceablePosition] extends Persist[P] {
+trait Positions[
+  L <: Position[L] with ExpandablePosition[L, P],
+  P <: Position[P] with ReduceablePosition[P, L]] extends Persist[P] {
 
   /** Specifies tuners permitted on a call to `names`. */
   type NamesTuners[_]
@@ -845,13 +831,22 @@ trait Positions[P <: Position with ReduceablePosition] extends Persist[P] {
    * @param slice Encapsulates the dimension(s) for which the names are to be returned.
    * @param tuner The tuner for the job.
    *
-   * @return A `U[(Slice.S, Long)]` of the distinct position(s) together with a unique index.
+   * @return A `U[(S, Long)]` of the distinct position(s) together with a unique index.
    *
    * @note The position(s) are returned with an index so the return value can be used in various `save` methods. The
    *       index itself is unique for each position but no ordering is defined.
    */
-  def names[T <: Tuner : NamesTuners](slice: Slice[P], tuner: T)(implicit ev1: slice.S =:!= Position0D,
-    ev2: ClassTag[slice.S]): U[slice.S]
+  def names[
+    S <: Position[S] with ExpandablePosition[S, _],
+    R <: Position[R] with ExpandablePosition[R, _],
+    T <: Tuner : NamesTuners
+  ](
+    slice: Slice[L, P, S, R],
+    tuner: T
+  )(implicit
+    ev1: S =:!= Position0D,
+    ev2: ClassTag[S]
+  ): U[S]
 
   /**
    * Persist to disk.
@@ -895,7 +890,7 @@ trait Positions[P <: Position with ReduceablePosition] extends Persist[P] {
 }
 
 /** Type class for transforming a type `T` into a `Position`. */
-trait Positionable[P <: Position] extends java.io.Serializable {
+trait Positionable[P <: Position[P]] extends java.io.Serializable {
   /** Returns a position for this type `T`. */
   def apply(): P
 }
@@ -903,7 +898,7 @@ trait Positionable[P <: Position] extends java.io.Serializable {
 /** Companion object for the `Positionable` trait. */
 object Positionable {
   /** Converts a position to a position; that is, it's a pass through. */
-  implicit def P2P[T <: Position](t: T): Positionable[T] = new Positionable[T] { def apply(): T = t }
+  implicit def P2P[T <: Position[T]](t: T): Positionable[T] = new Positionable[T] { def apply(): T = t }
 
   /** Converts a `Value` to a position. */
   implicit def V2P[T <: Value](t: T): Positionable[Position1D] = {
@@ -917,7 +912,7 @@ object Positionable {
 }
 
 /** Type class for transforming a type `T` into a `List[Position]`. */
-trait PositionListable[P <: Position] extends java.io.Serializable {
+trait PositionListable[P <: Position[P]] extends java.io.Serializable {
   /** Returns a `List[Position]` for this type `T`. */
   def apply(): List[P]
 }
@@ -925,18 +920,18 @@ trait PositionListable[P <: Position] extends java.io.Serializable {
 /** Companion object for the `PositionListable` trait. */
 object PositionListable {
   /** Converts a `List[Positionable]` to a `List[Position]`. */
-  implicit def LP2LP[T <% Positionable[P], P <: Position](t: List[T]): PositionListable[P] = {
+  implicit def LP2LP[T <% Positionable[P], P <: Position[P]](t: List[T]): PositionListable[P] = {
     new PositionListable[P] { def apply(): List[P] = t.map { case p => p() } }
   }
 
   /** Converts a `Positionable` to a `List[Position]`. */
-  implicit def P2PL[T <% Positionable[P], P <: Position](t: T): PositionListable[P] = {
+  implicit def P2PL[T <% Positionable[P], P <: Position[P]](t: T): PositionListable[P] = {
     new PositionListable[P] { def apply(): List[P] = List(t()) }
   }
 }
 
 /** Type class for transforming a type `T` into a `U[Position]`. */
-trait PositionDistributable[T, P <: Position, U[_]] {
+trait PositionDistributable[T, P <: Position[P], U[_]] {
   /**
    * Returns a `U[Position]` for type `T`.
    *
@@ -947,6 +942,6 @@ trait PositionDistributable[T, P <: Position, U[_]] {
 
 /** Define implicit ordering. */
 private[grimlock] trait PositionOrdering {
-  protected implicit def ImplicitPositionOrdering[T <: Position] = Position.Ordering[T]()
+  protected implicit def ImplicitPositionOrdering[P <: Position[P]] = Position.Ordering[P]()
 }
 

@@ -20,7 +20,7 @@ import au.com.cba.omnia.grimlock.framework.encoding._
 import au.com.cba.omnia.grimlock.framework.position._
 import au.com.cba.omnia.grimlock.framework.squash._
 
-private[squash] trait PreservingPosition[P <: Position] extends Squasher[P] {
+private[squash] trait PreservingPosition[P <: Position[P]] extends Squasher[P] {
   type T = (Value, Content)
 
   def prepare(cell: Cell[P], dim: Dimension): T = (cell.position(dim), cell.content)
@@ -29,17 +29,17 @@ private[squash] trait PreservingPosition[P <: Position] extends Squasher[P] {
 }
 
 /** Reduce two cells preserving the cell with maximal value for the coordinate of the dimension being squashed. */
-case class PreservingMaxPosition[P <: Position]() extends PreservingPosition[P] {
+case class PreservingMaxPosition[P <: Position[P]]() extends PreservingPosition[P] {
   def reduce(lt: T, rt: T): T = if (Value.Ordering.compare(lt._1, rt._1) > 0) { lt } else { rt }
 }
 
 /** Reduce two cells preserving the cell with minimal value for the coordinate of the dimension being squashed. */
-case class PreservingMinPosition[P <: Position]() extends PreservingPosition[P] {
+case class PreservingMinPosition[P <: Position[P]]() extends PreservingPosition[P] {
   def reduce(lt: T, rt: T): T = if (Value.Ordering.compare(lt._1, rt._1) < 0) { lt } else { rt }
 }
 
 /** Reduce two cells preserving the cell whose coordinate matches `keep`. */
-case class KeepSlice[P <: Position](keep: Valueable) extends Squasher[P] {
+case class KeepSlice[P <: Position[P]](keep: Valueable) extends Squasher[P] {
   type T = Option[Content]
 
   def prepare(cell: Cell[P], dim: Dimension): T = if (cell.position(dim) equ keep) { Some(cell.content) } else { None }

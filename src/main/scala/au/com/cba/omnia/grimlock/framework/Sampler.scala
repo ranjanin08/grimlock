@@ -18,7 +18,7 @@ import au.com.cba.omnia.grimlock.framework._
 import au.com.cba.omnia.grimlock.framework.position._
 
 /** Base trait for sampling. */
-trait Sampler[P <: Position] extends SamplerWithValue[P] { self =>
+trait Sampler[P <: Position[P]] extends SamplerWithValue[P] { self =>
   type V = Any
 
   def selectWithValue(cell: Cell[P], ext: V): Boolean = select(cell)
@@ -43,7 +43,7 @@ trait Sampler[P <: Position] extends SamplerWithValue[P] { self =>
 }
 
 /** Base trait for selecting samples with a user provided value. */
-trait SamplerWithValue[P <: Position] extends java.io.Serializable { self =>
+trait SamplerWithValue[P <: Position[P]] extends java.io.Serializable { self =>
   /** Type of the external value. */
   type V
 
@@ -74,7 +74,7 @@ trait SamplerWithValue[P <: Position] extends java.io.Serializable { self =>
 }
 
 /** Trait for transforming a type `T` to a `Sampler[P]`. */
-trait Sampleable[P <: Position] extends java.io.Serializable {
+trait Sampleable[P <: Position[P]] extends java.io.Serializable {
   /** Returns a `Sampler[P]` for this type `T`. */
   def apply(): Sampler[P]
 }
@@ -82,17 +82,17 @@ trait Sampleable[P <: Position] extends java.io.Serializable {
 /** Companion object for the `Sampleable` trait. */
 object Sampleable {
   /** Converts a `(Cell[P]) => Boolean` to a `Sampler[P]`. */
-  implicit def C2S[P <: Position](t: (Cell[P]) => Boolean): Sampleable[P] = {
+  implicit def C2S[P <: Position[P]](t: (Cell[P]) => Boolean): Sampleable[P] = {
     new Sampleable[P] { def apply(): Sampler[P] = new Sampler[P] { def select(cell: Cell[P]): Boolean = t(cell) } }
   }
 
   /** Converts a `Sampler[P]` to a `Sampler[P]`; that is, it is a pass through. */
-  implicit def S2S[P <: Position](t: Sampler[P]): Sampleable[P] = {
+  implicit def S2S[P <: Position[P]](t: Sampler[P]): Sampleable[P] = {
     new Sampleable[P] { def apply(): Sampler[P] = t }
   }
 
   /** Converts a `List[Sampler[P]]` to a `Sampler[P]`. */
-  implicit def LS2S[P <: Position](t: List[Sampler[P]]): Sampleable[P] = {
+  implicit def LS2S[P <: Position[P]](t: List[Sampler[P]]): Sampleable[P] = {
     new Sampleable[P] {
       def apply(): Sampler[P] = {
         new Sampler[P] { def select(cell: Cell[P]): Boolean = t.map { case s => s.select(cell) }.reduce(_ || _) }
@@ -102,7 +102,7 @@ object Sampleable {
 }
 
 /** Trait for transforming a type `T` to a `SamplerWithValue[P]`. */
-trait SampleableWithValue[P <: Position, W] extends java.io.Serializable {
+trait SampleableWithValue[P <: Position[P], W] extends java.io.Serializable {
   /** Returns a `SamplerWithValue[P]` for this type `T`. */
   def apply(): SamplerWithValue[P] { type V >: W }
 }
@@ -110,7 +110,7 @@ trait SampleableWithValue[P <: Position, W] extends java.io.Serializable {
 /** Companion object for the `SampleableWithValue` trait. */
 object SampleableWithValue {
   /** Converts a `(Cell[P], W) => Boolean` to a `SamplerWithValue[P]`. */
-  implicit def CW2SWV[P <: Position, W](t: (Cell[P], W) => Boolean): SampleableWithValue[P, W] = {
+  implicit def CW2SWV[P <: Position[P], W](t: (Cell[P], W) => Boolean): SampleableWithValue[P, W] = {
     new SampleableWithValue[P, W] {
       def apply(): SamplerWithValue[P] { type V >: W } = {
         new SamplerWithValue[P] {
@@ -123,12 +123,13 @@ object SampleableWithValue {
   }
 
   /** Converts a `SamplerWithValue[P]` to a `SamplerWithValue[P]`; that is, it is a pass through. */
-  implicit def SWV2SWV[P <: Position, W](t: SamplerWithValue[P] { type V >: W }): SampleableWithValue[P, W] = {
+  implicit def SWV2SWV[P <: Position[P], W](t: SamplerWithValue[P] { type V >: W }): SampleableWithValue[P, W] = {
     new SampleableWithValue[P, W] { def apply(): SamplerWithValue[P] { type V >: W } = t }
   }
 
   /** Converts a `List[SamplerWithValue[P] { type V >: W }]` to a `SamplerWithValue[P] { type V >: W }`. */
-  implicit def LSWV2SWV[P <: Position, W](t: List[SamplerWithValue[P] { type V >: W }]): SampleableWithValue[P, W] = {
+  implicit def LSWV2SWV[P <: Position[P], W](
+    t: List[SamplerWithValue[P] { type V >: W }]): SampleableWithValue[P, W] = {
     new SampleableWithValue[P, W] {
       def apply(): SamplerWithValue[P] { type V >: W } = {
         new SamplerWithValue[P] {

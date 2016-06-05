@@ -19,7 +19,7 @@ import au.com.cba.omnia.grimlock.framework.content._
 import au.com.cba.omnia.grimlock.framework.position._
 
 /** Base trait for squashing a dimension. */
-trait Squasher[P <: Position] extends SquasherWithValue[P] {
+trait Squasher[P <: Position[P]] extends SquasherWithValue[P] {
   type V = Any
 
   def prepareWithValue(cell: Cell[P], dim: Dimension, ext: V): T = prepare(cell, dim)
@@ -46,7 +46,7 @@ trait Squasher[P <: Position] extends SquasherWithValue[P] {
 }
 
 /** Base trait for squashing a dimension with a user provided value. */
-trait SquasherWithValue[P <: Position] extends java.io.Serializable {
+trait SquasherWithValue[P <: Position[P]] extends java.io.Serializable {
   /** Type of the state being squashed. */
   type T
 
@@ -84,7 +84,7 @@ trait SquasherWithValue[P <: Position] extends java.io.Serializable {
 }
 
 /** Trait for transforming a type `T` to a `Squasher[P]`. */
-trait Squashable[P <: Position] extends java.io.Serializable {
+trait Squashable[P <: Position[P]] extends java.io.Serializable {
   /** Returns a `Squasher[P]` for this type `T`. */
   def apply(): Squasher[P]
 }
@@ -92,13 +92,13 @@ trait Squashable[P <: Position] extends java.io.Serializable {
 /** Companion object for the `Squashable` trait. */
 object Squashable {
   /** Converts a `Squasher[P]` to a `Squasher[P]`; that is, it is a pass through. */
-  implicit def S2S[P <: Position](t: Squasher[P]): Squashable[P] = {
+  implicit def S2S[P <: Position[P]](t: Squasher[P]): Squashable[P] = {
     new Squashable[P] { def apply(): Squasher[P] = t }
   }
 }
 
 /** Trait for transforming a type `T` to a `SquasherWithValue[P]`. */
-trait SquashableWithValue[P <: Position, W] extends java.io.Serializable {
+trait SquashableWithValue[P <: Position[P], W] extends java.io.Serializable {
   /** Returns a `SquasherWithValue[P]` for this type `T`. */
   def apply(): SquasherWithValue[P] { type V >: W }
 }
@@ -106,7 +106,7 @@ trait SquashableWithValue[P <: Position, W] extends java.io.Serializable {
 /** Companion object for the `SquashableWithValue` trait. */
 object SquashableWithValue {
   /** Converts a `SquasherWithValue[P]` to a `SquasherWithValue[P]`; that is, it is a pass through. */
-  implicit def SWV2SWV[P <: Position, W](t: SquasherWithValue[P] { type V >: W }): SquashableWithValue[P, W] = {
+  implicit def SWV2SWV[P <: Position[P], W](t: SquasherWithValue[P] { type V >: W }): SquashableWithValue[P, W] = {
     new SquashableWithValue[P, W] { def apply(): SquasherWithValue[P] { type V >: W } = t }
   }
 }
