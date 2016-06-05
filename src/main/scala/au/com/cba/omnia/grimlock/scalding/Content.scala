@@ -41,7 +41,7 @@ object Contents {
  *
  * @param data The `TypedPipe[(P, Content]`.
  */
-case class IndexedContents[P <: Position](data: TypedPipe[(P, Content)]) extends FwIndexedContents[P]
+case class IndexedContents[P <: Position[P]](data: TypedPipe[(P, Content)]) extends FwIndexedContents[P]
   with Persist[(P, Content)] {
   def saveAsText(file: String, writer: TextWriter)(implicit ctx: C): U[(P, Content)] = saveText(file, writer)
 }
@@ -49,6 +49,6 @@ case class IndexedContents[P <: Position](data: TypedPipe[(P, Content)]) extends
 /** Companion object for the Scalding `IndexedContents` class. */
 object IndexedContents {
   /** Converts a `TypedPipe[(P, Content)]` to a `IndexedContents`. */
-  implicit def TPIC2TPC[P <: Position](data: TypedPipe[(P, Content)]): IndexedContents[P] = IndexedContents[P](data)
+  implicit def TPIC2TPC[P <: Position[P]](data: TypedPipe[(P, Content)]): IndexedContents[P] = IndexedContents[P](data)
 }
 

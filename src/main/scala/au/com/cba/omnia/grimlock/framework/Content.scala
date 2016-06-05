@@ -145,7 +145,7 @@ trait Contents extends Persist[Content] {
 }
 
 /** Base trait that represents the output of uniqueByPosition. */
-trait IndexedContents[P <: Position] extends Persist[(P, Content)] {
+trait IndexedContents[P <: Position[P]] extends Persist[(P, Content)] {
   /**
    * Persist to disk.
    *
@@ -167,7 +167,7 @@ object IndexedContent {
    * @param codec       Indicator if codec is required or not (only used if descriptive is `false`).
    * @param schema      Indicator if schema is required or not (only used if descriptive is `false`).
    */
-  def toString[P <: Position](descriptive: Boolean = false, separator: String = "|", codec: Boolean = true,
+  def toString[P <: Position[P]](descriptive: Boolean = false, separator: String = "|", codec: Boolean = true,
     schema: Boolean = true): ((P, Content)) => TraversableOnce[String] = {
     (t: (P, Content)) => Some(
       if (descriptive) {

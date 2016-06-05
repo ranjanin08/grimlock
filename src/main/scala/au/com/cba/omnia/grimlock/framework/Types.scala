@@ -79,7 +79,7 @@ object Type {
    * @param descriptive Indicator if descriptive string is required or not.
    * @param separator   The separator to use between various fields (only used if descriptive is `false`).
    */
-  def toString[P <: Position](descriptive: Boolean = false,
+  def toString[P <: Position[P]](descriptive: Boolean = false,
     separator: String = "|"): ((P, Type)) => TraversableOnce[String] = {
     (t: (P, Type)) => Some(
       if (descriptive) {
@@ -91,7 +91,7 @@ object Type {
 }
 
 /** Base trait that represents the variable type along the dimensions of a matrix. */
-trait Types[P <: Position] extends Persist[(P, Type)] {
+trait Types[P <: Position[P]] extends Persist[(P, Type)] {
   /**
    * Persist to disk.
    *

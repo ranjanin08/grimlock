@@ -20,7 +20,7 @@ import au.com.cba.omnia.grimlock.framework.position._
 import scala.reflect.ClassTag
 
 /** Base trait for partitioners. */
-trait Partitioner[P <: Position, I] extends PartitionerWithValue[P, I] {
+trait Partitioner[P <: Position[P], I] extends PartitionerWithValue[P, I] {
   type V = Any
 
   def assignWithValue(cell: Cell[P], ext: V): TraversableOnce[I] = assign(cell)
@@ -36,7 +36,7 @@ trait Partitioner[P <: Position, I] extends PartitionerWithValue[P, I] {
 }
 
 /** Base trait for partitioners that use a user supplied value. */
-trait PartitionerWithValue[P <: Position, I] {
+trait PartitionerWithValue[P <: Position[P], I] {
   /** Type of the external value. */
   type V
 
@@ -52,7 +52,7 @@ trait PartitionerWithValue[P <: Position, I] {
 }
 
 /** Base trait that represents the partitions of matrices */
-trait Partitions[P <: Position, I] extends Persist[(I, Cell[P])] {
+trait Partitions[P <: Position[P], I] extends Persist[(I, Cell[P])] {
 
   /**
    * Add a partition.
@@ -79,7 +79,7 @@ trait Partitions[P <: Position, I] extends Persist[(I, Cell[P])] {
    * @note This will pull all partition ids into memory, so only use this if there is sufficient memory
    *       available to keep all (distinct) partition ids in memory.
    */
-  def forAll[Q <: Position, T <: Tuner : ForAllTuners](fn: (I, U[Cell[P]]) => U[Cell[Q]], exclude: List[I] = List(),
+  def forAll[Q <: Position[Q], T <: Tuner : ForAllTuners](fn: (I, U[Cell[P]]) => U[Cell[Q]], exclude: List[I] = List(),
     tuner: T)(implicit ev1: ClassTag[I]): U[(I, Cell[Q])]
 
   /**
@@ -90,7 +90,7 @@ trait Partitions[P <: Position, I] extends Persist[(I, Cell[P])] {
    *
    * @return A `U[(I, Cell[Q])]` containing the paritions with `fn` applied to them.
    */
-  def forEach[Q <: Position](ids: List[I], fn: (I, U[Cell[P]]) => U[Cell[Q]]): U[(I, Cell[Q])]
+  def forEach[Q <: Position[Q]](ids: List[I], fn: (I, U[Cell[P]]) => U[Cell[Q]]): U[(I, Cell[Q])]
 
   /**
    * Return the data for the partition `id`.
@@ -150,7 +150,7 @@ object Partition {
    * @param codec       Indicator if codec is required or not (only used if descriptive is `false`).
    * @param schema      Indicator if schema is required or not (only used if descriptive is `false`).
    */
-  def toString[I, P <: Position](descriptive: Boolean = false, separator: String = "|", codec: Boolean = true,
+  def toString[I, P <: Position[P]](descriptive: Boolean = false, separator: String = "|", codec: Boolean = true,
     schema: Boolean = true): ((I, Cell[P])) => TraversableOnce[String] = {
     (p: (I, Cell[P])) => Some(p._1.toString + separator +
       (if (descriptive) { p._2.toString } else { p._2.toShortString(separator, codec, schema) }))
@@ -158,7 +158,7 @@ object Partition {
 }
 
 /** Trait for transforming a type `T` to a `Partitioner[P, I]`. */
-trait Partitionable[P <: Position, I] extends java.io.Serializable {
+trait Partitionable[P <: Position[P], I] extends java.io.Serializable {
   /** Returns a `Partitioner[P, I]` for this type `T`. */
   def apply(): Partitioner[P, I]
 }
@@ -166,7 +166,7 @@ trait Partitionable[P <: Position, I] extends java.io.Serializable {
 /** Companion object for the `Partitionable` trait. */
 object Partitionable {
   /** Converts a `(Cell[P]) => I` to a `Partitioner[P, S]`. */
-  implicit def SPS2P[P <: Position, I](t: (Cell[P]) => I): Partitionable[P, I] = {
+  implicit def SPS2P[P <: Position[P], I](t: (Cell[P]) => I): Partitionable[P, I] = {
     new Partitionable[P, I] {
       def apply(): Partitioner[P, I] = {
         new Partitioner[P, I] { def assign(cell: Cell[P]): TraversableOnce[I] = Some(t(cell)) }
@@ -175,7 +175,7 @@ object Partitionable {
   }
 
   /** Converts a `(Cell[P]) => List[S]` to a `Partitioner[P, I]`. */
-  implicit def LSPS2P[P <: Position, I](t: (Cell[P]) => List[I]): Partitionable[P, I] = {
+  implicit def LSPS2P[P <: Position[P], I](t: (Cell[P]) => List[I]): Partitionable[P, I] = {
     new Partitionable[P, I] {
       def apply(): Partitioner[P, I] = {
         new Partitioner[P, I] { def assign(cell: Cell[P]): TraversableOnce[I] = t(cell) }
@@ -184,12 +184,12 @@ object Partitionable {
   }
 
   /** Converts a `Partitioner[P, I]` to a `Partitioner[P, I]`; that is, it is a pass through. */
-  implicit def PPS2P[P <: Position, I](t: Partitioner[P, I]): Partitionable[P, I] = {
+  implicit def PPS2P[P <: Position[P], I](t: Partitioner[P, I]): Partitionable[P, I] = {
     new Partitionable[P, I] { def apply(): Partitioner[P, I] = t }
   }
 
   /** Converts a `List[Partitioner[P, I]]` to a single `Partitioner[P, I]`. */
-  implicit def LPPS2P[P <: Position, I](t: List[Partitioner[P, I]]): Partitionable[P, I] = {
+  implicit def LPPS2P[P <: Position[P], I](t: List[Partitioner[P, I]]): Partitionable[P, I] = {
     new Partitionable[P, I] {
       def apply(): Partitioner[P, I] = {
         new Partitioner[P, I] {
@@ -201,7 +201,7 @@ object Partitionable {
 }
 
 /** Trait for transforming a type `T` to a `PartitionerWithValue[P, I]`. */
-trait PartitionableWithValue[P <: Position, I, W] extends java.io.Serializable {
+trait PartitionableWithValue[P <: Position[P], I, W] extends java.io.Serializable {
   /** Returns a `PartitionerWithValue[P, I]` for this type `T`. */
   def apply(): PartitionerWithValue[P, I] { type V >: W }
 }
@@ -209,7 +209,7 @@ trait PartitionableWithValue[P <: Position, I, W] extends java.io.Serializable {
 /** Companion object for the `PartitionableWithValue` trait. */
 object PartitionableWithValue {
   /** Converts a `(Cell[P], W) => I` to a `PartitionerWithValue[P, S] { type V >: W }`. */
-  implicit def SPSW2PWV[P <: Position, I, W](t: (Cell[P], W) => I): PartitionableWithValue[P, I, W] = {
+  implicit def SPSW2PWV[P <: Position[P], I, W](t: (Cell[P], W) => I): PartitionableWithValue[P, I, W] = {
     new PartitionableWithValue[P, I, W] {
       def apply(): PartitionerWithValue[P, I] { type V >: W } = {
         new PartitionerWithValue[P, I] {
@@ -222,7 +222,7 @@ object PartitionableWithValue {
   }
 
   /** Converts a `(Cell[P], W) => List[I]` to a `PartitionerWithValue[P, I] { type V >: W }`. */
-  implicit def LSPSW2PWV[P <: Position, I, W](t: (Cell[P], W) => List[I]): PartitionableWithValue[P, I, W] = {
+  implicit def LSPSW2PWV[P <: Position[P], I, W](t: (Cell[P], W) => List[I]): PartitionableWithValue[P, I, W] = {
     new PartitionableWithValue[P, I, W] {
       def apply(): PartitionerWithValue[P, I] { type V >: W } = {
         new PartitionerWithValue[P, I] {
@@ -238,7 +238,7 @@ object PartitionableWithValue {
    * Converts a `PartitionerWithValue[P, I] { type V >: W }` to a `PartitionerWithValue[P, I] { type V >: W }`;
    * that is, it is a pass through.
    */
-  implicit def PPSW2PWV[P <: Position, I, W](
+  implicit def PPSW2PWV[P <: Position[P], I, W](
     t: PartitionerWithValue[P, I] { type V >: W }): PartitionableWithValue[P, I, W] = {
     new PartitionableWithValue[P, I, W] { def apply(): PartitionerWithValue[P, I] { type V >: W } = t }
   }
@@ -247,7 +247,7 @@ object PartitionableWithValue {
    * Converts a `List[PartitionerWithValue[P, I] { type V >: W }]` to a single
    * `PartitionerWithValue[P, I] { type V >: W }`.
    */
-  implicit def LPPSW2PWV[P <: Position, I, W](
+  implicit def LPPSW2PWV[P <: Position[P], I, W](
     t: List[PartitionerWithValue[P, I] { type V >: W }]): PartitionableWithValue[P, I, W] = {
     new PartitionableWithValue[P, I, W] {
       def apply(): PartitionerWithValue[P, I] { type V >: W } = {

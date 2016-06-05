@@ -28,7 +28,7 @@ import scala.util.Random
  *
  * @note This randomly samples ignoring the position.
  */
-case class RandomSample[P <: Position](ratio: Double, rnd: Random = new Random()) extends Sampler[P] {
+case class RandomSample[P <: Position[P]](ratio: Double, rnd: Random = new Random()) extends Sampler[P] {
   def select(cell: Cell[P]): Boolean = rnd.nextDouble() < ratio
 }
 
@@ -39,7 +39,7 @@ case class RandomSample[P <: Position](ratio: Double, rnd: Random = new Random()
  * @param ratio The sample ratio (relative to `base`).
  * @param base  The base of the sampling ratio.
  */
-case class HashSample[P <: Position](dim: Dimension, ratio: Int, base: Int) extends Sampler[P] {
+case class HashSample[P <: Position[P]](dim: Dimension, ratio: Int, base: Int) extends Sampler[P] {
   def select(cell: Cell[P]): Boolean = math.abs(cell.position(dim).hashCode % base) < ratio
 }
 
@@ -50,8 +50,14 @@ case class HashSample[P <: Position](dim: Dimension, ratio: Int, base: Int) exte
  * @param count Object that will extract, for `cell`, its corresponding number of values.
  * @param size  The size to sample to.
  */
-case class HashSampleToSize[P <: Position, W](dim: Dimension, count: Extract[P, W, Double],
-  size: Long) extends SamplerWithValue[P] {
+case class HashSampleToSize[
+  P <: Position[P],
+  W
+](
+  dim: Dimension,
+  count: Extract[P, W, Double],
+  size: Long
+) extends SamplerWithValue[P] {
   type V = W
 
   def selectWithValue(cell: Cell[P], ext: V): Boolean = {

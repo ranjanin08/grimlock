@@ -15,20 +15,10 @@
 package au.com.cba.omnia.grimlock.framework.position
 
 /** Base trait that encapsulates dimension on which to operate. */
-sealed trait Slice[P <: Position with ReduceablePosition] {
-  /**
-   * Return type of the `selected` method; a position of dimension less than `P`.
-   *
-   * @note `S` and `R` together make `P`.
-   */
-  type S <: Position with ExpandablePosition
-
-  /**
-   * Return type of the `remainder` method; a position of dimension less than `P`.
-   *
-   * @note `S` and `R` together make `P`.
-   */
-  type R <: Position with ExpandablePosition
+sealed trait Slice[L <: Position[L] with ExpandablePosition[L, P],
+                   P <: Position[P] with ReduceablePosition[P, L],
+                   S <: Position[S] with ExpandablePosition[S, _],
+                   R <: Position[R] with ExpandablePosition[R, _]] {
 
   /** The dimension of this slice. */
   val dimension: Dimension
@@ -38,7 +28,7 @@ sealed trait Slice[P <: Position with ReduceablePosition] {
   /** Returns the remaining coordinate(s) for the given `pos`. */
   def remainder(pos: P): R
 
-  protected def remove(pos: P): pos.L = pos.remove(dimension)
+  protected def remove(pos: P): L = pos.remove(dimension)
   protected def single(pos: P): Position1D = Position1D(pos(dimension))
 }
 
@@ -48,12 +38,10 @@ sealed trait Slice[P <: Position with ReduceablePosition] {
  *
  * @param dimension Dimension of the selected coordinate.
  */
-trait Over[P <: Position with ReduceablePosition] extends Slice[P] {
-  type S = Position1D
-  type R = P#L
-
-  def selected(pos: P): S = single(pos)
-  def remainder(pos: P): R = remove(pos)
+trait Over[L <: Position[L] with ExpandablePosition[L, P],
+           P <: Position[P] with ReduceablePosition[P, L]] extends Slice[L, P, Position1D, L] {
+  def selected(pos: P): Position1D = single(pos)
+  def remainder(pos: P): L = remove(pos)
 }
 
 /** Companion object to `Over` trait. */
@@ -64,26 +52,35 @@ object Over {
    *
    * @param dimension Dimension of the selected coordinate.
    */
-  def apply[P <: Position with ReduceablePosition](dimension: Dimension)(
-    implicit ev: PosDimDep[P, dimension.type]): Over[P] = OverImpl(dimension)
+  def apply[
+    L <: Position[L] with ExpandablePosition[L, P],
+    P <: Position[P] with ReduceablePosition[P, L]
+  ](
+    dimension: Dimension
+  )(implicit
+    ev: PosDimDep[P, dimension.type]
+  ): Over[L, P] = OverImpl(dimension)
 
   /** Standard `unapply` method for pattern matching. */
-  def unapply[P <: Position with ReduceablePosition](over: Over[P]): Option[Dimension] = Some(over.dimension)
+  def unapply(over: Over[_, _]): Option[Dimension] = Some(over.dimension)
 }
 
-private[position] case class OverImpl[P <: Position with ReduceablePosition](dimension: Dimension) extends Over[P]
+private[position] case class OverImpl[
+  L <: Position[L] with ExpandablePosition[L, P],
+  P <: Position[P] with ReduceablePosition[P, L]
+](
+  dimension: Dimension
+) extends Over[L, P]
 
 /**
  * Indicates that the selected coordinates are all except the one indexed by `dimension`. In other words, when a
  * groupBy is performed, it is performed using a `Position` (type `ReduceablePosition.L`) consisting of all coordinates
  * except that at index `dimension`.
  */
-trait Along[P <: Position with ReduceablePosition] extends Slice[P] {
-  type S = P#L
-  type R = Position1D
-
-  def selected(pos: P): S = remove(pos)
-  def remainder(pos: P): R = single(pos)
+trait Along[L <: Position[L] with ExpandablePosition[L, P],
+            P <: Position[P] with ReduceablePosition[P, L]] extends Slice[L, P, L, Position1D] {
+  def selected(pos: P): L = remove(pos)
+  def remainder(pos: P): Position1D = single(pos)
 }
 
 /** Companion object to `Along` trait. */
@@ -95,12 +92,23 @@ object Along {
    *
    * @param dimension Dimension of the coordinate to exclude.
    */
-  def apply[P <: Position with ReduceablePosition](dimension: Dimension)(
-    implicit ev: PosDimDep[P, dimension.type]): Along[P] = AlongImpl(dimension)
+  def apply[
+    L <: Position[L] with ExpandablePosition[L, P],
+    P <: Position[P] with ReduceablePosition[P, L]
+  ](
+    dimension: Dimension
+  )(implicit
+    ev: PosDimDep[P, dimension.type]
+  ): Along[L, P] = AlongImpl(dimension)
 
   /** Standard `unapply` method for pattern matching. */
-  def unapply[P <: Position with ReduceablePosition](along: Along[P]): Option[Dimension] = Some(along.dimension)
+  def unapply(along: Along[_, _]): Option[Dimension] = Some(along.dimension)
 }
 
-private[position] case class AlongImpl[P <: Position with ReduceablePosition](dimension: Dimension) extends Along[P]
+private[position] case class AlongImpl[
+  L <: Position[L] with ExpandablePosition[L, P],
+  P <: Position[P] with ReduceablePosition[P, L]
+](
+  dimension: Dimension
+) extends Along[L, P]
 

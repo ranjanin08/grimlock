@@ -33,8 +33,16 @@ import java.util.Date
  * @note The hash code modulo `base` is used for comparison with the ratio. While the position is assigned to the left
  *       partition if it is less or equal to the `ratio` value.
  */
-case class BinaryHashSplit[P <: Position, S](dim: Dimension, ratio: Int, left: S, right: S,
-  base: Int = 100) extends Partitioner[P, S] {
+case class BinaryHashSplit[
+  P <: Position[P],
+  S
+](
+  dim: Dimension,
+  ratio: Int,
+  left: S,
+  right: S,
+  base: Int = 100
+) extends Partitioner[P, S] {
   def assign(cell: Cell[P]): TraversableOnce[S] = {
     Some(if (math.abs(cell.position(dim).hashCode % base) <= ratio) left else right)
   }
@@ -55,8 +63,18 @@ case class BinaryHashSplit[P <: Position, S](dim: Dimension, ratio: Int, left: S
  *       partition `left` if it is less or equal to `lower`, `middle` if it is less of equal to `upper` or else to
  *       `right`.
  */
-case class TernaryHashSplit[P <: Position, S](dim: Dimension, lower: Int, upper: Int, left: S, middle: S, right: S,
-  base: Int = 100) extends Partitioner[P, S] {
+case class TernaryHashSplit[
+  P <: Position[P],
+  S
+](
+  dim: Dimension,
+  lower: Int,
+  upper: Int,
+  left: S,
+  middle: S,
+  right: S,
+  base: Int = 100
+) extends Partitioner[P, S] {
   def assign(cell: Cell[P]): TraversableOnce[S] = {
     val hash = math.abs(cell.position(dim).hashCode % base)
 
@@ -75,8 +93,14 @@ case class TernaryHashSplit[P <: Position, S](dim: Dimension, lower: Int, upper:
  *       (strictly) greater than the lower value (first value in tuple) and less or equal to the upper value (second
  *       value in tuple).
  */
-case class HashSplit[P <: Position, S](dim: Dimension, ranges: Map[S, (Int, Int)],
-  base: Int = 100) extends Partitioner[P, S] {
+case class HashSplit[
+  P <: Position[P],
+  S
+](
+  dim: Dimension,
+  ranges: Map[S, (Int, Int)],
+  base: Int = 100
+) extends Partitioner[P, S] {
   def assign(cell: Cell[P]): TraversableOnce[S] = {
     val hash = math.abs(cell.position(dim).hashCode % base)
     ranges
@@ -99,8 +123,16 @@ case class HashSplit[P <: Position, S](dim: Dimension, ranges: Map[S, (Int, Int)
  * @note The position is assigned to the `left` partition if it is less or equal to the `date` value, to `right`
  *       otherwise.
  */
-case class BinaryDateSplit[P <: Position, S](dim: Dimension, date: Date, left: S, right: S,
-  codec: DateCodec) extends Partitioner[P, S] {
+case class BinaryDateSplit[
+  P <: Position[P],
+  S
+](
+  dim: Dimension,
+  date: Date,
+  left: S,
+  right: S,
+  codec: DateCodec
+) extends Partitioner[P, S] {
   def assign(cell: Cell[P]): TraversableOnce[S] = {
     codec.compare(cell.position(dim), DateValue(date, codec)).map { case cmp => if (cmp <= 0) left else right }
   }
@@ -120,8 +152,18 @@ case class BinaryDateSplit[P <: Position, S](dim: Dimension, date: Date, left: S
  * @note The position is assigned to the partition `left` if it is less or equal to `lower`, `middle` if it is less or
  *       equal to `upper` or else to `right`.
  */
-case class TernaryDateSplit[P <: Position, S](dim: Dimension, lower: Date, upper: Date, left: S, middle: S, right: S,
-  codec: DateCodec) extends Partitioner[P, S] {
+case class TernaryDateSplit[
+  P <: Position[P],
+  S
+](
+  dim: Dimension,
+  lower: Date,
+  upper: Date,
+  left: S,
+  middle: S,
+  right: S,
+  codec: DateCodec
+) extends Partitioner[P, S] {
   def assign(cell: Cell[P]): TraversableOnce[S] = {
     (codec.compare(cell.position(dim), DateValue(lower, codec)),
       codec.compare(cell.position(dim), DateValue(upper, codec))) match {
@@ -141,8 +183,14 @@ case class TernaryDateSplit[P <: Position, S](dim: Dimension, lower: Date, upper
  * @note A position falls in a range if it is (strictly) greater than the lower value (first value in tuple) and less
  *       or equal to the upper value (second value in tuple).
  */
-case class DateSplit[P <: Position, S](dim: Dimension, ranges: Map[S, (Date, Date)],
-  codec: DateCodec) extends Partitioner[P, S] {
+case class DateSplit[
+  P <: Position[P],
+  S
+](
+  dim: Dimension,
+  ranges: Map[S, (Date, Date)],
+  codec: DateCodec
+) extends Partitioner[P, S] {
   def assign(cell: Cell[P]): TraversableOnce[S] = {
     ranges
       .flatMap {

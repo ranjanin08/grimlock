@@ -30,8 +30,12 @@ import au.com.cba.omnia.grimlock.framework.position._
  * the present method returns cells for the output values. Note that the running state can be used to create derived
  * features of different window sizes.
  */
-trait Window[P <: Position, S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position]
-  extends WindowWithValue[P, S, R, Q] { self =>
+trait Window[
+  P <: Position[P],
+  S <: Position[S] with ExpandablePosition[S, _],
+  R <: Position[R] with ExpandablePosition[R, _],
+  Q <: Position[Q]
+] extends WindowWithValue[P, S, R, Q] { self =>
   type V = Any
 
   def prepareWithValue(cell: Cell[P], ext: V): I = prepare(cell)
@@ -112,7 +116,7 @@ trait Window[P <: Position, S <: Position with ExpandablePosition, R <: Position
    *
    * @return A windowed function that runs `this` and then relocates the contents.
    */
-  override def andThenRelocate[U <: Position](locate: Locate.FromCell[Q, U])(implicit ev: PosIncDep[Q, U]) = {
+  override def andThenRelocate[U <: Position[U]](locate: Locate.FromCell[Q, U])(implicit ev: PosIncDep[Q, U]) = {
     new Window[P, S, R, U] {
       type I = self.I
       type T = self.T
@@ -143,8 +147,12 @@ trait Window[P <: Position, S <: Position with ExpandablePosition, R <: Position
  * the present method returns cells for the output values. Note that the running state can be used to create derived
  * features of different window sizes.
  */
-trait WindowWithValue[P <: Position, S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position]
-  extends java.io.Serializable { self =>
+trait WindowWithValue[
+  P <: Position[P],
+  S <: Position[S] with ExpandablePosition[S, _],
+  R <: Position[R] with ExpandablePosition[R, _],
+  Q <: Position[Q]
+] extends java.io.Serializable { self =>
   /** Type of the external value. */
   type V
 
@@ -256,7 +264,7 @@ trait WindowWithValue[P <: Position, S <: Position with ExpandablePosition, R <:
    *
    * @return A windowed function that runs `this` and then relocates the contents.
    */
-  def andThenRelocate[U <: Position](locate: Locate.FromCell[Q, U])(implicit ev: PosIncDep[Q, U]) = {
+  def andThenRelocate[U <: Position[U]](locate: Locate.FromCell[Q, U])(implicit ev: PosIncDep[Q, U]) = {
     new WindowWithValue[P, S, R, U] {
       type V = self.V
       type I = self.I
@@ -332,7 +340,7 @@ trait WindowWithValue[P <: Position, S <: Position with ExpandablePosition, R <:
    *
    * @return A windowed function that runs `this` and then relocates the contents.
    */
-  def andThenRelocateWithValue[U <: Position](locate: Locate.FromCellWithValue[Q, U, V])(
+  def andThenRelocateWithValue[U <: Position[U]](locate: Locate.FromCellWithValue[Q, U, V])(
     implicit ev: PosIncDep[Q, U]) = {
     new WindowWithValue[P, S, R, U] {
       type V = self.V
@@ -354,8 +362,12 @@ trait WindowWithValue[P <: Position, S <: Position with ExpandablePosition, R <:
 }
 
 /** Trait for transforming a type `T` to a `Window[S, R, Q]`. */
-trait Windowable[P <: Position, S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position]
-  extends java.io.Serializable {
+trait Windowable[
+  P <: Position[P],
+  S <: Position[S] with ExpandablePosition[S, _],
+  R <: Position[R] with ExpandablePosition[R, _],
+  Q <: Position[Q]
+] extends java.io.Serializable {
   /** Returns a `Window[S, R, Q]` for this type `T`. */
   def apply(): Window[P, S, R, Q]
 }
@@ -363,14 +375,24 @@ trait Windowable[P <: Position, S <: Position with ExpandablePosition, R <: Posi
 /** Companion object for the `Windowable` trait. */
 object Windowable {
   /** Converts a `Window[P, S, R, Q]` to a `Window[P, S, R, Q]`; that is, it is a pass through. */
-  implicit def W2W[P <: Position, S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position](
-    t: Window[P, S, R, Q]): Windowable[P, S, R, Q] = {
-    new Windowable[P, S, R, Q] { def apply(): Window[P, S, R, Q] = t }
-  }
+  implicit def W2W[
+    P <: Position[P],
+    S <: Position[S] with ExpandablePosition[S, _],
+    R <: Position[R] with ExpandablePosition[R, _],
+    Q <: Position[Q]
+  ](
+    t: Window[P, S, R, Q]
+  ): Windowable[P, S, R, Q] = new Windowable[P, S, R, Q] { def apply(): Window[P, S, R, Q] = t }
 
   /** Converts a `List[Window[P, S, R, Q]]` to a single `Window[P, S, R, Q]`. */
-  implicit def LW2W[P <: Position, S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position](
-    t: List[Window[P, S, R, Q]]): Windowable[P, S, R, Q] = {
+  implicit def LW2W[
+    P <: Position[P],
+    S <: Position[S] with ExpandablePosition[S, _],
+    R <: Position[R] with ExpandablePosition[R, _],
+    Q <: Position[Q]
+  ](
+    t: List[Window[P, S, R, Q]]
+  ): Windowable[P, S, R, Q] = {
     new Windowable[P, S, R, Q] {
       def apply(): Window[P, S, R, Q] = {
         new Window[P, S, R, Q] {
@@ -410,8 +432,13 @@ object Windowable {
 }
 
 /** Trait for transforming a type `T` to a `WindowWithValue[P, S, R, Q]`. */
-trait WindowableWithValue[P <: Position, S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position, W]
-  extends java.io.Serializable {
+trait WindowableWithValue[
+  P <: Position[P],
+  S <: Position[S] with ExpandablePosition[S, _],
+  R <: Position[R] with ExpandablePosition[R, _],
+  Q <: Position[Q],
+  W
+] extends java.io.Serializable {
   /** Returns a `WindowWithValue[P, S, R, Q]` for this type `T`. */
   def apply(): WindowWithValue[P, S, R, Q] { type V >: W }
 }
@@ -419,14 +446,28 @@ trait WindowableWithValue[P <: Position, S <: Position with ExpandablePosition, 
 /** Companion object for the `WindowableWithValue` trait. */
 object WindowableWithValue {
   /** Converts a `WindowWithValue[P, S, R, Q]` to a `WindowWithValue[P, S, R, Q]`; that is, it is a pass through. */
-  implicit def WWV2WWV[P <: Position, S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position, W](
-    t: WindowWithValue[P, S, R, Q] { type V >: W }): WindowableWithValue[P, S, R, Q, W] = {
+  implicit def WWV2WWV[
+    P <: Position[P],
+    S <: Position[S] with ExpandablePosition[S, _],
+    R <: Position[R] with ExpandablePosition[R, _],
+    Q <: Position[Q],
+    W
+  ](
+    t: WindowWithValue[P, S, R, Q] { type V >: W }
+  ): WindowableWithValue[P, S, R, Q, W] = {
     new WindowableWithValue[P, S, R, Q, W] { def apply(): WindowWithValue[P, S, R, Q] { type V >: W } = t }
   }
 
   /** Converts a `List[WindowWithValue[S, R, Q]]` to a single `WindowWithValue[S, R, Q]`. */
-  implicit def LWWV2WWV[P <: Position, S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position, W](
-    t: List[WindowWithValue[P, S, R, Q] { type V >: W }]): WindowableWithValue[P, S, R, Q, W] = {
+  implicit def LWWV2WWV[
+    P <: Position[P],
+    S <: Position[S] with ExpandablePosition[S, _],
+    R <: Position[R] with ExpandablePosition[R, _],
+    Q <: Position[Q],
+    W
+  ](
+    t: List[WindowWithValue[P, S, R, Q] { type V >: W }]
+  ): WindowableWithValue[P, S, R, Q, W] = {
     new WindowableWithValue[P, S, R, Q, W] {
       def apply(): WindowWithValue[P, S, R, Q] { type V >: W } = {
         new WindowWithValue[P, S, R, Q] {

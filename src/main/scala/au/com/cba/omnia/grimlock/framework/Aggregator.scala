@@ -72,7 +72,7 @@ object Multiple {
 }
 
 /** Base trait for aggregations. */
-trait Aggregator[P <: Position, S <: Position with ExpandablePosition, Q <: Position]
+trait Aggregator[P <: Position[P], S <: Position[S] with ExpandablePosition[S, _], Q <: Position[Q]]
   extends AggregatorWithValue[P, S, Q] { self =>
   type V = Any
 
@@ -146,7 +146,7 @@ trait Aggregator[P <: Position, S <: Position with ExpandablePosition, Q <: Posi
    *
    * @return An aggregator that runs `this` and then relocates the resulting contents.
    */
-  override def andThenRelocate[R <: Position](locate: Locate.FromCell[Q, R])(implicit ev: PosIncDep[Q, R]) = {
+  override def andThenRelocate[R <: Position[R]](locate: Locate.FromCell[Q, R])(implicit ev: PosIncDep[Q, R]) = {
     new Aggregator[P, S, R] {
       type T = self.T
       type O[A] = self.O[A]
@@ -161,7 +161,7 @@ trait Aggregator[P <: Position, S <: Position with ExpandablePosition, Q <: Posi
 }
 
 /** Base trait for aggregations with a user supplied value. */
-trait AggregatorWithValue[P <: Position, S <: Position with ExpandablePosition, Q <: Position]
+trait AggregatorWithValue[P <: Position[P], S <: Position[S] with ExpandablePosition[S, _], Q <: Position[Q]]
   extends java.io.Serializable { self =>
   /** Type of the state being aggregated. */
   type T
@@ -257,7 +257,7 @@ trait AggregatorWithValue[P <: Position, S <: Position with ExpandablePosition, 
    *
    * @return An aggregator that runs `this` and then relocates the resulting contents.
    */
-  def andThenRelocate[R <: Position](locate: Locate.FromCell[Q, R])(implicit ev: PosIncDep[Q, R]) = {
+  def andThenRelocate[R <: Position[R]](locate: Locate.FromCell[Q, R])(implicit ev: PosIncDep[Q, R]) = {
     new AggregatorWithValue[P, S, R] {
       type T = self.T
       type V = self.V
@@ -320,7 +320,7 @@ trait AggregatorWithValue[P <: Position, S <: Position with ExpandablePosition, 
    *
    * @return An aggregator that runs `this` and then relocates the resulting contents.
    */
-  def andThenRelocateWithValue[R <: Position](locate: Locate.FromCellWithValue[Q, R, V])(
+  def andThenRelocateWithValue[R <: Position[R]](locate: Locate.FromCellWithValue[Q, R, V])(
     implicit ev: PosIncDep[Q, R]) = {
     new AggregatorWithValue[P, S, R] {
       type T = self.T
@@ -337,7 +337,8 @@ trait AggregatorWithValue[P <: Position, S <: Position with ExpandablePosition, 
 }
 
 /** Trait for transforming a type `T` to a `List[Aggregator[P, S, Q]]`. */
-trait Aggregatable[P <: Position, S <: Position with ExpandablePosition, Q <: Position] extends java.io.Serializable {
+trait Aggregatable[P <: Position[P], S <: Position[S] with ExpandablePosition[S, _], Q <: Position[Q]]
+  extends java.io.Serializable {
   /** Returns a `List[Aggregator[P, S, Q]]` for this type `T`. */
   def apply(): List[Aggregator[P, S, Q]]
 }
@@ -345,26 +346,26 @@ trait Aggregatable[P <: Position, S <: Position with ExpandablePosition, Q <: Po
 /** Companion object for the `Aggregatable` trait. */
 object Aggregatable {
   /** Converts an `Aggregator[P, S, S]` to a `List[Aggregator[P, S, S]]`. */
-  implicit def AS2A[P <: Position, S <: Position with ExpandablePosition](
+  implicit def AS2A[P <: Position[P], S <: Position[S] with ExpandablePosition[S, _]](
     t: Aggregator[P, S, S] { type O[A] = Single[A] }): Aggregatable[P, S, S] = {
     new Aggregatable[P, S, S] { def apply(): List[Aggregator[P, S, S]] = List(t) }
   }
 
   /** Converts an `Aggregator[P, S, Q]` to a `List[Aggregator[P, S, Q]]`. */
-  implicit def AQ2A[P <: Position, S <: Position with ExpandablePosition, Q <: Position](
+  implicit def AQ2A[P <: Position[P], S <: Position[S] with ExpandablePosition[S, _], Q <: Position[Q]](
     t: Aggregator[P, S, Q])(implicit ev: PosExpDep[S, Q]): Aggregatable[P, S, Q] = {
     new Aggregatable[P, S, Q] { def apply(): List[Aggregator[P, S, Q]] = List(t) }
   }
 
   /** Converts a `List[Aggregator[P, S, Q]]` to a `List[Aggregator[P, S, Q]]`; that is, it's a pass through. */
-  implicit def LAQ2A[P <: Position, S <: Position with ExpandablePosition, Q <: Position](
+  implicit def LAQ2A[P <: Position[P], S <: Position[S] with ExpandablePosition[S, _], Q <: Position[Q]](
     t: List[Aggregator[P, S, Q]])(implicit ev: PosExpDep[S, Q]): Aggregatable[P, S, Q] = {
     new Aggregatable[P, S, Q] { def apply(): List[Aggregator[P, S, Q]] = t }
   }
 }
 
 /** Trait for transforming a type `T` to a 'List[AggregatorWithValue[P S, Q] { type V >: W }]`. */
-trait AggregatableWithValue[P <: Position, S <: Position with ExpandablePosition, Q <: Position, W]
+trait AggregatableWithValue[P <: Position[P], S <: Position[S] with ExpandablePosition[S, _], Q <: Position[Q], W]
   extends java.io.Serializable {
   /** Returns a `List[AggregatorWithValue[P, S, Q] { type V >: W }]` for this type `T`. */
   def apply(): List[AggregatorWithValue[P, S, Q] { type V >: W }]
@@ -376,7 +377,7 @@ object AggregatableWithValue {
    * Converts an `AggregatorWithValue[P, S, S] { type V >: W }` to a
    * `List[AggregatorWithValue[P, S, S] { type V >: W }]`.
    */
-  implicit def ASWV2AWV[P <: Position, S <: Position with ExpandablePosition, W](
+  implicit def ASWV2AWV[P <: Position[P], S <: Position[S] with ExpandablePosition[S, _], W](
     t: AggregatorWithValue[P, S, S] { type V >: W; type O[A] = Single[A] }): AggregatableWithValue[P, S, S, W] = {
     new AggregatableWithValue[P, S, S, W] {
       def apply(): List[AggregatorWithValue[P, S, S] { type V >: W }] = List(t)
@@ -387,7 +388,7 @@ object AggregatableWithValue {
    * Converts an `AggregatorWithValue[P, S, Q] { type V >: W }` to a
    * `List[AggregatorWithValue[P, S, Q] { type V >: W }]`.
    */
-  implicit def AQWV2AWV[P <: Position, S <: Position with ExpandablePosition, Q <: Position, W](
+  implicit def AQWV2AWV[P <: Position[P], S <: Position[S] with ExpandablePosition[S, _], Q <: Position[Q], W](
     t: AggregatorWithValue[P, S, Q] { type V >: W })(
       implicit ev: PosExpDep[S, Q]): AggregatableWithValue[P, S, Q, W] = {
     new AggregatableWithValue[P, S, Q, W] {
@@ -399,7 +400,7 @@ object AggregatableWithValue {
    * Converts a `List[AggregatorWithValue[P, S, Q] { type V >: W }]` to a
    * `List[AggregatorWithValue[P, S, Q] { type V >: W }]`; that is, it is a pass through.
    */
-  implicit def LAQWV2AWV[P <: Position, S <: Position with ExpandablePosition, Q <: Position, W](
+  implicit def LAQWV2AWV[P <: Position[P], S <: Position[S] with ExpandablePosition[S, _], Q <: Position[Q], W](
     t: List[AggregatorWithValue[P, S, Q] { type V >: W }])(
       implicit ev: PosExpDep[S, Q]): AggregatableWithValue[P, S, Q, W] = {
     new AggregatableWithValue[P, S, Q, W] {

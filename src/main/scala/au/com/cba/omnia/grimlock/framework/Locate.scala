@@ -20,31 +20,42 @@ import au.com.cba.omnia.grimlock.framework.position._
 
 object Locate {
   /** Extract position. */
-  type FromPosition[P <: Position, Q <: Position] = (P) => Option[Q]
+  type FromPosition[P <: Position[P], Q <: Position[Q]] = (P) => Option[Q]
 
   /** Extract position from cell. */
-  type FromCell[P <: Position, Q <: Position] = (Cell[P]) => Option[Q]
+  type FromCell[P <: Position[P], Q <: Position[Q]] = (Cell[P]) => Option[Q]
 
   /** Extract position from cell with user provided value. */
-  type FromCellWithValue[P <: Position, Q <: Position, V] = (Cell[P], V) => Option[Q]
+  type FromCellWithValue[P <: Position[P], Q <: Position[Q], V] = (Cell[P], V) => Option[Q]
 
   /** Extract position from cell and an optional value. */
-  type FromCellAndOptionalValue[P <: Position, Q <: Position] = (Cell[P], Option[Value]) => Option[Q]
+  type FromCellAndOptionalValue[P <: Position[P], Q <: Position[Q]] = (Cell[P], Option[Value]) => Option[Q]
 
   /** Extract position for left and right cells. */
-  type FromPairwiseCells[P <: Position, Q <: Position] = (Cell[P], Cell[P]) => Option[Q]
+  type FromPairwiseCells[P <: Position[P], Q <: Position[Q]] = (Cell[P], Cell[P]) => Option[Q]
 
   /** Extract position for the selected cell and its remainder. */
-  type FromSelectedAndRemainder[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position] = (S, R) => Option[Q]
+  type FromSelectedAndRemainder[
+    S <: Position[S] with ExpandablePosition[S, _],
+    R <: Position[R] with ExpandablePosition[R, _],
+    Q <: Position[Q]] = (S, R) => Option[Q]
 
   /** Extract position for the selected cell and its current and prior remainder. */
-  type FromSelectedAndPairwiseRemainder[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position] = (S, R, R) => Option[Q]
+  type FromSelectedAndPairwiseRemainder[
+    S <: Position[S] with ExpandablePosition[S, _],
+    R <: Position[R] with ExpandablePosition[R, _],
+    Q <: Position[Q]] = (S, R, R) => Option[Q]
 
   /** Extract position from selected position and a value. */
-  type FromSelectedAndOutput[S <: Position with ExpandablePosition, T, Q <: Position] = (S, T) => Option[Q]
+  type FromSelectedAndOutput[
+    S <: Position[S] with ExpandablePosition[S, _],
+    T,
+    Q <: Position[Q]] = (S, T) => Option[Q]
 
   /** Extract position from selected position and a content. */
-  type FromSelectedAndContent[S <: Position with ExpandablePosition, Q <: Position] = (S, Content) => Option[Q]
+  type FromSelectedAndContent[
+    S <: Position[S] with ExpandablePosition[S, _],
+    Q <: Position[Q]] = (S, Content) => Option[Q]
 
   /**
    * Rename a dimension.
@@ -52,9 +63,15 @@ object Locate {
    * @param dim  The dimension to rename.
    * @param name The rename pattern. Use `%1$``s` for the coordinate.
    */
-  def RenameDimension[P <: Position](dim: Dimension, name: String)(
-    implicit ev: PosDimDep[P, dim.type]): FromCell[P, P] = {
-    (cell: Cell[P]) => Some(cell.position.update(dim, name.format(cell.position(dim).toShortString)))
+  def RenameDimension[
+    P <: Position[P]
+  ](
+    dim: Dimension,
+    name: String
+  )(implicit
+    ev: PosDimDep[P, dim.type]
+  ): FromCell[P, P] = {
+    (cell: Cell[P]) => cell.position.update(dim, name.format(cell.position(dim).toShortString)).toOption
   }
 
   /**
@@ -64,10 +81,19 @@ object Locate {
    * @param name Pattern for the new name of the coordinate at `dim`. Use `%[12]$``s` for the string
    *             representations of the coordinate, and the content.
    */
-  def RenameDimensionWithContent[P <: Position](dim: Dimension, name: String = "%1$s=%2$s")(
-    implicit ev: PosDimDep[P, dim.type]): FromCell[P, P] = {
-    (cell: Cell[P]) =>
-      Some(cell.position.update(dim, name.format(cell.position(dim).toShortString, cell.content.value.toShortString)))
+  def RenameDimensionWithContent[
+    P <: Position[P]
+  ](
+    dim: Dimension,
+    name: String = "%1$s=%2$s"
+  )(implicit
+    ev: PosDimDep[P, dim.type]
+  ): FromCell[P, P] = {
+    (cell: Cell[P]) => cell.position.update(
+      dim,
+      name.format(cell.position(dim).toShortString,
+      cell.content.value.toShortString)
+    ).toOption
   }
 
   /**
@@ -75,9 +101,12 @@ object Locate {
    *
    * @param name The coordinate to append to the outcome cell.
    */
-  def AppendValue[P <: Position with ExpandablePosition](name: Valueable): FromCell[P, P#M] = {
-    (cell: Cell[P]) => Some(cell.position.append(name))
-  }
+  def AppendValue[
+    P <: Position[P] with ExpandablePosition[P, M],
+    M <: Position[M] with ReduceablePosition[M, P]
+  ](
+    name: Valueable
+  ): FromCell[P, M] = (cell: Cell[P]) => cell.position.append(name).toOption
 
   /**
    * Extract position use a name pattern.
@@ -91,19 +120,29 @@ object Locate {
    *
    * @note If a position is returned then it's always right cell's remainder with an additional coordinate prepended.
    */
-  def PrependPairwiseSelectedStringToRemainder[P <: Position with ReduceablePosition](slice: Slice[P], pattern: String,
-    all: Boolean = false, separator: String = "|"): FromPairwiseCells[P, slice.R#M] = {
-    (left: Cell[P], right: Cell[P]) =>
-      {
-        val reml = slice.remainder(left.position)
-        val remr = slice.remainder(right.position)
+  def PrependPairwiseSelectedStringToRemainder[
+    L <: Position[L] with ExpandablePosition[L, P],
+    P <: Position[P] with ReduceablePosition[P, L],
+    S <: Position[S] with ExpandablePosition[S, _],
+    R <: Position[R] with ExpandablePosition[R, M],
+    M <: Position[M] with ReduceablePosition[M, R]
+  ](
+    slice: Slice[L, P, S, R],
+    pattern: String,
+    all: Boolean = false,
+    separator: String = "|"
+  ): FromPairwiseCells[P, M] = (left: Cell[P], right: Cell[P]) => {
+    val reml = slice.remainder(left.position)
+    val remr = slice.remainder(right.position)
 
-        (all || reml == remr) match {
-          case true => Some(reml.prepend(pattern.format(slice.selected(left.position).toShortString(separator),
-            slice.selected(right.position).toShortString(separator))))
-          case false => None
-        }
-      }
+    if (all || reml == remr) {
+      reml.prepend(
+        pattern.format(slice.selected(left.position).toShortString(separator),
+                       slice.selected(right.position).toShortString(separator))
+      ).toOption
+    } else {
+      None
+    }
   }
 
   /**
@@ -111,20 +150,28 @@ object Locate {
    *
    * @param dim The dimension (out of `rem`) to append to the cell's position.
    */
-  def AppendRemainderDimension[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition](
-    dim: Dimension)(implicit ev: PosDimDep[R, dim.type]): FromSelectedAndRemainder[S, R, S#M] = {
-    (pos: S, rem: R) => Some(pos.append(rem(dim)))
-  }
+  def AppendRemainderDimension[
+    S <: Position[S] with ExpandablePosition[S, M],
+    R <: Position[R] with ExpandablePosition[R, _],
+    M <: Position[M] with ReduceablePosition[M, S]
+  ](
+    dim: Dimension
+  )(implicit
+    ev: PosDimDep[R, dim.type]
+  ): FromSelectedAndRemainder[S, R, M] = (pos: S, rem: R) => pos.append(rem(dim)).toOption
 
   /**
    * Extract position using string of `rem`.
    *
    * @param separator The separator to use for the appended coordinate.
    */
-  def AppendRemainderString[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition](
-    separator: String = "|"): FromSelectedAndRemainder[S, R, S#M] = {
-    (pos: S, rem: R) => Some(pos.append(rem.toShortString(separator)))
-  }
+  def AppendRemainderString[
+    S <: Position[S] with ExpandablePosition[S, M],
+    R <: Position[R] with ExpandablePosition[R, _],
+    M <: Position[M] with ReduceablePosition[M, S]
+  ](
+    separator: String = "|"
+  ): FromSelectedAndRemainder[S, R, M] = (pos: S, rem: R) => pos.append(rem.toShortString(separator)).toOption
 
   /**
    * Extract position using string of current and previous `rem`.
@@ -133,26 +180,35 @@ object Locate {
    *                  previous and current remainder positions respectively.
    * @param separator The separator to use for the appended coordinate.
    */
-  def AppendPairwiseString[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition](
-    pattern: String, separator: String = "|"): FromSelectedAndPairwiseRemainder[S, R, S#M] = {
-    (pos: S, curr: R, prev: R) =>
-      Some(pos.append(pattern.format(prev.toShortString(separator), curr.toShortString(separator))))
-  }
+  def AppendPairwiseString[
+    S <: Position[S] with ExpandablePosition[S, M],
+    R <: Position[R] with ExpandablePosition[R, _],
+    M <: Position[M] with ReduceablePosition[M, S]
+  ](
+    pattern: String,
+    separator: String = "|"
+  ): FromSelectedAndPairwiseRemainder[S, R, M] = (pos: S, curr: R, prev: R) => pos.append(
+    pattern.format(prev.toShortString(separator),
+    curr.toShortString(separator))
+  ).toOption
 
   /**
    * Expand position by appending a string coordinate from double.
    *
    * @param name The name pattern. Use `%1$``s` for the output pattern.
    */
-  def AppendDoubleString[S <: Position with ExpandablePosition](
-    name: String = "%1$f%%"): FromSelectedAndOutput[S, Double, S#M] = {
-    (pos: S, value: Double) => Some(pos.append(name.format(value)))
-  }
+  def AppendDoubleString[
+    S <: Position[S] with ExpandablePosition[S, M],
+    M <: Position[M] with ReduceablePosition[M, S]
+  ](
+    name: String = "%1$f%%"
+  ): FromSelectedAndOutput[S, Double, M] = (pos: S, value: Double) => pos.append(name.format(value)).toOption
 
   /** Append the content string to the position. */
-  def AppendContentString[S <: Position with ExpandablePosition](): FromSelectedAndContent[S, S#M] = {
-    (pos: S, con: Content) => Some(pos.append(con.value.toShortString))
-  }
+  def AppendContentString[
+    S <: Position[S] with ExpandablePosition[S, M],
+    M <: Position[M] with ReduceablePosition[M, S]
+  ](): FromSelectedAndContent[S, M] = (pos: S, con: Content) => pos.append(con.value.toShortString).toOption
 
   /**
    * Append a coordinate according a name pattern.
@@ -161,9 +217,17 @@ object Locate {
    * @param name Pattern for the new name of the coordinate at `dim`. Use `%[12]$``s` for the string
    *             representations of the coordinate, and the content.
    */
-  def AppendDimensionAndContentString[S <: Position with ExpandablePosition](dim: Dimension,
-    name: String = "%1$s=%2$s")(implicit ev: PosDimDep[S, dim.type]): FromSelectedAndContent[S, S#M] = {
-    (pos: S, con: Content) => Some(pos.append(name.format(pos(dim).toShortString, con.value.toShortString)))
-  }
+  def AppendDimensionAndContentString[
+    S <: Position[S] with ExpandablePosition[S, M],
+    M <: Position[M] with ReduceablePosition[M, S]
+  ](
+    dim: Dimension,
+    name: String = "%1$s=%2$s"
+  )(implicit
+    ev: PosDimDep[S, dim.type]
+  ): FromSelectedAndContent[S, M] = (pos: S, con: Content) => pos.append(
+    name.format(pos(dim).toShortString,
+    con.value.toShortString)
+  ).toOption
 }
 

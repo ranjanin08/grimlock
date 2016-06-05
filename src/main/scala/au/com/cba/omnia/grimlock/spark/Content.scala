@@ -41,7 +41,7 @@ object Contents {
  *
  * @param data The `RDD[(P, Content)]`.
  */
-case class IndexedContents[P <: Position](data: RDD[(P, Content)]) extends FwIndexedContents[P]
+case class IndexedContents[P <: Position[P]](data: RDD[(P, Content)]) extends FwIndexedContents[P]
   with Persist[(P, Content)] {
   def saveAsText(file: String, writer: TextWriter)(implicit ctx: C): U[(P, Content)] = saveText(file, writer)
 }
@@ -49,6 +49,6 @@ case class IndexedContents[P <: Position](data: RDD[(P, Content)]) extends FwInd
 /** Companion object for the Spark `IndexedContents` class. */
 object IndexedContents {
   /** Converts a `RDD[(P, Content)]` to a `IndexedContents`. */
-  implicit def RDDIC2RDDC[P <: Position](data: RDD[(P, Content)]): IndexedContents[P] = IndexedContents[P](data)
+  implicit def RDDIC2RDDC[P <: Position[P]](data: RDD[(P, Content)]): IndexedContents[P] = IndexedContents[P](data)
 }
 

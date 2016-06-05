@@ -45,7 +45,7 @@ case object Ninth extends Dimension { type D = Ninth.type; val index = 8 }
 case object Last extends Dimension { type D = Last.type; val index = -1 }
 
 /** Trait for capturing the dependency between a position and a dimension. */
-trait PosDimDep[A <: Position, B <: Dimension] extends java.io.Serializable
+trait PosDimDep[P <: Position[P], B <: Dimension] extends java.io.Serializable
 
 /**
  * Companion object of `Dimension` trait. This defines the (implicit) permitted dependencies between position and

@@ -25,7 +25,7 @@ import au.com.cba.omnia.grimlock.framework.position._
 import com.twitter.algebird.{ Moments => AlgeMoments, Monoid }
 
 /** Trait for aggregators that can be filter based on the type. */
-private[aggregate] trait PrepareDouble[P <: Position] {
+private[aggregate] trait PrepareDouble[P <: Position[P]] {
 
   /** Indicates if filtering data is required. If so then any non-numeric value is filtered. */
   val filter: Boolean
@@ -39,8 +39,13 @@ private[aggregate] trait PrepareDouble[P <: Position] {
 }
 
 /** Trait for aggregators that can be lenient or strict when it comes to invalid (or unexpected) values. */
-private[aggregate] trait StrictReduce[P <: Position, S <: Position with ExpandablePosition, Q <: Position] {
-  self: AggregatorWithValue[P, S, Q] =>
+private[aggregate] trait StrictReduce[
+  P <: Position[P],
+  S <: Position[S] with ExpandablePosition[S, _],
+  Q <: Position[_]
+] { // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!  self: AggregatorWithValue[P, S, Q] =>
+  /** Type of the state being aggregated. */
+  type T
 
   /**
    * Indicates if strict data handling is required. If so then any invalid value fails the reduction. If not, then
@@ -67,8 +72,10 @@ private[aggregate] trait StrictReduce[P <: Position, S <: Position with Expandab
 }
 
 /** Trait for aggregators that can be lenient or strict when it comes to invalid (or unexpected) values. */
-private[aggregate] trait PresentDouble[P <: Position, S <: Position with ExpandablePosition]
-  extends StrictReduce[P, S, S] { self: Aggregator[P, S, S] =>
+private[aggregate] trait PresentDouble[
+  P <: Position[P],
+  S <: Position[S] with ExpandablePosition[S, _]
+] extends StrictReduce[P, S, S] { self: Aggregator[P, S, S] =>
   type O[A] = Single[A]
 
   /** Indicator if 'NaN' value should be output if the reduction failed (for example due to non-numeric data). */
@@ -102,8 +109,10 @@ private[aggregate] trait PresentDouble[P <: Position, S <: Position with Expanda
 }
 
 /** Base trait for aggregator that return a `Double` value. */
-private[aggregate] trait DoubleAggregator[P <: Position, S <: Position with ExpandablePosition]
-  extends PrepareDouble[P] with PresentDouble[P, S] { self: Aggregator[P, S, S] =>
+private[aggregate] trait DoubleAggregator[
+  P <: Position[P],
+  S <: Position[S] with ExpandablePosition[S, _]
+] extends PrepareDouble[P] with PresentDouble[P, S] { self: Aggregator[P, S, S] =>
   /** Type of the state being aggregated. */
   type T = Double
 
@@ -123,8 +132,11 @@ private[aggregate] trait DoubleAggregator[P <: Position, S <: Position with Expa
 }
 
 /** Trait for preparing and reducing algebird Moments. */
-private[aggregate] trait MomentsPrepareReduce[P <: Position, S <: Position with ExpandablePosition, Q <: Position]
-  extends PrepareDouble[P] with StrictReduce[P, S, Q] { self: Aggregator[P, S, Q] =>
+private[aggregate] trait MomentsPrepareReduce[
+  P <: Position[P],
+  S <: Position[S] with ExpandablePosition[S, _],
+  Q <: Position[Q]
+] extends PrepareDouble[P] with StrictReduce[P, S, Q] { self: Aggregator[P, S, Q] =>
   /** Type of the state being aggregated. */
   type T = AlgeMoments
 
@@ -142,8 +154,10 @@ private[aggregate] trait MomentsPrepareReduce[P <: Position, S <: Position with 
 }
 
 /** Trait for presenting algebird Moments. */
-private[aggregate] trait MomentsPresent[P <: Position, S <: Position with ExpandablePosition]
-  extends MomentsPrepareReduce[P, S, S] with PresentDouble[P, S] { self: Aggregator[P, S, S] =>
+private[aggregate] trait MomentsPresent[
+  P <: Position[P],
+  S <: Position[S] with ExpandablePosition[S, _]
+] extends MomentsPrepareReduce[P, S, S] with PresentDouble[P, S] { self: Aggregator[P, S, S] =>
   protected def missing(t: T): Boolean = false
 }
 
@@ -169,7 +183,10 @@ private[aggregate] object MomentsPresent {
 }
 
 /** Count reductions. */
-case class Count[P <: Position, S <: Position with ExpandablePosition]() extends Aggregator[P, S, S] {
+case class Count[
+  P <: Position[P],
+  S <: Position[S] with ExpandablePosition[S, _]
+]() extends Aggregator[P, S, S] {
   type T = Long
   type O[A] = Single[A]
 
@@ -181,7 +198,10 @@ case class Count[P <: Position, S <: Position with ExpandablePosition]() extends
 }
 
 /** Distinct count reductions. */
-case class DistinctCount[P <: Position, S <: Position with ExpandablePosition]() extends Aggregator[P, S, S] {
+case class DistinctCount[
+  P <: Position[P],
+  S <: Position[S] with ExpandablePosition[S, _]
+]() extends Aggregator[P, S, S] {
   type T = Set[Value]
   type O[A] = Single[A]
 
@@ -197,8 +217,12 @@ case class DistinctCount[P <: Position, S <: Position with ExpandablePosition]()
  *
  * @param predicte Function to be applied to content.
  */
-case class PredicateCount[P <: Position, S <: Position with ExpandablePosition](
-  predicate: (Content) => Boolean) extends Aggregator[P, S, S] {
+case class PredicateCount[
+  P <: Position[P],
+  S <: Position[S] with ExpandablePosition[S, _]
+](
+  predicate: (Content) => Boolean
+) extends Aggregator[P, S, S] {
   type T = Long
   type O[A] = Single[A]
 
@@ -225,12 +249,24 @@ case class PredicateCount[P <: Position, S <: Position with ExpandablePosition](
  * @param nan      Indicator if 'NaN' string should be output if the reduction failed (for example due to non-numeric
  *                 data).
  */
-case class Moments[P <: Position, S <: Position with ExpandablePosition](mean: String, sd: String, skewness: String,
-  kurtosis: String, biased: Boolean = false, excess: Boolean = false, filter: Boolean = true, strict: Boolean = true,
-  nan: Boolean = false) extends Aggregator[P, S, S#M] with MomentsPrepareReduce[P, S, S#M] {
+case class Moments[
+  P <: Position[P],
+  S <: Position[S] with ExpandablePosition[S, M],
+  M <: Position[M] with ReduceablePosition[M, S]
+](
+  mean: String,
+  sd: String,
+  skewness: String,
+  kurtosis: String,
+  biased: Boolean = false,
+  excess: Boolean = false,
+  filter: Boolean = true,
+  strict: Boolean = true,
+  nan: Boolean = false
+) extends Aggregator[P, S, M] with MomentsPrepareReduce[P, S, M] {
   type O[A] = Multiple[A]
 
-  def present(pos: S, t: T): O[Cell[S#M]] = {
+  def present(pos: S, t: T): O[Cell[M]] = {
     if (invalid(t) && !nan) {
       Multiple()
     } else if (invalid(t)) {
@@ -257,8 +293,14 @@ case class Moments[P <: Position, S <: Position with ExpandablePosition](mean: S
  * @param nan    Indicator if 'NaN' string should be output if the reduction failed (for example due to non-numeric
  *               data).
  */
-case class Mean[P <: Position, S <: Position with ExpandablePosition](filter: Boolean = true, strict: Boolean = true,
-  nan: Boolean = false) extends Aggregator[P, S, S] with MomentsPrepareReduce[P, S, S] with MomentsPresent[P, S] {
+case class Mean[
+  P <: Position[P],
+  S <: Position[S] with ExpandablePosition[S, _]
+](
+  filter: Boolean = true,
+  strict: Boolean = true,
+  nan: Boolean = false
+) extends Aggregator[P, S, S] with MomentsPrepareReduce[P, S, S] with MomentsPresent[P, S] {
   protected def asDouble(t: T): Double = t.mean
 }
 
@@ -273,9 +315,15 @@ case class Mean[P <: Position, S <: Position with ExpandablePosition](filter: Bo
  * @param nan    Indicator if 'NaN' string should be output if the reduction failed (for example due to non-numeric
  *               data).
  */
-case class StandardDeviation[P <: Position, S <: Position with ExpandablePosition](biased: Boolean = false,
-  filter: Boolean = true, strict: Boolean = true, nan: Boolean = false) extends Aggregator[P, S, S]
-    with MomentsPrepareReduce[P, S, S] with MomentsPresent[P, S] {
+case class StandardDeviation[
+  P <: Position[P],
+  S <: Position[S] with ExpandablePosition[S, _]
+](
+  biased: Boolean = false,
+  filter: Boolean = true,
+  strict: Boolean = true,
+  nan: Boolean = false
+) extends Aggregator[P, S, S] with MomentsPrepareReduce[P, S, S] with MomentsPresent[P, S] {
   protected def asDouble(t: T): Double = MomentsPresent.sd(t, biased)
 }
 
@@ -289,9 +337,14 @@ case class StandardDeviation[P <: Position, S <: Position with ExpandablePositio
  * @param nan    Indicator if 'NaN' string should be output if the reduction failed (for example due to non-numeric
  *               data).
  */
-case class Skewness[P <: Position, S <: Position with ExpandablePosition](filter: Boolean = true,
-  strict: Boolean = true, nan: Boolean = false) extends Aggregator[P, S, S] with MomentsPrepareReduce[P, S, S]
-    with MomentsPresent[P, S] {
+case class Skewness[
+  P <: Position[P],
+  S <: Position[S] with ExpandablePosition[S, _]
+](
+  filter: Boolean = true,
+  strict: Boolean = true,
+  nan: Boolean = false
+) extends Aggregator[P, S, S] with MomentsPrepareReduce[P, S, S] with MomentsPresent[P, S] {
   protected def asDouble(t: T): Double = t.skewness
 }
 
@@ -306,9 +359,15 @@ case class Skewness[P <: Position, S <: Position with ExpandablePosition](filter
  * @param nan    Indicator if 'NaN' string should be output if the reduction failed (for example due to non-numeric
  *               data).
  */
-case class Kurtosis[P <: Position, S <: Position with ExpandablePosition](excess: Boolean = false,
-  filter: Boolean = true, strict: Boolean = true, nan: Boolean = false) extends Aggregator[P, S, S]
-    with MomentsPrepareReduce[P, S, S] with MomentsPresent[P, S] {
+case class Kurtosis[
+  P <: Position[P],
+  S <: Position[S] with ExpandablePosition[S, _]
+](
+  excess: Boolean = false,
+  filter: Boolean = true,
+  strict: Boolean = true,
+  nan: Boolean = false
+) extends Aggregator[P, S, S] with MomentsPrepareReduce[P, S, S] with MomentsPresent[P, S] {
   protected def asDouble(t: T): Double = MomentsPresent.kurtosis(t, excess)
 }
 
@@ -324,15 +383,23 @@ case class Kurtosis[P <: Position, S <: Position with ExpandablePosition](excess
  * @param nan    Indicator if 'NaN' string should be output if the reduction failed (for example due to non-numeric
  *               data).
  */
-case class Limits[P <: Position, S <: Position with ExpandablePosition](min: String, max: String,
-  filter: Boolean = true, strict: Boolean = true, nan: Boolean = false) extends Aggregator[P, S, S#M]
-    with PrepareDouble[P] with StrictReduce[P, S, S#M] {
+case class Limits[
+  P <: Position[P],
+  S <: Position[S] with ExpandablePosition[S, M],
+  M <: Position[M] with ReduceablePosition[M, S]
+](
+  min: String,
+  max: String,
+  filter: Boolean = true,
+  strict: Boolean = true,
+  nan: Boolean = false
+) extends Aggregator[P, S, M] with PrepareDouble[P] with StrictReduce[P, S, M] {
   type T = (Double, Double)
   type O[A] = Multiple[A]
 
   def prepare(cell: Cell[P]): Option[T] = prepareDouble(cell).map(d => (d, d))
 
-  def present(pos: S, t: T): O[Cell[S#M]] = {
+  def present(pos: S, t: T): O[Cell[M]] = {
     if (invalid(t) && !nan) {
       Multiple()
     } else if (invalid(t)) {
@@ -358,8 +425,14 @@ case class Limits[P <: Position, S <: Position with ExpandablePosition](min: Str
  * @param nan    Indicator if 'NaN' string should be output if the reduction failed (for example due to non-numeric
  *               data).
  */
-case class Min[P <: Position, S <: Position with ExpandablePosition](filter: Boolean = true, strict: Boolean = true,
-  nan: Boolean = false) extends Aggregator[P, S, S] with DoubleAggregator[P, S] {
+case class Min[
+  P <: Position[P],
+  S <: Position[S] with ExpandablePosition[S, _]
+](
+  filter: Boolean = true,
+  strict: Boolean = true,
+  nan: Boolean = false
+) extends Aggregator[P, S, S] with DoubleAggregator[P, S] {
   protected def reduction(lt: T, rt: T): T = math.min(lt, rt)
 }
 
@@ -373,8 +446,14 @@ case class Min[P <: Position, S <: Position with ExpandablePosition](filter: Boo
  * @param nan    Indicator if 'NaN' string should be output if the reduction failed (for example due to non-numeric
  *               data).
  */
-case class Max[P <: Position, S <: Position with ExpandablePosition](filter: Boolean = true, strict: Boolean = true,
-  nan: Boolean = false) extends Aggregator[P, S, S] with DoubleAggregator[P, S] {
+case class Max[
+  P <: Position[P],
+  S <: Position[S] with ExpandablePosition[S, _]
+](
+  filter: Boolean = true,
+  strict: Boolean = true,
+  nan: Boolean = false
+) extends Aggregator[P, S, S] with DoubleAggregator[P, S] {
   protected def reduction(lt: T, rt: T): T = math.max(lt, rt)
 }
 
@@ -388,8 +467,14 @@ case class Max[P <: Position, S <: Position with ExpandablePosition](filter: Boo
  * @param nan    Indicator if 'NaN' string should be output if the reduction failed (for example due to non-numeric
  *               data).
  */
-case class MaxAbs[P <: Position, S <: Position with ExpandablePosition](filter: Boolean = true, strict: Boolean = true,
-  nan: Boolean = false) extends Aggregator[P, S, S] with DoubleAggregator[P, S] {
+case class MaxAbs[
+  P <: Position[P],
+  S <: Position[S] with ExpandablePosition[S, _]
+](
+  filter: Boolean = true,
+  strict: Boolean = true,
+  nan: Boolean = false
+) extends Aggregator[P, S, S] with DoubleAggregator[P, S] {
   protected def reduction(lt: T, rt: T): T = math.max(math.abs(lt), math.abs(rt))
 }
 
@@ -403,8 +488,14 @@ case class MaxAbs[P <: Position, S <: Position with ExpandablePosition](filter: 
  * @param nan    Indicator if 'NaN' string should be output if the reduction failed (for example due to non-numeric
  *               data).
  */
-case class Sum[P <: Position, S <: Position with ExpandablePosition](filter: Boolean = true, strict: Boolean = true,
-  nan: Boolean = false) extends Aggregator[P, S, S] with DoubleAggregator[P, S] {
+case class Sum[
+  P <: Position[P],
+  S <: Position[S] with ExpandablePosition[S, _]
+](
+  filter: Boolean = true,
+  strict: Boolean = true,
+  nan: Boolean = false
+) extends Aggregator[P, S, S] with DoubleAggregator[P, S] {
   protected def reduction(lt: T, rt: T): T = lt + rt
 }
 
@@ -419,9 +510,16 @@ case class Sum[P <: Position, S <: Position with ExpandablePosition](filter: Boo
  * @param nan    Indicator if 'NaN' string should be output if the reduction failed (for example due to non-numeric
  *               data).
  */
-case class WeightedSum[P <: Position, S <: Position with ExpandablePosition, W](weight: Extract[P, W, Double],
-  filter: Boolean = true, strict: Boolean = true, nan: Boolean = false) extends AggregatorWithValue[P, S, S]
-    with PrepareDouble[P] with StrictReduce[P, S, S] {
+case class WeightedSum[
+  P <: Position[P],
+  S <: Position[S] with ExpandablePosition[S, _],
+  W
+](
+  weight: Extract[P, W, Double],
+  filter: Boolean = true,
+  strict: Boolean = true,
+  nan: Boolean = false
+) extends AggregatorWithValue[P, S, S] with PrepareDouble[P] with StrictReduce[P, S, S] {
   type T = Double
   type V = W
   type O[A] = Single[A]
@@ -451,10 +549,18 @@ case class WeightedSum[P <: Position, S <: Position with ExpandablePosition, W](
  * @param negate Indicator if negative entropy should be returned.
  * @param log    The log function to use.
  */
-case class Entropy[P <: Position, S <: Position with ExpandablePosition, W](count: Extract[P, W, Double],
-  filter: Boolean = true, strict: Boolean = true, nan: Boolean = false, negate: Boolean = false,
-    log: (Double) => Double = (x: Double) => math.log(x) / math.log(2)) extends AggregatorWithValue[P, S, S]
-      with PrepareDouble[P] {
+case class Entropy[
+  P <: Position[P],
+  S <: Position[S] with ExpandablePosition[S, _],
+  W
+](
+  count: Extract[P, W, Double],
+  filter: Boolean = true,
+  strict: Boolean = true,
+  nan: Boolean = false,
+  negate: Boolean = false,
+  log: (Double) => Double = (x: Double) => math.log(x) / math.log(2)
+) extends AggregatorWithValue[P, S, S] with PrepareDouble[P] {
   type T = (Long, Double)
   type V = W
   type O[A] = Single[A]
@@ -493,9 +599,14 @@ case class Entropy[P <: Position, S <: Position with ExpandablePosition, W](coun
  * @param nan    Indicator if 'NaN' string should be output if the reduction failed (for example due to non-numeric
  *               data).
  */
-case class FrequencyRatio[P <: Position, S <: Position with ExpandablePosition](filter: Boolean = true,
-  strict: Boolean = true, nan: Boolean = false) extends Aggregator[P, S, S] with PrepareDouble[P]
-    with PresentDouble[P, S] {
+case class FrequencyRatio[
+  P <: Position[P],
+  S <: Position[S] with ExpandablePosition[S, _]
+](
+  filter: Boolean = true,
+  strict: Boolean = true,
+  nan: Boolean = false
+) extends Aggregator[P, S, S] with PrepareDouble[P] with PresentDouble[P, S] {
   type T = (Long, Double, Double)
 
   def prepare(cell: Cell[P]): Option[T] = prepareDouble(cell).map { case d => (1, d, d) }
@@ -528,9 +639,19 @@ case class FrequencyRatio[P <: Position, S <: Position with ExpandablePosition](
  *
  * @see https://github.com/tdunning/t-digest
  */
-case class TDigestQuantiles[P <: Position, S <: Position with ExpandablePosition, Q <: Position](probs: List[Double],
-  compression: Double, name: Locate.FromSelectedAndOutput[S, Double, Q], filter: Boolean = true, nan: Boolean = false)(
-    implicit ev: PosExpDep[S, Q]) extends Aggregator[P, S, Q] with PrepareDouble[P] {
+case class TDigestQuantiles[
+  P <: Position[P],
+  S <: Position[S] with ExpandablePosition[S, _],
+  Q <: Position[Q]
+](
+  probs: List[Double],
+  compression: Double,
+  name: Locate.FromSelectedAndOutput[S, Double, Q],
+  filter: Boolean = true,
+  nan: Boolean = false
+)(implicit
+  ev: PosExpDep[S, Q]
+) extends Aggregator[P, S, Q] with PrepareDouble[P] {
   type T = TDigest.T
   type O[A] = Multiple[A]
 
@@ -554,9 +675,19 @@ case class TDigestQuantiles[P <: Position, S <: Position with ExpandablePosition
  *
  * @note Only use this if all distinct values and their counts fit in memory.
  */
-case class CountMapQuantiles[P <: Position, S <: Position with ExpandablePosition, Q <: Position](probs: List[Double],
-  quantiser: Quantile.Quantiser, name: Locate.FromSelectedAndOutput[S, Double, Q], filter: Boolean = true,
-    nan: Boolean = false)(implicit ev: PosExpDep[S, Q]) extends Aggregator[P, S, Q] with PrepareDouble[P] {
+case class CountMapQuantiles[
+  P <: Position[P],
+  S <: Position[S] with ExpandablePosition[S, _],
+  Q <: Position[Q]
+](
+  probs: List[Double],
+  quantiser: Quantile.Quantiser,
+  name: Locate.FromSelectedAndOutput[S, Double, Q],
+  filter: Boolean = true,
+  nan: Boolean = false
+)(implicit
+  ev: PosExpDep[S, Q]
+) extends Aggregator[P, S, Q] with PrepareDouble[P] {
   type T = CountMap.T
   type O[A] = Multiple[A]
 
@@ -579,9 +710,18 @@ case class CountMapQuantiles[P <: Position, S <: Position with ExpandablePositio
  *
  * @see http://www.jmlr.org/papers/volume11/ben-haim10a/ben-haim10a.pdf
  */
-sealed case class UniformQuantiles[P <: Position, S <: Position with ExpandablePosition, Q <: Position](count: Long,
-  name: Locate.FromSelectedAndOutput[S, Double, Q], filter: Boolean = true, nan: Boolean = false)(
-    implicit ev: PosExpDep[S, Q]) extends Aggregator[P, S, Q] with PrepareDouble[P] {
+sealed case class UniformQuantiles[
+  P <: Position[P],
+  S <: Position[S] with ExpandablePosition[S, _],
+  Q <: Position[Q]
+](
+  count: Long,
+  name: Locate.FromSelectedAndOutput[S, Double, Q],
+  filter: Boolean = true,
+  nan: Boolean = false
+)(implicit
+  ev: PosExpDep[S, Q]
+) extends Aggregator[P, S, Q] with PrepareDouble[P] {
   type T = StreamingHistogram.T
   type O[A] = Multiple[A]
 
