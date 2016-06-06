@@ -64,13 +64,32 @@ case class Positions[
 
 /** Companion object for the Scalding `Positions` class. */
 object Positions {
-  /** Converts a `TypedPipe[Position]` to a `Positions`. */
-  implicit def TPP2TPP[
-    L <: Position[L] with ExpandablePosition[L, P],
-    P <: Position[P] with ReduceablePosition[P, L]
-  ](
-    data: TypedPipe[P]
-  ): Positions[L, P] = Positions(data)
+  /** Converts a `TypedPipe[Position1D]` to a `Positions`. */
+  implicit def TPP12TPP(data: TypedPipe[Position1D]): Positions[Position0D, Position1D] = Positions(data)
+
+  /** Converts a `TypedPipe[Position2D]` to a `Positions`. */
+  implicit def TPP22TPP(data: TypedPipe[Position2D]): Positions[Position1D, Position2D] = Positions(data)
+
+  /** Converts a `TypedPipe[Position3D]` to a `Positions`. */
+  implicit def TPP32TPP(data: TypedPipe[Position3D]): Positions[Position2D, Position3D] = Positions(data)
+
+  /** Converts a `TypedPipe[Position4D]` to a `Positions`. */
+  implicit def TPP42TPP(data: TypedPipe[Position4D]): Positions[Position3D, Position4D] = Positions(data)
+
+  /** Converts a `TypedPipe[Position5D]` to a `Positions`. */
+  implicit def TPP52TPP(data: TypedPipe[Position5D]): Positions[Position4D, Position5D] = Positions(data)
+
+  /** Converts a `TypedPipe[Position6D]` to a `Positions`. */
+  implicit def TPP62TPP(data: TypedPipe[Position6D]): Positions[Position5D, Position6D] = Positions(data)
+
+  /** Converts a `TypedPipe[Position7D]` to a `Positions`. */
+  implicit def TPP72TPP(data: TypedPipe[Position7D]): Positions[Position6D, Position7D] = Positions(data)
+
+  /** Converts a `TypedPipe[Position8D]` to a `Positions`. */
+  implicit def TPP82TPP(data: TypedPipe[Position8D]): Positions[Position7D, Position8D] = Positions(data)
+
+  /** Converts a `TypedPipe[Position9D]` to a `Positions`. */
+  implicit def TPP92TPP(data: TypedPipe[Position9D]): Positions[Position8D, Position9D] = Positions(data)
 }
 
 /** Scalding companion object for the `PositionDistributable` type class. */

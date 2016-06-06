@@ -933,13 +933,13 @@ trait MatrixDistance { self: Matrix[Position1D, Position2D] with ReduceableMatri
       .transform(Power[Position2D](2))
       .summarise(slice, Sum[Position2D, Position1D](), stuner)
       .pairwise(Over(First), Lower,
-        Times(Locate.PrependPairwiseSelectedStringToRemainder[Position0D, Position1D, Position1D, Position0D, Position1D](Over(First), "(%1$s*%2$s)")), ptuner)
+        Times(Locate.PrependPairwiseSelectedStringToRemainder[Position1D, Position1D, Position0D, Position1D](Over(First), "(%1$s*%2$s)")), ptuner)
       .transform(SquareRoot[Position1D]())
       .compact(Over(First))
 
     centered
       .pairwise(slice, Lower,
-        Times(Locate.PrependPairwiseSelectedStringToRemainder[Position1D, Position2D, Position1D, Position1D, Position2D](slice, "(%1$s*%2$s)")), ptuner)
+        Times(Locate.PrependPairwiseSelectedStringToRemainder[Position2D, Position1D, Position1D, Position2D](slice, "(%1$s*%2$s)")), ptuner)
       .summarise(Over(First), Sum[Position2D, Position1D](), stuner)
       .transformWithValue(Fraction(ExtractWithDimension[Position1D, Content](First)
         .andThenPresent(_.value.asDouble)), denom)
@@ -989,11 +989,11 @@ trait MatrixDistance { self: Matrix[Position1D, Position2D] with ReduceableMatri
       .summariseWithValue(Over(First), Entropy[Position2D, Position1D, W](extractor)
         .andThenRelocate(_.position.append("marginal").toOption), mcount, stuner)
       .pairwise(Over(First), Upper,
-        Plus(Locate.PrependPairwiseSelectedStringToRemainder[Position1D, Position2D, Position1D, Position1D, Position2D](Over(First), "%s,%s")), ptuner)
+        Plus(Locate.PrependPairwiseSelectedStringToRemainder[Position2D, Position1D, Position1D, Position2D](Over(First), "%s,%s")), ptuner)
 
     val jhist = data
       .pairwise(slice, Upper,
-        Concatenate(Locate.PrependPairwiseSelectedStringToRemainder[Position1D, Position2D, Position1D, Position1D, Position2D](slice, "%s,%s")), ptuner)
+        Concatenate(Locate.PrependPairwiseSelectedStringToRemainder[Position2D, Position1D, Position1D, Position2D](slice, "%s,%s")), ptuner)
       .relocate(c => Some(c.position.append(c.content.value.toShortString)))
       .summarise(Along(Second), Count[Position3D, Position2D](), stuner)
 
@@ -1064,7 +1064,7 @@ trait MatrixDistance { self: Matrix[Position1D, Position2D] with ReduceableMatri
 
     tpr
       .pairwiseBetween(Along(First), Diagonal, fpr,
-        Times(Locate.PrependPairwiseSelectedStringToRemainder[Position1D, Position2D, Position1D, Position1D, Position2D](Along(First), "(%1$s*%2$s)")), ptuner)
+        Times(Locate.PrependPairwiseSelectedStringToRemainder[Position2D, Position1D, Position1D, Position2D](Along(First), "(%1$s*%2$s)")), ptuner)
       .summarise(Along(First), Sum[Position2D, Position1D](), stuner)
       .transformWithValue(Subtract(ExtractWithKey[Position1D, Double]("one"), true),
         Map(Position1D("one") -> 1.0))

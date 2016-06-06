@@ -68,13 +68,32 @@ case class Positions[
 
 /** Companion object for the Spark `Positions` class. */
 object Positions {
-  /** Converts a `RDD[Position]` to a Spark `Positions`. */
-  implicit def RDDP2RDDP[
-    L <: Position[L] with ExpandablePosition[L, P],
-    P <: Position[P] with ReduceablePosition[P, L]
-  ](
-    data: RDD[P]
-  ): Positions[L, P] = Positions(data)
+  /** Converts a `RDD[Position1D]` to a Spark `Positions`. */
+  implicit def RDDP12RDDP(data: RDD[Position1D]): Positions[Position0D, Position1D] = Positions(data)
+
+  /** Converts a `RDD[Position2D]` to a Spark `Positions`. */
+  implicit def RDDP22RDDP(data: RDD[Position2D]): Positions[Position1D, Position2D] = Positions(data)
+
+  /** Converts a `RDD[Position3D]` to a Spark `Positions`. */
+  implicit def RDDP32RDDP(data: RDD[Position3D]): Positions[Position2D, Position3D] = Positions(data)
+
+  /** Converts a `RDD[Position4D]` to a Spark `Positions`. */
+  implicit def RDDP42RDDP(data: RDD[Position4D]): Positions[Position3D, Position4D] = Positions(data)
+
+  /** Converts a `RDD[Position5D]` to a Spark `Positions`. */
+  implicit def RDDP52RDDP(data: RDD[Position5D]): Positions[Position4D, Position5D] = Positions(data)
+
+  /** Converts a `RDD[Position6D]` to a Spark `Positions`. */
+  implicit def RDDP62RDDP(data: RDD[Position6D]): Positions[Position5D, Position6D] = Positions(data)
+
+  /** Converts a `RDD[Position7D]` to a Spark `Positions`. */
+  implicit def RDDP72RDDP(data: RDD[Position7D]): Positions[Position6D, Position7D] = Positions(data)
+
+  /** Converts a `RDD[Position8D]` to a Spark `Positions`. */
+  implicit def RDDP82RDDP(data: RDD[Position8D]): Positions[Position7D, Position8D] = Positions(data)
+
+  /** Converts a `RDD[Position9D]` to a Spark `Positions`. */
+  implicit def RDDP92RDDP(data: RDD[Position9D]): Positions[Position8D, Position9D] = Positions(data)
 }
 
 /** Spark Companion object for the `PositionDistributable` type class. */

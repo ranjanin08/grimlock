@@ -138,16 +138,15 @@ case class ExtractWithPositionAndKey[P <: Position[P], T](
   def extract(cell: Cell[P], ext: V): Option[T] = ext.get(cell.position).flatMap(_.get(key()))
 }
 
-/** Extract from a `Map[slice.S, T]` using the selected position(s) of the cell. */
+/** Extract from a `Map[S, T]` using the selected position(s) of the cell. */
 trait ExtractWithSelected[
-  L <: Position[L] with ExpandablePosition[L, P],
-  P <: Position[P] with ReduceablePosition[P, L],
+  P <: Position[P] with ReduceablePosition[P, _],
   S <: Position[S] with ExpandablePosition[S, _],
   R <: Position[R] with ExpandablePosition[R, _],
-  T]
-  extends Extract[P, Map[S, T], T] {
+  T
+] extends Extract[P, Map[S, T], T] {
   /** The slice used to extract the selected position(s) from the cell which are used as the key into the map. */
-  val slice: Slice[L, P, S, R]
+  val slice: Slice[_, P, S, R]
 
   def extract(cell: Cell[P], ext: V): Option[T] = ext.get(slice.selected(cell.position))
 }
@@ -155,7 +154,7 @@ trait ExtractWithSelected[
 /** Companion object to `ExtractWithSelected`. */
 object ExtractWithSelected {
   /**
-   * Extract from a `Map[slice.S, T]` using the selected position(s) of the cell.
+   * Extract from a `Map[S, T]` using the selected position(s) of the cell.
    *
    * @param slice The slice used to extract the selected position(s) from the cell which are used as the key
    *              into the map.
@@ -168,7 +167,7 @@ object ExtractWithSelected {
     T
   ](
     slice: Slice[L, P, S, R]
-  ): ExtractWithSelected[L, P, S, R, T] = ExtractWithSelectedImpl(slice)
+  ): ExtractWithSelected[P, S, R, T] = ExtractWithSelectedImpl(slice)
 }
 
 private case class ExtractWithSelectedImpl[
@@ -179,20 +178,17 @@ private case class ExtractWithSelectedImpl[
   T
 ](
   slice: Slice[L, P, S, R]
-) extends ExtractWithSelected[L, P, S, R, T]
+) extends ExtractWithSelected[P, S, R, T]
 
-/**
- * Extract from a `Map[slice.S, Map[Position1D, T]]` using the selected position(s) of the cell and the provided key.
- */
+/** Extract from a `Map[S, Map[Position1D, T]]` using the selected position(s) of the cell and the provided key. */
 trait ExtractWithSelectedAndKey[
-  L <: Position[L] with ExpandablePosition[L, P],
-  P <: Position[P] with ReduceablePosition[P, L],
+  P <: Position[P] with ReduceablePosition[P, _],
   S <: Position[S] with ExpandablePosition[S, _],
   R <: Position[R] with ExpandablePosition[R, _],
   T
 ] extends Extract[P, Map[S, Map[Position1D, T]], T] {
   /** The slice used to extract the selected position(s) from the cell which are used as the key into the map. */
-  val slice: Slice[L, P, S, R]
+  val slice: Slice[_, P, S, R]
 
   /** The key used for extracting from the inner map. */
   val key: Positionable[Position1D]
@@ -203,7 +199,7 @@ trait ExtractWithSelectedAndKey[
 /** Companion object to `ExtractWithSelectedAndKey`. */
 object ExtractWithSelectedAndKey {
   /**
-   * Extract from a `Map[slice.S, Map[Position1D, T]]` using the selected position(s) of the cell and the provided key.
+   * Extract from a `Map[S, Map[Position1D, T]]` using the selected position(s) of the cell and the provided key.
    *
    * @param slice The slice used to extract the selected position(s) from the cell which are used as the key
    *              into the map.
@@ -218,7 +214,7 @@ object ExtractWithSelectedAndKey {
   ](
     slice: Slice[L, P, S, R],
     key: Positionable[Position1D]
-  ): ExtractWithSelectedAndKey[L, P, S, R, T] = ExtractWithSelectedAndKeyImpl(slice, key)
+  ): ExtractWithSelectedAndKey[P, S, R, T] = ExtractWithSelectedAndKeyImpl(slice, key)
 }
 
 private case class ExtractWithSelectedAndKeyImpl[
@@ -230,12 +226,11 @@ private case class ExtractWithSelectedAndKeyImpl[
 ](
   slice: Slice[L, P, S, R],
   key: Positionable[Position1D]
-) extends ExtractWithSelectedAndKey[L, P, S, R, T]
+) extends ExtractWithSelectedAndKey[P, S, R, T]
 
-/** Extract from a `Map[slice.S, Map[slice.R, T]]` using the selected and remainder position(s) of the cell. */
+/** Extract from a `Map[S, Map[R, T]]` using the selected and remainder position(s) of the cell. */
 trait ExtractWithSlice[
-  L <: Position[L] with ExpandablePosition[L, P],
-  P <: Position[P] with ReduceablePosition[P, L],
+  P <: Position[P] with ReduceablePosition[P, _],
   S <: Position[S] with ExpandablePosition[S, _],
   R <: Position[R] with ExpandablePosition[R, _],
   T] extends Extract[P, Map[S, Map[R, T]], T] {
@@ -243,7 +238,7 @@ trait ExtractWithSlice[
    * The slice used to extract the selected and remainder position(s) from the cell which are used as the keys
    * into the outer and inner maps.
    */
-  val slice: Slice[L, P, S, R]
+  val slice: Slice[_, P, S, R]
 
   def extract(cell: Cell[P], ext: V): Option[T] = {
     ext.get(slice.selected(cell.position)).flatMap(_.get(slice.remainder(cell.position)))
@@ -253,7 +248,7 @@ trait ExtractWithSlice[
 /** Companion object to `ExtractWithSlice`. */
 object ExtractWithSlice {
   /**
-   * Extract from a `Map[slice.S, Map[slice.R, T]]` using the selected and remainder position(s) of the cell.
+   * Extract from a `Map[S, Map[R, T]]` using the selected and remainder position(s) of the cell.
    *
    * @param slice The slice used to extract the selected and remainder position(s) from the cell which are used
    *              as the keys into the outer and inner maps.
@@ -266,7 +261,7 @@ object ExtractWithSlice {
     T
   ](
     slice: Slice[L, P, S, R]
-  ): ExtractWithSlice[L, P, S, R, T] = ExtractWithSliceImpl(slice)
+  ): ExtractWithSlice[P, S, R, T] = ExtractWithSliceImpl(slice)
 }
 
 private case class ExtractWithSliceImpl[
@@ -277,5 +272,5 @@ private case class ExtractWithSliceImpl[
   T
 ](
   slice: Slice[L, P, S, R]
-) extends ExtractWithSlice[L, P, S, R, T]
+) extends ExtractWithSlice[P, S, R, T]
 

@@ -883,7 +883,7 @@ class TestScalding26(args: Args) extends Job(args) {
 
   left
     .pairwiseBetween(Over(First), All, right,
-      Times(Locate.PrependPairwiseSelectedStringToRemainder[Position1D, Position2D, Position1D, Position1D, Position2D](Over(First), "(%1$s*%2$s)")))
+      Times(Locate.PrependPairwiseSelectedStringToRemainder[Position2D, Position1D, Position1D, Position2D](Over(First), "(%1$s*%2$s)")))
     .saveAsText(s"./tmp.${tool}/alg.out")
     .toUnit
 }
