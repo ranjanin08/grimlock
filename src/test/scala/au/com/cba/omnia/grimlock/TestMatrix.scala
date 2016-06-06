@@ -4937,230 +4937,277 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise {
 
   "A Matrix.pairwise" should "return its first over pairwise in 1D" in {
     toPipe(num1)
-      .pairwise(Over(First), Lower, Plus(plus[Position1D](Over(First))), InMemory())
+      .pairwise(Over(First), Lower,
+        Plus(plus[Position0D, Position1D, Position1D, Position0D, Position1D](Over(First))), InMemory())
       .toList.sortBy(_.position) shouldBe result1
   }
 
   it should "return its first over pairwise in 2D" in {
     toPipe(num2)
-      .pairwise(Over(First), Lower, Plus(plus[Position2D](Over(First))), Default())
+      .pairwise(Over(First), Lower,
+        Plus(plus[Position1D, Position2D, Position1D, Position1D, Position2D](Over(First))), Default())
       .toList.sortBy(_.position) shouldBe result2
   }
 
   it should "return its first along pairwise in 2D" in {
     toPipe(num2)
-      .pairwise(Along(First), Lower, List(Plus(plus[Position2D](Along(First))),
-        Minus(minus[Position2D](Along(First)))), Default(Redistribute(123), Redistribute(321)))
+      .pairwise(Along(First), Lower, List(
+        Plus(plus[Position1D, Position2D, Position1D, Position1D, Position2D](Along(First))),
+        Minus(minus[Position1D, Position2D, Position1D, Position1D, Position2D](Along(First)))),
+        Default(Redistribute(123), Redistribute(321)))
       .toList.sortBy(_.position) shouldBe result3
   }
 
   it should "return its second over pairwise in 2D" in {
     toPipe(num2)
-      .pairwise(Over(Second), Lower, List(Plus(plus[Position2D](Over(Second))),
-        Minus(minus[Position2D](Over(Second)))), Default(Redistribute(123), Reducers(321)))
+      .pairwise(Over(Second), Lower, List(
+        Plus(plus[Position1D, Position2D, Position1D, Position1D, Position2D](Over(Second))),
+        Minus(minus[Position1D, Position2D, Position1D, Position1D, Position2D](Over(Second)))),
+        Default(Redistribute(123), Reducers(321)))
       .toList.sortBy(_.position) shouldBe result4
   }
 
   it should "return its second along pairwise in 2D" in {
     toPipe(num2)
-      .pairwise(Along(Second), Lower, Plus(plus[Position2D](Along(Second))),
+      .pairwise(Along(Second), Lower,
+        Plus(plus[Position1D, Position2D, Position1D, Position1D, Position2D](Along(Second))),
         Default(Redistribute(123), Redistribute(654) |-> Reducers(321)))
       .toList.sortBy(_.position) shouldBe result5
   }
 
   it should "return its first over pairwise in 3D" in {
     toPipe(num3)
-      .pairwise(Over(First), Lower, Plus(plus[Position3D](Over(First))), Default(Reducers(123), Redistribute(321)))
+      .pairwise(Over(First), Lower,
+        Plus(plus[Position2D, Position3D, Position1D, Position2D, Position3D](Over(First))),
+        Default(Reducers(123), Redistribute(321)))
       .toList.sortBy(_.position) shouldBe result6
   }
 
   it should "return its first along pairwise in 3D" in {
     toPipe(num3)
-      .pairwise(Along(First), Lower, List(Plus(plus[Position3D](Along(First))),
-        Minus(minus[Position3D](Along(First)))), Default(Reducers(123), Reducers(321)))
+      .pairwise(Along(First), Lower, List(
+        Plus(plus[Position2D, Position3D, Position2D, Position1D, Position2D](Along(First))),
+        Minus(minus[Position2D, Position3D, Position2D, Position1D, Position2D](Along(First)))),
+        Default(Reducers(123), Reducers(321)))
       .toList.sortBy(_.position) shouldBe result7
   }
 
   it should "return its second over pairwise in 3D" in {
     toPipe(num3)
-      .pairwise(Over(Second), Lower, List(Plus(plus[Position3D](Over(Second))),
-        Minus(minus[Position3D](Over(Second)))), Default(Reducers(123), Redistribute(654) |-> Reducers(321)))
+      .pairwise(Over(Second), Lower, List(
+        Plus(plus[Position2D, Position3D, Position1D, Position2D, Position3D](Over(Second))),
+        Minus(minus[Position2D, Position3D, Position1D, Position2D, Position3D](Over(Second)))),
+        Default(Reducers(123), Redistribute(654) |-> Reducers(321)))
       .toList.sortBy(_.position) shouldBe result8
   }
 
   it should "return its second along pairwise in 3D" in {
     toPipe(num3)
-      .pairwise(Along(Second), Lower, Plus(plus[Position3D](Along(Second))),
+      .pairwise(Along(Second), Lower,
+        Plus(plus[Position2D, Position3D, Position2D, Position1D, Position2D](Along(Second))),
         Default(Redistribute(123) |-> Reducers(456), Redistribute(321)))
       .toList.sortBy(_.position) shouldBe result9
   }
 
   it should "return its third over pairwise in 3D" in {
     toPipe(num3)
-      .pairwise(Over(Third), Lower, List(Plus(plus[Position3D](Over(Third))), Minus(minus[Position3D](Over(Third)))),
+      .pairwise(Over(Third), Lower, List(
+        Plus(plus[Position2D, Position3D, Position1D, Position2D, Position3D](Over(Third))),
+        Minus(minus[Position2D, Position3D, Position1D, Position2D, Position3D](Over(Third)))),
         Default(Redistribute(123) |-> Reducers(456), Reducers(321)))
       .toList.sortBy(_.position) shouldBe result10
   }
 
   it should "return its third along pairwise in 3D" in {
     toPipe(num3)
-      .pairwise(Along(Third), Lower, Plus(plus[Position3D](Along(Third))),
+      .pairwise(Along(Third), Lower,
+        Plus(plus[Position2D, Position3D, Position2D, Position1D, Position2D](Along(Third))),
         Default(Redistribute(123) |-> Reducers(456), Redistribute(654) |-> Reducers(321)))
       .toList.sortBy(_.position) shouldBe result11
   }
 
   "A Matrix.pairwiseWithValue" should "return its first over pairwise in 1D" in {
     toPipe(num1)
-      .pairwiseWithValue(Over(First), Lower, TestMatrixPairwise.PlusX(plus[Position1D](Over(First))), ValuePipe(ext),
-          Unbalanced(Reducers(123), Reducers(654)))
+      .pairwiseWithValue(Over(First), Lower,
+        TestMatrixPairwise.PlusX(plus[Position0D, Position1D, Position1D, Position0D, Position1D](Over(First))),
+        ValuePipe(ext), Unbalanced(Reducers(123), Reducers(654)))
       .toList.sortBy(_.position) shouldBe result12
   }
 
   it should "return its first over pairwise in 2D" in {
     toPipe(num2)
-      .pairwiseWithValue(Over(First), Lower, TestMatrixPairwise.PlusX(plus[Position2D](Over(First))), ValuePipe(ext),
-        Unbalanced(Redistribute(123) |-> Reducers(456), Redistribute(654) |-> Reducers(321)))
+      .pairwiseWithValue(Over(First), Lower,
+        TestMatrixPairwise.PlusX(plus[Position1D, Position2D, Position1D, Position1D, Position2D](Over(First))),
+        ValuePipe(ext), Unbalanced(Redistribute(123) |-> Reducers(456), Redistribute(654) |-> Reducers(321)))
       .toList.sortBy(_.position) shouldBe result13
   }
 
   it should "return its first along pairwise in 2D" in {
     toPipe(num2)
-      .pairwiseWithValue(Along(First), Lower, List(TestMatrixPairwise.PlusX(plus[Position2D](Along(First))),
-        TestMatrixPairwise.MinusX(minus[Position2D](Along(First)))), ValuePipe(ext), InMemory())
+      .pairwiseWithValue(Along(First), Lower, List(
+        TestMatrixPairwise.PlusX(plus[Position1D, Position2D, Position1D, Position1D, Position2D](Along(First))),
+        TestMatrixPairwise.MinusX(minus[Position1D, Position2D, Position1D, Position1D, Position2D](Along(First)))),
+        ValuePipe(ext), InMemory())
       .toList.sortBy(_.position) shouldBe result14
   }
 
   it should "return its second over pairwise in 2D" in {
     toPipe(num2)
-      .pairwiseWithValue(Over(Second), Lower, List(TestMatrixPairwise.PlusX(plus[Position2D](Over(Second))),
-        TestMatrixPairwise.MinusX(minus[Position2D](Over(Second)))), ValuePipe(ext), Default())
+      .pairwiseWithValue(Over(Second), Lower, List(
+        TestMatrixPairwise.PlusX(plus[Position1D, Position2D, Position1D, Position1D, Position2D](Over(Second))),
+        TestMatrixPairwise.MinusX(minus[Position1D, Position2D, Position1D, Position1D, Position2D](Over(Second)))),
+        ValuePipe(ext), Default())
       .toList.sortBy(_.position) shouldBe result15
   }
 
   it should "return its second along pairwise in 2D" in {
     toPipe(num2)
-      .pairwiseWithValue(Along(Second), Lower, TestMatrixPairwise.PlusX(plus[Position2D](Along(Second))),
+      .pairwiseWithValue(Along(Second), Lower,
+        TestMatrixPairwise.PlusX(plus[Position1D, Position2D, Position1D, Position1D, Position2D](Along(Second))),
         ValuePipe(ext), Default(Redistribute(123), Redistribute(321)))
       .toList.sortBy(_.position) shouldBe result16
   }
 
   it should "return its first over pairwise in 3D" in {
     toPipe(num3)
-      .pairwiseWithValue(Over(First), Lower, TestMatrixPairwise.PlusX(plus[Position3D](Over(First))), ValuePipe(ext),
-        Default(Redistribute(123), Reducers(321)))
+      .pairwiseWithValue(Over(First), Lower,
+        TestMatrixPairwise.PlusX(plus[Position2D, Position3D, Position1D, Position2D, Position3D](Over(First))),
+        ValuePipe(ext), Default(Redistribute(123), Reducers(321)))
       .toList.sortBy(_.position) shouldBe result17
   }
 
   it should "return its first along pairwise in 3D" in {
     toPipe(num3)
-      .pairwiseWithValue(Along(First), Lower, List(TestMatrixPairwise.PlusX(plus[Position3D](Along(First))),
-        TestMatrixPairwise.MinusX(minus[Position3D](Along(First)))), ValuePipe(ext),
-          Default(Redistribute(123), Redistribute(654) |-> Reducers(321)))
+      .pairwiseWithValue(Along(First), Lower, List(
+        TestMatrixPairwise.PlusX(plus[Position2D, Position3D, Position2D, Position1D, Position2D](Along(First))),
+        TestMatrixPairwise.MinusX(minus[Position2D, Position3D, Position2D, Position1D, Position2D](Along(First)))),
+        ValuePipe(ext), Default(Redistribute(123), Redistribute(654) |-> Reducers(321)))
       .toList.sortBy(_.position) shouldBe result18
   }
 
   it should "return its second over pairwise in 3D" in {
     toPipe(num3)
-      .pairwiseWithValue(Over(Second), Lower, List(TestMatrixPairwise.PlusX(plus[Position3D](Over(Second))),
-        TestMatrixPairwise.MinusX(minus[Position3D](Over(Second)))), ValuePipe(ext),
-          Default(Reducers(321), Redistribute(321)))
+      .pairwiseWithValue(Over(Second), Lower, List(
+        TestMatrixPairwise.PlusX(plus[Position2D, Position3D, Position1D, Position2D, Position3D](Over(Second))),
+        TestMatrixPairwise.MinusX(minus[Position2D, Position3D, Position1D, Position2D, Position3D](Over(Second)))),
+        ValuePipe(ext), Default(Reducers(321), Redistribute(321)))
       .toList.sortBy(_.position) shouldBe result19
   }
 
   it should "return its second along pairwise in 3D" in {
     toPipe(num3)
-      .pairwiseWithValue(Along(Second), Lower, TestMatrixPairwise.PlusX(plus[Position3D](Along(Second))),
+      .pairwiseWithValue(Along(Second), Lower,
+        TestMatrixPairwise.PlusX(plus[Position2D, Position3D, Position2D, Position1D, Position2D](Along(Second))),
         ValuePipe(ext), Default(Reducers(123), Reducers(321)))
       .toList.sortBy(_.position) shouldBe result20
   }
 
   it should "return its third over pairwise in 3D" in {
     toPipe(num3)
-      .pairwiseWithValue(Over(Third), Lower, List(TestMatrixPairwise.PlusX(plus[Position3D](Over(Third))),
-        TestMatrixPairwise.MinusX(minus[Position3D](Over(Third)))), ValuePipe(ext),
-          Default(Reducers(123), Redistribute(654) |-> Reducers(321)))
+      .pairwiseWithValue(Over(Third), Lower, List(
+        TestMatrixPairwise.PlusX(plus[Position2D, Position3D, Position1D, Position2D, Position3D](Over(Third))),
+        TestMatrixPairwise.MinusX(minus[Position2D, Position3D, Position1D, Position2D, Position3D](Over(Third)))),
+        ValuePipe(ext), Default(Reducers(123), Redistribute(654) |-> Reducers(321)))
       .toList.sortBy(_.position) shouldBe result21
   }
 
   it should "return its third along pairwise in 3D" in {
     toPipe(num3)
-      .pairwiseWithValue(Along(Third), Lower, TestMatrixPairwise.PlusX(plus[Position3D](Along(Third))),
+      .pairwiseWithValue(Along(Third), Lower,
+        TestMatrixPairwise.PlusX(plus[Position2D, Position3D, Position2D, Position1D, Position2D](Along(Third))),
         ValuePipe(ext), Default(Redistribute(123) |-> Reducers(456), Redistribute(321)))
       .toList.sortBy(_.position) shouldBe result22
   }
 
   "A Matrix.pairwiseBetween" should "return its first over pairwise in 1D" in {
     toPipe(num1)
-      .pairwiseBetween(Over(First), Lower, toPipe(dataA), Plus(plus[Position1D](Over(First))),
+      .pairwiseBetween(Over(First), Lower, toPipe(dataA),
+        Plus(plus[Position0D, Position1D, Position1D, Position0D, Position1D](Over(First))),
         Default(Redistribute(123) |-> Reducers(456), Reducers(321)))
       .toList.sortBy(_.position) shouldBe result23
   }
 
   it should "return its first over pairwise in 2D" in {
     toPipe(num2)
-      .pairwiseBetween(Over(First), Lower, toPipe(dataB), Plus(plus[Position2D](Over(First))),
+      .pairwiseBetween(Over(First), Lower, toPipe(dataB),
+        Plus(plus[Position1D, Position2D, Position1D, Position1D, Position2D](Over(First))),
         Default(Redistribute(123) |-> Reducers(456), Redistribute(654) |-> Reducers(321)))
       .toList.sortBy(_.position) shouldBe result24
   }
 
   it should "return its first along pairwise in 2D" in {
     toPipe(num2)
-      .pairwiseBetween(Along(First), Lower, toPipe(dataC), List(Plus(plus[Position2D](Along(First))),
-        Minus(minus[Position2D](Along(First)))), Unbalanced(Reducers(123), Reducers(321)))
+      .pairwiseBetween(Along(First), Lower, toPipe(dataC), List(
+        Plus(plus[Position1D, Position2D, Position1D, Position1D, Position2D](Along(First))),
+        Minus(minus[Position1D, Position2D, Position1D, Position1D, Position2D](Along(First)))),
+        Unbalanced(Reducers(123), Reducers(321)))
       .toList.sortBy(_.position) shouldBe result25
   }
 
   it should "return its second over pairwise in 2D" in {
     toPipe(num2)
-      .pairwiseBetween(Over(Second), Lower, toPipe(dataD), List(Plus(plus[Position2D](Over(Second))),
-        Minus(minus[Position2D](Over(Second)))),
-          Unbalanced(Redistribute(123) |-> Reducers(456), Redistribute(654) |-> Reducers(321)))
+      .pairwiseBetween(Over(Second), Lower, toPipe(dataD), List(
+        Plus(plus[Position1D, Position2D, Position1D, Position1D, Position2D](Over(Second))),
+        Minus(minus[Position1D, Position2D, Position1D, Position1D, Position2D](Over(Second)))),
+        Unbalanced(Redistribute(123) |-> Reducers(456), Redistribute(654) |-> Reducers(321)))
       .toList.sortBy(_.position) shouldBe result26
   }
 
   it should "return its second along pairwise in 2D" in {
     toPipe(num2)
-      .pairwiseBetween(Along(Second), Lower, toPipe(dataE), Plus(plus[Position2D](Along(Second))), InMemory())
+      .pairwiseBetween(Along(Second), Lower, toPipe(dataE),
+        Plus(plus[Position1D, Position2D, Position1D, Position1D, Position2D](Along(Second))),
+        InMemory())
       .toList.sortBy(_.position) shouldBe result27
   }
 
   it should "return its first over pairwise in 3D" in {
     toPipe(num3)
-      .pairwiseBetween(Over(First), Lower, toPipe(dataF), Plus(plus[Position3D](Over(First))), Default())
+      .pairwiseBetween(Over(First), Lower, toPipe(dataF),
+        Plus(plus[Position2D, Position3D, Position1D, Position2D, Position3D](Over(First))),
+        Default())
       .toList.sortBy(_.position) shouldBe result28
   }
 
   it should "return its first along pairwise in 3D" in {
     toPipe(num3)
-      .pairwiseBetween(Along(First), Lower, toPipe(dataG), List(Plus(plus[Position3D](Along(First))),
-        Minus(minus[Position3D](Along(First)))), Default(Redistribute(123), Redistribute(321)))
+      .pairwiseBetween(Along(First), Lower, toPipe(dataG), List(
+        Plus(plus[Position2D, Position3D, Position2D, Position1D, Position2D](Along(First))),
+        Minus(minus[Position2D, Position3D, Position2D, Position1D, Position2D](Along(First)))),
+        Default(Redistribute(123), Redistribute(321)))
       .toList.sortBy(_.position) shouldBe result29
   }
 
   it should "return its second over pairwise in 3D" in {
     toPipe(num3)
-      .pairwiseBetween(Over(Second), Lower, toPipe(dataH), List(Plus(plus[Position3D](Over(Second))),
-        Minus(minus[Position3D](Over(Second)))), Default(Redistribute(123), Reducers(321)))
+      .pairwiseBetween(Over(Second), Lower, toPipe(dataH), List(
+        Plus(plus[Position2D, Position3D, Position1D, Position2D, Position3D](Over(Second))),
+        Minus(minus[Position2D, Position3D, Position1D, Position2D, Position3D](Over(Second)))),
+        Default(Redistribute(123), Reducers(321)))
       .toList.sortBy(_.position) shouldBe result30
   }
 
   it should "return its second along pairwise in 3D" in {
     toPipe(num3)
-      .pairwiseBetween(Along(Second), Lower, toPipe(dataI), Plus(plus[Position3D](Along(Second))),
+      .pairwiseBetween(Along(Second), Lower, toPipe(dataI),
+        Plus(plus[Position2D, Position3D, Position2D, Position1D, Position2D](Along(Second))),
         Default(Redistribute(123), Redistribute(654) |-> Reducers(321)))
       .toList.sortBy(_.position) shouldBe result31
   }
 
   it should "return its third over pairwise in 3D" in {
     toPipe(num3)
-      .pairwiseBetween(Over(Third), Lower, toPipe(dataJ), List(Plus(plus[Position3D](Over(Third))),
-        Minus(minus[Position3D](Over(Third)))), Default(Reducers(123), Redistribute(321)))
+      .pairwiseBetween(Over(Third), Lower, toPipe(dataJ), List(
+        Plus(plus[Position2D, Position3D, Position1D, Position2D, Position3D](Over(Third))),
+        Minus(minus[Position2D, Position3D, Position1D, Position2D, Position3D](Over(Third)))),
+        Default(Reducers(123), Redistribute(321)))
       .toList.sortBy(_.position) shouldBe result32
   }
 
   it should "return its third along pairwise in 3D" in {
     toPipe(num3)
-      .pairwiseBetween(Along(Third), Lower, toPipe(dataK), Plus(plus[Position3D](Along(Third))),
+      .pairwiseBetween(Along(Third), Lower, toPipe(dataK),
+        Plus(plus[Position2D, Position3D, Position2D, Position1D, Position2D](Along(Third))),
         Default(Reducers(123), Reducers(321)))
       .toList.sortBy(_.position) shouldBe result33
   }
@@ -5168,103 +5215,109 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise {
   "A Matrix.pairwiseBetweenWithValue" should "return its first over pairwise in 1D" in {
     toPipe(num1)
       .pairwiseBetweenWithValue(Over(First), Lower, toPipe(dataL),
-        TestMatrixPairwise.PlusX(plus[Position1D](Over(First))), ValuePipe(ext),
-          Default(Reducers(123), Redistribute(654) |-> Reducers(321)))
+        TestMatrixPairwise.PlusX(plus[Position0D, Position1D, Position1D, Position0D, Position1D](Over(First))),
+        ValuePipe(ext), Default(Reducers(123), Redistribute(654) |-> Reducers(321)))
       .toList.sortBy(_.position) shouldBe result34
   }
 
   it should "return its first over pairwise in 2D" in {
     toPipe(num2)
       .pairwiseBetweenWithValue(Over(First), Lower, toPipe(dataM),
-        TestMatrixPairwise.PlusX(plus[Position2D](Over(First))), ValuePipe(ext),
-          Default(Redistribute(123) |-> Reducers(456), Redistribute(321)))
+        TestMatrixPairwise.PlusX(plus[Position1D, Position2D, Position1D, Position1D, Position2D](Over(First))),
+        ValuePipe(ext), Default(Redistribute(123) |-> Reducers(456), Redistribute(321)))
       .toList.sortBy(_.position) shouldBe result35
   }
 
   it should "return its first along pairwise in 2D" in {
     toPipe(num2)
       .pairwiseBetweenWithValue(Along(First), Lower, toPipe(dataN), List(
-        TestMatrixPairwise.PlusX(plus[Position2D](Along(First))),
-        TestMatrixPairwise.MinusX(minus[Position2D](Along(First)))), ValuePipe(ext),
-          Default(Redistribute(123) |-> Reducers(456), Reducers(321)))
+        TestMatrixPairwise.PlusX(plus[Position1D, Position2D, Position1D, Position1D, Position2D](Along(First))),
+        TestMatrixPairwise.MinusX(minus[Position1D, Position2D, Position1D, Position1D, Position2D](Along(First)))),
+        ValuePipe(ext), Default(Redistribute(123) |-> Reducers(456), Reducers(321)))
       .toList.sortBy(_.position) shouldBe result36
   }
 
   it should "return its second over pairwise in 2D" in {
     toPipe(num2)
       .pairwiseBetweenWithValue(Over(Second), Lower, toPipe(dataO), List(
-        TestMatrixPairwise.PlusX(plus[Position2D](Over(Second))),
-        TestMatrixPairwise.MinusX(minus[Position2D](Over(Second)))), ValuePipe(ext),
-          Default(Redistribute(123) |-> Reducers(456), Redistribute(654) |-> Reducers(321)))
+        TestMatrixPairwise.PlusX(plus[Position1D, Position2D, Position1D, Position1D, Position2D](Over(Second))),
+        TestMatrixPairwise.MinusX(minus[Position1D, Position2D, Position1D, Position1D, Position2D](Over(Second)))),
+        ValuePipe(ext), Default(Redistribute(123) |-> Reducers(456), Redistribute(654) |-> Reducers(321)))
       .toList.sortBy(_.position) shouldBe result37
   }
 
   it should "return its second along pairwise in 2D" in {
     toPipe(num2)
       .pairwiseBetweenWithValue(Along(Second), Lower, toPipe(dataP),
-        TestMatrixPairwise.PlusX(plus[Position2D](Along(Second))), ValuePipe(ext),
-          Unbalanced(Reducers(123), Reducers(321)))
+        TestMatrixPairwise.PlusX(plus[Position1D, Position2D, Position1D, Position1D, Position2D](Along(Second))),
+        ValuePipe(ext), Unbalanced(Reducers(123), Reducers(321)))
       .toList.sortBy(_.position) shouldBe result38
   }
 
   it should "return its first over pairwise in 3D" in {
     toPipe(num3)
       .pairwiseBetweenWithValue(Over(First), Lower, toPipe(dataQ),
-        TestMatrixPairwise.PlusX(plus[Position3D](Over(First))), ValuePipe(ext),
-          Unbalanced(Redistribute(123) |-> Reducers(456), Redistribute(654) |-> Reducers(321)))
+        TestMatrixPairwise.PlusX(plus[Position2D, Position3D, Position1D, Position2D, Position3D](Over(First))),
+        ValuePipe(ext), Unbalanced(Redistribute(123) |-> Reducers(456), Redistribute(654) |-> Reducers(321)))
       .toList.sortBy(_.position) shouldBe result39
   }
 
   it should "return its first along pairwise in 3D" in {
     toPipe(num3)
       .pairwiseBetweenWithValue(Along(First), Lower, toPipe(dataR), List(
-        TestMatrixPairwise.PlusX(plus[Position3D](Along(First))),
-        TestMatrixPairwise.MinusX(minus[Position3D](Along(First)))), ValuePipe(ext), InMemory())
+        TestMatrixPairwise.PlusX(plus[Position2D, Position3D, Position2D, Position1D, Position2D](Along(First))),
+        TestMatrixPairwise.MinusX(minus[Position2D, Position3D, Position2D, Position1D, Position2D](Along(First)))),
+        ValuePipe(ext), InMemory())
       .toList.sortBy(_.position) shouldBe result40
   }
 
   it should "return its second over pairwise in 3D" in {
     toPipe(num3)
       .pairwiseBetweenWithValue(Over(Second), Lower, toPipe(dataS), List(
-        TestMatrixPairwise.PlusX(plus[Position3D](Over(Second))),
-        TestMatrixPairwise.MinusX(minus[Position3D](Over(Second)))), ValuePipe(ext), Default())
+        TestMatrixPairwise.PlusX(plus[Position2D, Position3D, Position1D, Position2D, Position3D](Over(Second))),
+        TestMatrixPairwise.MinusX(minus[Position2D, Position3D, Position1D, Position2D, Position3D](Over(Second)))),
+        ValuePipe(ext), Default())
       .toList.sortBy(_.position) shouldBe result41
   }
 
   it should "return its second along pairwise in 3D" in {
     toPipe(num3)
       .pairwiseBetweenWithValue(Along(Second), Lower, toPipe(dataT),
-        TestMatrixPairwise.PlusX(plus[Position3D](Along(Second))), ValuePipe(ext),
-          Default(Redistribute(123), Redistribute(321)))
+        TestMatrixPairwise.PlusX(plus[Position2D, Position3D, Position2D, Position1D, Position2D](Along(Second))),
+        ValuePipe(ext), Default(Redistribute(123), Redistribute(321)))
       .toList.sortBy(_.position) shouldBe result42
   }
 
   it should "return its third over pairwise in 3D" in {
     toPipe(num3)
       .pairwiseBetweenWithValue(Over(Third), Lower, toPipe(dataU), List(
-        TestMatrixPairwise.PlusX(plus[Position3D](Over(Third))),
-        TestMatrixPairwise.MinusX(minus[Position3D](Over(Third)))), ValuePipe(ext),
-          Default(Redistribute(123), Reducers(321)))
+        TestMatrixPairwise.PlusX(plus[Position2D, Position3D, Position1D, Position2D, Position3D](Over(Third))),
+        TestMatrixPairwise.MinusX(minus[Position2D, Position3D, Position1D, Position2D, Position3D](Over(Third)))),
+        ValuePipe(ext), Default(Redistribute(123), Reducers(321)))
       .toList.sortBy(_.position) shouldBe result43
   }
 
   it should "return its third along pairwise in 3D" in {
     toPipe(num3)
       .pairwiseBetweenWithValue(Along(Third), Lower, toPipe(dataV),
-        TestMatrixPairwise.PlusX(plus[Position3D](Along(Third))), ValuePipe(ext),
-          Default(Redistribute(123), Redistribute(654) |-> Reducers(321)))
+        TestMatrixPairwise.PlusX(plus[Position2D, Position3D, Position2D, Position1D, Position2D](Along(Third))),
+        ValuePipe(ext), Default(Redistribute(123), Redistribute(654) |-> Reducers(321)))
       .toList.sortBy(_.position) shouldBe result44
   }
 
   it should "return empty data - InMemory" in {
     toPipe(num3)
-      .pairwiseBetween(Along(Third), Lower, TypedPipe.empty, Plus(plus[Position3D](Along(Third))), InMemory())
+      .pairwiseBetween(Along(Third), Lower, TypedPipe.empty,
+        Plus(plus[Position2D, Position3D, Position2D, Position1D, Position2D](Along(Third))),
+        InMemory())
       .toList.sortBy(_.position) shouldBe List()
   }
 
   it should "return empty data - Default" in {
     toPipe(num3)
-      .pairwiseBetween(Along(Third), Lower, TypedPipe.empty, Plus(plus[Position3D](Along(Third))), Default())
+      .pairwiseBetween(Along(Third), Lower, TypedPipe.empty,
+        Plus(plus[Position2D, Position3D, Position2D, Position1D, Position2D](Along(Third))),
+        Default())
       .toList.sortBy(_.position) shouldBe List()
   }
 }
@@ -5273,220 +5326,279 @@ class TestSparkMatrixPairwise extends TestMatrixPairwise {
 
   "A Matrix.pairwise" should "return its first over pairwise in 1D" in {
     toRDD(num1)
-      .pairwise(Over(First), Lower, Plus(plus[Position1D](Over(First))), Default())
+      .pairwise(Over(First), Lower,
+        Plus(plus[Position0D, Position1D, Position1D, Position0D, Position1D](Over(First))),
+        Default())
       .toList.sortBy(_.position) shouldBe result1
   }
 
   it should "return its first over pairwise in 2D" in {
     toRDD(num2)
-      .pairwise(Over(First), Lower, Plus(plus[Position2D](Over(First))), Default(Reducers(12)))
+      .pairwise(Over(First), Lower,
+        Plus(plus[Position1D, Position2D, Position1D, Position1D, Position2D](Over(First))),
+        Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result2
   }
 
   it should "return its first along pairwise in 2D" in {
     toRDD(num2)
-      .pairwise(Along(First), Lower, List(Plus(plus[Position2D](Along(First))),
-        Minus(minus[Position2D](Along(First)))), Default(Reducers(12), Reducers(23)))
+      .pairwise(Along(First), Lower, List(
+        Plus(plus[Position1D, Position2D, Position1D, Position1D, Position2D](Along(First))),
+        Minus(minus[Position1D, Position2D, Position1D, Position1D, Position2D](Along(First)))),
+        Default(Reducers(12), Reducers(23)))
       .toList.sortBy(_.position) shouldBe result3
   }
 
   it should "return its second over pairwise in 2D" in {
     toRDD(num2)
-      .pairwise(Over(Second), Lower, List(Plus(plus[Position2D](Over(Second))),
-        Minus(minus[Position2D](Over(Second)))), Default())
+      .pairwise(Over(Second), Lower, List(
+        Plus(plus[Position1D, Position2D, Position1D, Position1D, Position2D](Over(Second))),
+        Minus(minus[Position1D, Position2D, Position1D, Position1D, Position2D](Over(Second)))),
+        Default())
       .toList.sortBy(_.position) shouldBe result4
   }
 
   it should "return its second along pairwise in 2D" in {
     toRDD(num2)
-      .pairwise(Along(Second), Lower, Plus(plus[Position2D](Along(Second))), Default(Reducers(12)))
+      .pairwise(Along(Second), Lower,
+        Plus(plus[Position1D, Position2D, Position1D, Position1D, Position2D](Along(Second))),
+        Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result5
   }
 
   it should "return its first over pairwise in 3D" in {
     toRDD(num3)
-      .pairwise(Over(First), Lower, Plus(plus[Position3D](Over(First))), Default(Reducers(12), Reducers(23)))
+      .pairwise(Over(First), Lower,
+        Plus(plus[Position2D, Position3D, Position1D, Position2D, Position3D](Over(First))),
+        Default(Reducers(12), Reducers(23)))
       .toList.sortBy(_.position) shouldBe result6
   }
 
   it should "return its first along pairwise in 3D" in {
     toRDD(num3)
-      .pairwise(Along(First), Lower, List(Plus(plus[Position3D](Along(First))),
-        Minus(minus[Position3D](Along(First)))), Default())
+      .pairwise(Along(First), Lower, List(
+        Plus(plus[Position2D, Position3D, Position2D, Position1D, Position2D](Along(First))),
+        Minus(minus[Position2D, Position3D, Position2D, Position1D, Position2D](Along(First)))),
+        Default())
       .toList.sortBy(_.position) shouldBe result7
   }
 
   it should "return its second over pairwise in 3D" in {
     toRDD(num3)
-      .pairwise(Over(Second), Lower, List(Plus(plus[Position3D](Over(Second))),
-        Minus(minus[Position3D](Over(Second)))), Default(Reducers(12)))
+      .pairwise(Over(Second), Lower, List(
+        Plus(plus[Position2D, Position3D, Position1D, Position2D, Position3D](Over(Second))),
+        Minus(minus[Position2D, Position3D, Position1D, Position2D, Position3D](Over(Second)))),
+        Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result8
   }
 
   it should "return its second along pairwise in 3D" in {
     toRDD(num3)
-      .pairwise(Along(Second), Lower, Plus(plus[Position3D](Along(Second))), Default(Reducers(12), Reducers(23)))
+      .pairwise(Along(Second), Lower,
+        Plus(plus[Position2D, Position3D, Position2D, Position1D, Position2D](Along(Second))),
+        Default(Reducers(12), Reducers(23)))
       .toList.sortBy(_.position) shouldBe result9
   }
 
   it should "return its third over pairwise in 3D" in {
     toRDD(num3)
-      .pairwise(Over(Third), Lower, List(Plus(plus[Position3D](Over(Third))), Minus(minus[Position3D](Over(Third)))),
+      .pairwise(Over(Third), Lower, List(
+        Plus(plus[Position2D, Position3D, Position1D, Position2D, Position3D](Over(Third))),
+        Minus(minus[Position2D, Position3D, Position1D, Position2D, Position3D](Over(Third)))),
         Default())
       .toList.sortBy(_.position) shouldBe result10
   }
 
   it should "return its third along pairwise in 3D" in {
     toRDD(num3)
-      .pairwise(Along(Third), Lower, Plus(plus[Position3D](Along(Third))), Default(Reducers(12)))
+      .pairwise(Along(Third), Lower,
+        Plus(plus[Position2D, Position3D, Position2D, Position1D, Position2D](Along(Third))),
+        Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result11
   }
 
   "A Matrix.pairwiseWithValue" should "return its first over pairwise in 1D" in {
     toRDD(num1)
-      .pairwiseWithValue(Over(First), Lower, TestMatrixPairwise.PlusX(plus[Position1D](Over(First))), ext,
-        Default(Reducers(12), Reducers(23)))
+      .pairwiseWithValue(Over(First), Lower,
+        TestMatrixPairwise.PlusX(plus[Position0D, Position1D, Position1D, Position0D, Position1D](Over(First))),
+        ext, Default(Reducers(12), Reducers(23)))
       .toList.sortBy(_.position) shouldBe result12
   }
 
   it should "return its first over pairwise in 2D" in {
     toRDD(num2)
-      .pairwiseWithValue(Over(First), Lower, TestMatrixPairwise.PlusX(plus[Position2D](Over(First))), ext, Default())
+      .pairwiseWithValue(Over(First), Lower,
+        TestMatrixPairwise.PlusX(plus[Position1D, Position2D, Position1D, Position1D, Position2D](Over(First))),
+        ext, Default())
       .toList.sortBy(_.position) shouldBe result13
   }
 
   it should "return its first along pairwise in 2D" in {
     toRDD(num2)
-      .pairwiseWithValue(Along(First), Lower, List(TestMatrixPairwise.PlusX(plus[Position2D](Along(First))),
-        TestMatrixPairwise.MinusX(minus[Position2D](Along(First)))), ext, Default(Reducers(12)))
+      .pairwiseWithValue(Along(First), Lower, List(
+        TestMatrixPairwise.PlusX(plus[Position1D, Position2D, Position1D, Position1D, Position2D](Along(First))),
+        TestMatrixPairwise.MinusX(minus[Position1D, Position2D, Position1D, Position1D, Position2D](Along(First)))),
+        ext, Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result14
   }
 
   it should "return its second over pairwise in 2D" in {
     toRDD(num2)
-      .pairwiseWithValue(Over(Second), Lower, List(TestMatrixPairwise.PlusX(plus[Position2D](Over(Second))),
-        TestMatrixPairwise.MinusX(minus[Position2D](Over(Second)))), ext, Default(Reducers(12), Reducers(23)))
+      .pairwiseWithValue(Over(Second), Lower, List(
+        TestMatrixPairwise.PlusX(plus[Position1D, Position2D, Position1D, Position1D, Position2D](Over(Second))),
+        TestMatrixPairwise.MinusX(minus[Position1D, Position2D, Position1D, Position1D, Position2D](Over(Second)))),
+        ext, Default(Reducers(12), Reducers(23)))
       .toList.sortBy(_.position) shouldBe result15
   }
 
   it should "return its second along pairwise in 2D" in {
     toRDD(num2)
-      .pairwiseWithValue(Along(Second), Lower, TestMatrixPairwise.PlusX(plus[Position2D](Along(Second))), ext,
-        Default())
+      .pairwiseWithValue(Along(Second), Lower,
+        TestMatrixPairwise.PlusX(plus[Position1D, Position2D, Position1D, Position1D, Position2D](Along(Second))),
+        ext, Default())
       .toList.sortBy(_.position) shouldBe result16
   }
 
   it should "return its first over pairwise in 3D" in {
     toRDD(num3)
-      .pairwiseWithValue(Over(First), Lower, TestMatrixPairwise.PlusX(plus[Position3D](Over(First))), ext,
-        Default(Reducers(12)))
+      .pairwiseWithValue(Over(First), Lower,
+        TestMatrixPairwise.PlusX(plus[Position2D, Position3D, Position1D, Position2D, Position3D](Over(First))),
+        ext, Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result17
   }
 
   it should "return its first along pairwise in 3D" in {
     toRDD(num3)
-      .pairwiseWithValue(Along(First), Lower, List(TestMatrixPairwise.PlusX(plus[Position3D](Along(First))),
-        TestMatrixPairwise.MinusX(minus[Position3D](Along(First)))), ext, Default(Reducers(12), Reducers(23)))
+      .pairwiseWithValue(Along(First), Lower, List(
+        TestMatrixPairwise.PlusX(plus[Position2D, Position3D, Position2D, Position1D, Position2D](Along(First))),
+        TestMatrixPairwise.MinusX(minus[Position2D, Position3D, Position2D, Position1D, Position2D](Along(First)))),
+        ext, Default(Reducers(12), Reducers(23)))
       .toList.sortBy(_.position) shouldBe result18
   }
 
   it should "return its second over pairwise in 3D" in {
     toRDD(num3)
-      .pairwiseWithValue(Over(Second), Lower, List(TestMatrixPairwise.PlusX(plus[Position3D](Over(Second))),
-        TestMatrixPairwise.MinusX(minus[Position3D](Over(Second)))), ext, Default())
+      .pairwiseWithValue(Over(Second), Lower, List(
+        TestMatrixPairwise.PlusX(plus[Position2D, Position3D, Position1D, Position2D, Position3D](Over(Second))),
+        TestMatrixPairwise.MinusX(minus[Position2D, Position3D, Position1D, Position2D, Position3D](Over(Second)))),
+        ext, Default())
       .toList.sortBy(_.position) shouldBe result19
   }
 
   it should "return its second along pairwise in 3D" in {
     toRDD(num3)
-      .pairwiseWithValue(Along(Second), Lower, TestMatrixPairwise.PlusX(plus[Position3D](Along(Second))), ext,
-        Default(Reducers(12)))
+      .pairwiseWithValue(Along(Second), Lower,
+        TestMatrixPairwise.PlusX(plus[Position2D, Position3D, Position2D, Position1D, Position2D](Along(Second))),
+        ext, Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result20
   }
 
   it should "return its third over pairwise in 3D" in {
     toRDD(num3)
-      .pairwiseWithValue(Over(Third), Lower, List(TestMatrixPairwise.PlusX(plus[Position3D](Over(Third))),
-        TestMatrixPairwise.MinusX(minus[Position3D](Over(Third)))), ext, Default(Reducers(12), Reducers(23)))
+      .pairwiseWithValue(Over(Third), Lower, List(
+        TestMatrixPairwise.PlusX(plus[Position2D, Position3D, Position1D, Position2D, Position3D](Over(Third))),
+        TestMatrixPairwise.MinusX(minus[Position2D, Position3D, Position1D, Position2D, Position3D](Over(Third)))),
+        ext, Default(Reducers(12), Reducers(23)))
       .toList.sortBy(_.position) shouldBe result21
   }
 
   it should "return its third along pairwise in 3D" in {
     toRDD(num3)
-      .pairwiseWithValue(Along(Third), Lower, TestMatrixPairwise.PlusX(plus[Position3D](Along(Third))), ext, Default())
+      .pairwiseWithValue(Along(Third), Lower,
+        TestMatrixPairwise.PlusX(plus[Position2D, Position3D, Position2D, Position1D, Position2D](Along(Third))),
+        ext, Default())
       .toList.sortBy(_.position) shouldBe result22
   }
 
   "A Matrix.pairwiseBetween" should "return its first over pairwise in 1D" in {
     toRDD(num1)
-      .pairwiseBetween(Over(First), Lower, toRDD(dataA), Plus(plus[Position1D](Over(First))), Default(Reducers(12)))
+      .pairwiseBetween(Over(First), Lower, toRDD(dataA),
+        Plus(plus[Position0D, Position1D, Position1D, Position0D, Position1D](Over(First))),
+        Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result23
   }
 
   it should "return its first over pairwise in 2D" in {
     toRDD(num2)
-      .pairwiseBetween(Over(First), Lower, toRDD(dataB), Plus(plus[Position2D](Over(First))),
+      .pairwiseBetween(Over(First), Lower, toRDD(dataB),
+        Plus(plus[Position1D, Position2D, Position1D, Position1D, Position2D](Over(First))),
         Default(Reducers(12), Reducers(23)))
       .toList.sortBy(_.position) shouldBe result24
   }
 
   it should "return its first along pairwise in 2D" in {
     toRDD(num2)
-      .pairwiseBetween(Along(First), Lower, toRDD(dataC), List(Plus(plus[Position2D](Along(First))),
-        Minus(minus[Position2D](Along(First)))), Default())
+      .pairwiseBetween(Along(First), Lower, toRDD(dataC), List(
+        Plus(plus[Position1D, Position2D, Position1D, Position1D, Position2D](Along(First))),
+        Minus(minus[Position1D, Position2D, Position1D, Position1D, Position2D](Along(First)))),
+        Default())
       .toList.sortBy(_.position) shouldBe result25
   }
 
   it should "return its second over pairwise in 2D" in {
     toRDD(num2)
-      .pairwiseBetween(Over(Second), Lower, toRDD(dataD), List(Plus(plus[Position2D](Over(Second))),
-        Minus(minus[Position2D](Over(Second)))), Default(Reducers(12)))
+      .pairwiseBetween(Over(Second), Lower, toRDD(dataD), List(
+        Plus(plus[Position1D, Position2D, Position1D, Position1D, Position2D](Over(Second))),
+        Minus(minus[Position1D, Position2D, Position1D, Position1D, Position2D](Over(Second)))),
+        Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result26
   }
 
   it should "return its second along pairwise in 2D" in {
     toRDD(num2)
-      .pairwiseBetween(Along(Second), Lower, toRDD(dataE), Plus(plus[Position2D](Along(Second))),
+      .pairwiseBetween(Along(Second), Lower, toRDD(dataE),
+        Plus(plus[Position1D, Position2D, Position1D, Position1D, Position2D](Along(Second))),
         Default(Reducers(12), Reducers(23)))
       .toList.sortBy(_.position) shouldBe result27
   }
 
   it should "return its first over pairwise in 3D" in {
     toRDD(num3)
-      .pairwiseBetween(Over(First), Lower, toRDD(dataF), Plus(plus[Position3D](Over(First))), Default())
+      .pairwiseBetween(Over(First), Lower, toRDD(dataF),
+        Plus(plus[Position2D, Position3D, Position1D, Position2D, Position3D](Over(First))),
+        Default())
       .toList.sortBy(_.position) shouldBe result28
   }
 
   it should "return its first along pairwise in 3D" in {
     toRDD(num3)
-      .pairwiseBetween(Along(First), Lower, toRDD(dataG), List(Plus(plus[Position3D](Along(First))),
-        Minus(minus[Position3D](Along(First)))), Default(Reducers(12)))
+      .pairwiseBetween(Along(First), Lower, toRDD(dataG), List(
+        Plus(plus[Position2D, Position3D, Position2D, Position1D, Position2D](Along(First))),
+        Minus(minus[Position2D, Position3D, Position2D, Position1D, Position2D](Along(First)))),
+        Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result29
   }
 
   it should "return its second over pairwise in 3D" in {
     toRDD(num3)
-      .pairwiseBetween(Over(Second), Lower, toRDD(dataH), List(Plus(plus[Position3D](Over(Second))),
-        Minus(minus[Position3D](Over(Second)))), Default(Reducers(12), Reducers(23)))
+      .pairwiseBetween(Over(Second), Lower, toRDD(dataH), List(
+        Plus(plus[Position2D, Position3D, Position1D, Position2D, Position3D](Over(Second))),
+        Minus(minus[Position2D, Position3D, Position1D, Position2D, Position3D](Over(Second)))),
+        Default(Reducers(12), Reducers(23)))
       .toList.sortBy(_.position) shouldBe result30
   }
 
   it should "return its second along pairwise in 3D" in {
     toRDD(num3)
-      .pairwiseBetween(Along(Second), Lower, toRDD(dataI), Plus(plus[Position3D](Along(Second))), Default())
+      .pairwiseBetween(Along(Second), Lower, toRDD(dataI),
+        Plus(plus[Position2D, Position3D, Position2D, Position1D, Position2D](Along(Second))),
+        Default())
       .toList.sortBy(_.position) shouldBe result31
   }
 
   it should "return its third over pairwise in 3D" in {
     toRDD(num3)
-      .pairwiseBetween(Over(Third), Lower, toRDD(dataJ), List(Plus(plus[Position3D](Over(Third))),
-        Minus(minus[Position3D](Over(Third)))), Default(Reducers(12)))
+      .pairwiseBetween(Over(Third), Lower, toRDD(dataJ), List(
+        Plus(plus[Position2D, Position3D, Position1D, Position2D, Position3D](Over(Third))),
+        Minus(minus[Position2D, Position3D, Position1D, Position2D, Position3D](Over(Third)))),
+        Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result32
   }
 
   it should "return its third along pairwise in 3D" in {
     toRDD(num3)
-      .pairwiseBetween(Along(Third), Lower, toRDD(dataK), Plus(plus[Position3D](Along(Third))),
+      .pairwiseBetween(Along(Third), Lower, toRDD(dataK),
+        Plus(plus[Position2D, Position3D, Position2D, Position1D, Position2D](Along(Third))),
         Default(Reducers(12), Reducers(23)))
       .toList.sortBy(_.position) shouldBe result33
   }
@@ -5494,89 +5606,101 @@ class TestSparkMatrixPairwise extends TestMatrixPairwise {
   "A Matrix.pairwiseBetweenWithValue" should "return its first over pairwise in 1D" in {
     toRDD(num1)
       .pairwiseBetweenWithValue(Over(First), Lower, toRDD(dataL),
-        TestMatrixPairwise.PlusX(plus[Position1D](Over(First))), ext, Default())
+        TestMatrixPairwise.PlusX(plus[Position0D, Position1D, Position1D, Position0D, Position1D](Over(First))),
+        ext, Default())
       .toList.sortBy(_.position) shouldBe result34
   }
 
   it should "return its first over pairwise in 2D" in {
     toRDD(num2)
       .pairwiseBetweenWithValue(Over(First), Lower, toRDD(dataM),
-        TestMatrixPairwise.PlusX(plus[Position2D](Over(First))), ext, Default(Reducers(12)))
+        TestMatrixPairwise.PlusX(plus[Position1D, Position2D, Position1D, Position1D, Position2D](Over(First))),
+        ext, Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result35
   }
 
   it should "return its first along pairwise in 2D" in {
     toRDD(num2)
       .pairwiseBetweenWithValue(Along(First), Lower, toRDD(dataN), List(
-        TestMatrixPairwise.PlusX(plus[Position2D](Along(First))),
-        TestMatrixPairwise.MinusX(minus[Position2D](Along(First)))), ext, Default(Reducers(12), Reducers(23)))
+        TestMatrixPairwise.PlusX(plus[Position1D, Position2D, Position1D, Position1D, Position2D](Along(First))),
+        TestMatrixPairwise.MinusX(minus[Position1D, Position2D, Position1D, Position1D, Position2D](Along(First)))),
+        ext, Default(Reducers(12), Reducers(23)))
       .toList.sortBy(_.position) shouldBe result36
   }
 
   it should "return its second over pairwise in 2D" in {
     toRDD(num2)
       .pairwiseBetweenWithValue(Over(Second), Lower, toRDD(dataO), List(
-        TestMatrixPairwise.PlusX(plus[Position2D](Over(Second))),
-        TestMatrixPairwise.MinusX(minus[Position2D](Over(Second)))), ext, Default())
+        TestMatrixPairwise.PlusX(plus[Position1D, Position2D, Position1D, Position1D, Position2D](Over(Second))),
+        TestMatrixPairwise.MinusX(minus[Position1D, Position2D, Position1D, Position1D, Position2D](Over(Second)))),
+        ext, Default())
       .toList.sortBy(_.position) shouldBe result37
   }
 
   it should "return its second along pairwise in 2D" in {
     toRDD(num2)
       .pairwiseBetweenWithValue(Along(Second), Lower, toRDD(dataP),
-        TestMatrixPairwise.PlusX(plus[Position2D](Along(Second))), ext, Default(Reducers(12)))
+        TestMatrixPairwise.PlusX(plus[Position1D, Position2D, Position1D, Position1D, Position2D](Along(Second))),
+        ext, Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result38
   }
 
   it should "return its first over pairwise in 3D" in {
     toRDD(num3)
       .pairwiseBetweenWithValue(Over(First), Lower, toRDD(dataQ),
-        TestMatrixPairwise.PlusX(plus[Position3D](Over(First))), ext, Default(Reducers(12), Reducers(23)))
+        TestMatrixPairwise.PlusX(plus[Position2D, Position3D, Position1D, Position2D, Position3D](Over(First))),
+        ext, Default(Reducers(12), Reducers(23)))
       .toList.sortBy(_.position) shouldBe result39
   }
 
   it should "return its first along pairwise in 3D" in {
     toRDD(num3)
       .pairwiseBetweenWithValue(Along(First), Lower, toRDD(dataR), List(
-        TestMatrixPairwise.PlusX(plus[Position3D](Along(First))),
-        TestMatrixPairwise.MinusX(minus[Position3D](Along(First)))), ext, Default())
+        TestMatrixPairwise.PlusX(plus[Position2D, Position3D, Position2D, Position1D, Position2D](Along(First))),
+        TestMatrixPairwise.MinusX(minus[Position2D, Position3D, Position2D, Position1D, Position2D](Along(First)))),
+        ext, Default())
       .toList.sortBy(_.position) shouldBe result40
   }
 
   it should "return its second over pairwise in 3D" in {
     toRDD(num3)
       .pairwiseBetweenWithValue(Over(Second), Lower, toRDD(dataS), List(
-        TestMatrixPairwise.PlusX(plus[Position3D](Over(Second))),
-        TestMatrixPairwise.MinusX(minus[Position3D](Over(Second)))), ext, Default(Reducers(12)))
+        TestMatrixPairwise.PlusX(plus[Position2D, Position3D, Position1D, Position2D, Position3D](Over(Second))),
+        TestMatrixPairwise.MinusX(minus[Position2D, Position3D, Position1D, Position2D, Position3D](Over(Second)))),
+        ext, Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result41
   }
 
   it should "return its second along pairwise in 3D" in {
     toRDD(num3)
       .pairwiseBetweenWithValue(Along(Second), Lower, toRDD(dataT),
-        TestMatrixPairwise.PlusX(plus[Position3D](Along(Second))), ext, Default(Reducers(12), Reducers(23)))
+        TestMatrixPairwise.PlusX(plus[Position2D, Position3D, Position2D, Position1D, Position2D](Along(Second))),
+        ext, Default(Reducers(12), Reducers(23)))
       .toList.sortBy(_.position) shouldBe result42
   }
 
   it should "return its third over pairwise in 3D" in {
     toRDD(num3)
       .pairwiseBetweenWithValue(Over(Third), Lower, toRDD(dataU), List(
-        TestMatrixPairwise.PlusX(plus[Position3D](Over(Third))),
-        TestMatrixPairwise.MinusX(minus[Position3D](Over(Third)))), ext, Default())
+        TestMatrixPairwise.PlusX(plus[Position2D, Position3D, Position1D, Position2D, Position3D](Over(Third))),
+        TestMatrixPairwise.MinusX(minus[Position2D, Position3D, Position1D, Position2D, Position3D](Over(Third)))),
+        ext, Default())
       .toList.sortBy(_.position) shouldBe result43
   }
 
   it should "return its third along pairwise in 3D" in {
     toRDD(num3)
       .pairwiseBetweenWithValue(Along(Third), Lower, toRDD(dataV),
-        TestMatrixPairwise.PlusX(plus[Position3D](Along(Third))), ext, Default(Reducers(12)))
+        TestMatrixPairwise.PlusX(plus[Position2D, Position3D, Position2D, Position1D, Position2D](Along(Third))),
+        ext, Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result44
   }
 
   it should "return empty data - Default" in {
     toRDD(num3)
       .pairwiseBetween(Along(Third), Lower, toRDD(List.empty[Cell[Position3D]]),
-        Plus(plus[Position3D](Along(Third))), Default())
+        Plus(plus[Position2D, Position3D, Position2D, Position1D, Position2D](Along(Third))),
+        Default())
       .toList.sortBy(_.position) shouldBe List()
   }
 }
@@ -6640,8 +6764,12 @@ trait TestMatrixSlide extends TestMatrix {
 
 object TestMatrixSlide {
 
-  case class Delta[P <: Position[P], S <: Position[S] with ExpandablePosition[S, _], R <: Position[R] with ExpandablePosition[R, _]](
-    times: Int) extends Window[P, S, R, S#M] {
+  case class Delta[
+    P <: Position[P],
+    S <: Position[S] with ExpandablePosition[S, M],
+    R <: Position[R] with ExpandablePosition[R, _],
+    M <: Position[M] with ReduceablePosition[M, S]
+  ](times: Int) extends Window[P, S, R, M] {
     type I = Option[Double]
     type T = (Option[Double], R)
     type O = (Double, R, R)
@@ -6657,14 +6785,18 @@ object TestMatrixSlide {
      })
     }
 
-    def present(pos: S, out: O): TraversableOnce[Cell[S#M]] = {
-      Some(Cell[S#M](pos.append(times + "*(" + out._2.toShortString("|") + "-" + out._3.toShortString("|") + ")"),
+    def present(pos: S, out: O): TraversableOnce[Cell[M]] = {
+      Some(Cell(pos.append(times + "*(" + out._2.toShortString("|") + "-" + out._3.toShortString("|") + ")"),
         Content(ContinuousSchema[Double](), times * out._1)))
     }
   }
 
-  case class DeltaWithValue[P <: Position[P], S <: Position[S] with ExpandablePosition[S, _], R <: Position[R] with ExpandablePosition[R, _]](
-    key: String) extends WindowWithValue[P, S, R, S#M] {
+  case class DeltaWithValue[
+    P <: Position[P],
+    S <: Position[S] with ExpandablePosition[S, M],
+    R <: Position[R] with ExpandablePosition[R, _],
+    M <: Position[M] with ReduceablePosition[M, S]
+  ](key: String) extends WindowWithValue[P, S, R, M] {
     type V = Map[String, Int]
     type I = Option[Double]
     type T = (Option[Double], R)
@@ -6681,8 +6813,8 @@ object TestMatrixSlide {
      })
     }
 
-    def presentWithValue(pos: S, out: O, ext: V): TraversableOnce[Cell[S#M]] = {
-      Some(Cell[S#M](pos.append(ext(key) + "*(" + out._2.toShortString("|") + "-" + out._3.toShortString("|") + ")"),
+    def presentWithValue(pos: S, out: O, ext: V): TraversableOnce[Cell[M]] = {
+      Some(Cell(pos.append(ext(key) + "*(" + out._2.toShortString("|") + "-" + out._3.toShortString("|") + ")"),
         Content(ContinuousSchema[Double](), ext(key) * out._1)))
     }
   }
@@ -6692,152 +6824,178 @@ class TestScaldingMatrixSlide extends TestMatrixSlide {
 
   "A Matrix.slide" should "return its first along derived data in 1D" in {
     toPipe(num1)
-      .slide(Along(First), List(TestMatrixSlide.Delta[Position1D, Position0D, Position1D](1),
-        TestMatrixSlide.Delta[Position1D, Position0D, Position1D](2)), false, Default())
+      .slide(Along(First), List(
+        TestMatrixSlide.Delta[Position1D, Position0D, Position1D, Position1D](1),
+        TestMatrixSlide.Delta[Position1D, Position0D, Position1D, Position1D](2)),
+        false, Default())
       .toList.sortBy(_.position) shouldBe result1
   }
 
   it should "return its first over derived data in 2D" in {
     toPipe(num2)
-      .slide(Over(First), TestMatrixSlide.Delta[Position2D, Position1D, Position1D](1), false,
-        Default(Redistribute(123)))
+      .slide(Over(First),
+        TestMatrixSlide.Delta[Position2D, Position1D, Position1D, Position2D](1),
+        false, Default(Redistribute(123)))
       .toList.sortBy(_.position) shouldBe result2
   }
 
   it should "return its first along derived data in 2D" in {
     toPipe(num2)
-      .slide(Along(First), TestMatrixSlide.Delta[Position2D, Position1D, Position1D](1), true, Default(Reducers(123)))
+      .slide(Along(First),
+        TestMatrixSlide.Delta[Position2D, Position1D, Position1D, Position2D](1),
+        true, Default(Reducers(123)))
       .toList.sortBy(_.position) shouldBe result3
   }
 
   it should "return its second over derived data in 2D" in {
     toPipe(num2)
-      .slide(Over(Second), TestMatrixSlide.Delta[Position2D, Position1D, Position1D](1), true,
-        Default(Redistribute(123) |-> Reducers(123)))
+      .slide(Over(Second),
+        TestMatrixSlide.Delta[Position2D, Position1D, Position1D, Position2D](1),
+        true, Default(Redistribute(123) |-> Reducers(123)))
       .toList.sortBy(_.position) shouldBe result4
   }
 
   it should "return its second along derived data in 2D" in {
     toPipe(num2)
-      .slide(Along(Second), TestMatrixSlide.Delta[Position2D, Position1D, Position1D](1), false, Default())
+      .slide(Along(Second),
+        TestMatrixSlide.Delta[Position2D, Position1D, Position1D, Position2D](1),
+        false, Default())
       .toList.sortBy(_.position) shouldBe result5
   }
 
   it should "return its first over derived data in 3D" in {
     toPipe(num3)
-      .slide(Over(First), TestMatrixSlide.Delta[Position3D, Position1D, Position2D](1), false,
-        Default(Redistribute(123)))
+      .slide(Over(First),
+        TestMatrixSlide.Delta[Position3D, Position1D, Position2D, Position2D](1),
+        false, Default(Redistribute(123)))
       .toList.sortBy(_.position) shouldBe result6
   }
 
   it should "return its first along derived data in 3D" in {
     toPipe(num3)
-      .slide(Along(First), TestMatrixSlide.Delta[Position3D, Position2D, Position1D](1), true,
-        Default(Reducers(123)))
+      .slide(Along(First),
+        TestMatrixSlide.Delta[Position3D, Position2D, Position1D, Position3D](1),
+        true, Default(Reducers(123)))
       .toList.sortBy(_.position) shouldBe result7
   }
 
   it should "return its second over derived data in 3D" in {
     toPipe(num3)
-      .slide(Over(Second), TestMatrixSlide.Delta[Position3D, Position1D, Position2D](1), true,
-        Default(Redistribute(123) |-> Reducers(123)))
+      .slide(Over(Second),
+        TestMatrixSlide.Delta[Position3D, Position1D, Position2D, Position2D](1),
+        true, Default(Redistribute(123) |-> Reducers(123)))
       .toList.sortBy(_.position) shouldBe result8
   }
 
   it should "return its second along derived data in 3D" in {
     toPipe(num3)
-      .slide(Along(Second), TestMatrixSlide.Delta[Position3D, Position2D, Position1D](1), false, Default())
+      .slide(Along(Second),
+        TestMatrixSlide.Delta[Position3D, Position2D, Position1D, Position3D](1),
+        false, Default())
       .toList.sortBy(_.position) shouldBe result9
   }
 
   it should "return its third over derived data in 3D" in {
     toPipe(num3)
-      .slide(Over(Third), TestMatrixSlide.Delta[Position3D, Position1D, Position2D](1), false,
-        Default(Redistribute(123)))
+      .slide(Over(Third),
+        TestMatrixSlide.Delta[Position3D, Position1D, Position2D, Position2D](1),
+        false, Default(Redistribute(123)))
       .toList.sortBy(_.position) shouldBe result10
   }
 
   it should "return its third along derived data in 3D" in {
     toPipe(num3)
-      .slide(Along(Third), TestMatrixSlide.Delta[Position3D, Position2D, Position1D](1), true,
-        Default(Reducers(123)))
+      .slide(Along(Third),
+        TestMatrixSlide.Delta[Position3D, Position2D, Position1D, Position3D](1),
+        true, Default(Reducers(123)))
       .toList.sortBy(_.position) shouldBe result11
   }
 
   "A Matrix.slideWithValue" should "return its first along derived data in 1D" in {
     toPipe(num1)
-      .slideWithValue(Along(First), List(TestMatrixSlide.DeltaWithValue[Position1D, Position0D, Position1D]("one"),
-        TestMatrixSlide.DeltaWithValue[Position1D, Position0D, Position1D]("two")), ValuePipe(ext), true,
-          Default(Redistribute(123)))
+      .slideWithValue(Along(First), List(
+        TestMatrixSlide.DeltaWithValue[Position1D, Position0D, Position1D, Position1D]("one"),
+        TestMatrixSlide.DeltaWithValue[Position1D, Position0D, Position1D, Position1D]("two")),
+        ValuePipe(ext), true, Default(Redistribute(123)))
       .toList.sortBy(_.position) shouldBe result12
   }
 
   it should "return its first over derived data in 2D" in {
     toPipe(num2)
-      .slideWithValue(Over(First), TestMatrixSlide.DeltaWithValue[Position2D, Position1D, Position1D]("one"),
+      .slideWithValue(Over(First),
+        TestMatrixSlide.DeltaWithValue[Position2D, Position1D, Position1D, Position2D]("one"),
         ValuePipe(ext), false, Default(Redistribute(123) |-> Reducers(123)))
       .toList.sortBy(_.position) shouldBe result13
   }
 
   it should "return its first along derived data in 2D" in {
     toPipe(num2)
-      .slideWithValue(Along(First), TestMatrixSlide.DeltaWithValue[Position2D, Position1D, Position1D]("one"),
+      .slideWithValue(Along(First),
+        TestMatrixSlide.DeltaWithValue[Position2D, Position1D, Position1D, Position2D]("one"),
         ValuePipe(ext), false, Default())
       .toList.sortBy(_.position) shouldBe result14
   }
 
   it should "return its second over derived data in 2D" in {
     toPipe(num2)
-      .slideWithValue(Over(Second), TestMatrixSlide.DeltaWithValue[Position2D, Position1D, Position1D]("one"),
+      .slideWithValue(Over(Second),
+        TestMatrixSlide.DeltaWithValue[Position2D, Position1D, Position1D, Position2D]("one"),
         ValuePipe(ext), true, Default(Redistribute(123)))
       .toList.sortBy(_.position) shouldBe result15
   }
 
   it should "return its second along derived data in 2D" in {
     toPipe(num2)
-      .slideWithValue(Along(Second), TestMatrixSlide.DeltaWithValue[Position2D, Position1D, Position1D]("one"),
+      .slideWithValue(Along(Second),
+        TestMatrixSlide.DeltaWithValue[Position2D, Position1D, Position1D, Position2D]("one"),
         ValuePipe(ext), true, Default(Reducers(123)))
       .toList.sortBy(_.position) shouldBe result16
   }
 
   it should "return its first over derived data in 3D" in {
     toPipe(num3)
-      .slideWithValue(Over(First), TestMatrixSlide.DeltaWithValue[Position3D, Position1D, Position2D]("one"),
+      .slideWithValue(Over(First),
+        TestMatrixSlide.DeltaWithValue[Position3D, Position1D, Position2D, Position2D]("one"),
         ValuePipe(ext), false, Default(Redistribute(123) |-> Reducers(123)))
       .toList.sortBy(_.position) shouldBe result17
   }
 
   it should "return its first along derived data in 3D" in {
     toPipe(num3)
-      .slideWithValue(Along(First), TestMatrixSlide.DeltaWithValue[Position3D, Position2D, Position1D]("one"),
+      .slideWithValue(Along(First),
+        TestMatrixSlide.DeltaWithValue[Position3D, Position2D, Position1D, Position3D]("one"),
         ValuePipe(ext), false, Default())
       .toList.sortBy(_.position) shouldBe result18
   }
 
   it should "return its second over derived data in 3D" in {
     toPipe(num3)
-      .slideWithValue(Over(Second), TestMatrixSlide.DeltaWithValue[Position3D, Position1D, Position2D]("one"),
+      .slideWithValue(Over(Second),
+        TestMatrixSlide.DeltaWithValue[Position3D, Position1D, Position2D, Position2D]("one"),
         ValuePipe(ext), true, Default(Redistribute(123)))
       .toList.sortBy(_.position) shouldBe result19
   }
 
   it should "return its second along derived data in 3D" in {
     toPipe(num3)
-      .slideWithValue(Along(Second), TestMatrixSlide.DeltaWithValue[Position3D, Position2D, Position1D]("one"),
+      .slideWithValue(Along(Second),
+        TestMatrixSlide.DeltaWithValue[Position3D, Position2D, Position1D, Position3D]("one"),
         ValuePipe(ext), true, Default(Reducers(123)))
       .toList.sortBy(_.position) shouldBe result20
   }
 
   it should "return its third over derived data in 3D" in {
     toPipe(num3)
-      .slideWithValue(Over(Third), TestMatrixSlide.DeltaWithValue[Position3D, Position1D, Position2D]("one"),
+      .slideWithValue(Over(Third),
+        TestMatrixSlide.DeltaWithValue[Position3D, Position1D, Position2D, Position2D]("one"),
         ValuePipe(ext), false, Default(Redistribute(123) |-> Reducers(123)))
       .toList.sortBy(_.position) shouldBe result21
   }
 
   it should "return its third along derived data in 3D" in {
     toPipe(num3)
-      .slideWithValue(Along(Third), TestMatrixSlide.DeltaWithValue[Position3D, Position2D, Position1D]("one"),
+      .slideWithValue(Along(Third),
+        TestMatrixSlide.DeltaWithValue[Position3D, Position2D, Position1D, Position3D]("one"),
         ValuePipe(ext), false, Default())
       .toList.sortBy(_.position) shouldBe result22
   }
@@ -6847,144 +7005,178 @@ class TestSparkMatrixSlide extends TestMatrixSlide {
 
   "A Matrix.slide" should "return its first along derived data in 1D" in {
     toRDD(num1)
-      .slide(Along(First), List(TestMatrixSlide.Delta[Position1D, Position0D, Position1D](1),
-        TestMatrixSlide.Delta[Position1D, Position0D, Position1D](2)), false, Default())
+      .slide(Along(First), List(
+        TestMatrixSlide.Delta[Position1D, Position0D, Position1D, Position1D](1),
+        TestMatrixSlide.Delta[Position1D, Position0D, Position1D, Position1D](2)),
+        false, Default())
       .toList.sortBy(_.position) shouldBe result1
   }
 
   it should "return its first over derived data in 2D" in {
     toRDD(num2)
-      .slide(Over(First), TestMatrixSlide.Delta[Position2D, Position1D, Position1D](1), false, Default())
+      .slide(Over(First),
+        TestMatrixSlide.Delta[Position2D, Position1D, Position1D, Position2D](1),
+        false, Default())
       .toList.sortBy(_.position) shouldBe result2
   }
 
   it should "return its first along derived data in 2D" in {
     toRDD(num2)
-      .slide(Along(First), TestMatrixSlide.Delta[Position2D, Position1D, Position1D](1), true, Default())
+      .slide(Along(First),
+        TestMatrixSlide.Delta[Position2D, Position1D, Position1D, Position2D](1),
+        true, Default())
       .toList.sortBy(_.position) shouldBe result3
   }
 
   it should "return its second over derived data in 2D" in {
     toRDD(num2)
-      .slide(Over(Second), TestMatrixSlide.Delta[Position2D, Position1D, Position1D](1), true, Default())
+      .slide(Over(Second),
+        TestMatrixSlide.Delta[Position2D, Position1D, Position1D, Position2D](1),
+        true, Default())
       .toList.sortBy(_.position) shouldBe result4
   }
 
   it should "return its second along derived data in 2D" in {
     toRDD(num2)
-      .slide(Along(Second), TestMatrixSlide.Delta[Position2D, Position1D, Position1D](1), false, Default())
+      .slide(Along(Second),
+        TestMatrixSlide.Delta[Position2D, Position1D, Position1D, Position2D](1),
+        false, Default())
       .toList.sortBy(_.position) shouldBe result5
   }
 
   it should "return its first over derived data in 3D" in {
     toRDD(num3)
-      .slide(Over(First), TestMatrixSlide.Delta[Position3D, Position1D, Position2D](1), false, Default())
+      .slide(Over(First),
+        TestMatrixSlide.Delta[Position3D, Position1D, Position2D, Position2D](1),
+        false, Default())
       .toList.sortBy(_.position) shouldBe result6
   }
 
   it should "return its first along derived data in 3D" in {
     toRDD(num3)
-      .slide(Along(First), TestMatrixSlide.Delta[Position3D, Position2D, Position1D](1), true, Default())
+      .slide(Along(First),
+        TestMatrixSlide.Delta[Position3D, Position2D, Position1D, Position3D](1),
+        true, Default())
       .toList.sortBy(_.position) shouldBe result7
   }
 
   it should "return its second over derived data in 3D" in {
     toRDD(num3)
-      .slide(Over(Second), TestMatrixSlide.Delta[Position3D, Position1D, Position2D](1), true, Default())
+      .slide(Over(Second),
+        TestMatrixSlide.Delta[Position3D, Position1D, Position2D, Position2D](1),
+        true, Default())
       .toList.sortBy(_.position) shouldBe result8
   }
 
   it should "return its second along derived data in 3D" in {
     toRDD(num3)
-      .slide(Along(Second), TestMatrixSlide.Delta[Position3D, Position2D, Position1D](1), false, Default())
+      .slide(Along(Second),
+        TestMatrixSlide.Delta[Position3D, Position2D, Position1D, Position3D](1),
+        false, Default())
       .toList.sortBy(_.position) shouldBe result9
   }
 
   it should "return its third over derived data in 3D" in {
     toRDD(num3)
-      .slide(Over(Third), TestMatrixSlide.Delta[Position3D, Position1D, Position2D](1), false, Default())
+      .slide(Over(Third),
+        TestMatrixSlide.Delta[Position3D, Position1D, Position2D, Position2D](1),
+        false, Default())
       .toList.sortBy(_.position) shouldBe result10
   }
 
   it should "return its third along derived data in 3D" in {
     toRDD(num3)
-      .slide(Along(Third), TestMatrixSlide.Delta[Position3D, Position2D, Position1D](1), true, Default())
+      .slide(Along(Third),
+        TestMatrixSlide.Delta[Position3D, Position2D, Position1D, Position3D](1),
+        true, Default())
       .toList.sortBy(_.position) shouldBe result11
   }
 
   "A Matrix.slideWithValue" should "return its first along derived data in 1D" in {
     toRDD(num1)
-      .slideWithValue(Along(First), List(TestMatrixSlide.DeltaWithValue[Position1D, Position0D, Position1D]("one"),
-        TestMatrixSlide.DeltaWithValue[Position1D, Position0D, Position1D]("two")), ext, true, Default())
+      .slideWithValue(Along(First), List(
+        TestMatrixSlide.DeltaWithValue[Position1D, Position0D, Position1D, Position1D]("one"),
+        TestMatrixSlide.DeltaWithValue[Position1D, Position0D, Position1D, Position1D]("two")),
+        ext, true, Default())
       .toList.sortBy(_.position) shouldBe result12
   }
 
   it should "return its first over derived data in 2D" in {
     toRDD(num2)
-      .slideWithValue(Over(First), TestMatrixSlide.DeltaWithValue[Position2D, Position1D, Position1D]("one"),
+      .slideWithValue(Over(First),
+        TestMatrixSlide.DeltaWithValue[Position2D, Position1D, Position1D, Position2D]("one"),
         ext, false, Default())
       .toList.sortBy(_.position) shouldBe result13
   }
 
   it should "return its first along derived data in 2D" in {
     toRDD(num2)
-      .slideWithValue(Along(First), TestMatrixSlide.DeltaWithValue[Position2D, Position1D, Position1D]("one"),
+      .slideWithValue(Along(First),
+        TestMatrixSlide.DeltaWithValue[Position2D, Position1D, Position1D, Position2D]("one"),
         ext, false, Default())
       .toList.sortBy(_.position) shouldBe result14
   }
 
   it should "return its second over derived data in 2D" in {
     toRDD(num2)
-      .slideWithValue(Over(Second), TestMatrixSlide.DeltaWithValue[Position2D, Position1D, Position1D]("one"),
+      .slideWithValue(Over(Second),
+        TestMatrixSlide.DeltaWithValue[Position2D, Position1D, Position1D, Position2D]("one"),
         ext, true, Default())
       .toList.sortBy(_.position) shouldBe result15
   }
 
   it should "return its second along derived data in 2D" in {
     toRDD(num2)
-      .slideWithValue(Along(Second), TestMatrixSlide.DeltaWithValue[Position2D, Position1D, Position1D]("one"),
+      .slideWithValue(Along(Second),
+        TestMatrixSlide.DeltaWithValue[Position2D, Position1D, Position1D, Position2D]("one"),
         ext, true, Default())
       .toList.sortBy(_.position) shouldBe result16
   }
 
   it should "return its first over derived data in 3D" in {
     toRDD(num3)
-      .slideWithValue(Over(First), TestMatrixSlide.DeltaWithValue[Position3D, Position1D, Position2D]("one"),
+      .slideWithValue(Over(First),
+        TestMatrixSlide.DeltaWithValue[Position3D, Position1D, Position2D, Position2D]("one"),
         ext, false, Default())
       .toList.sortBy(_.position) shouldBe result17
   }
 
   it should "return its first along derived data in 3D" in {
     toRDD(num3)
-      .slideWithValue(Along(First), TestMatrixSlide.DeltaWithValue[Position3D, Position2D, Position1D]("one"),
+      .slideWithValue(Along(First),
+        TestMatrixSlide.DeltaWithValue[Position3D, Position2D, Position1D, Position3D]("one"),
         ext, false, Default())
       .toList.sortBy(_.position) shouldBe result18
   }
 
   it should "return its second over derived data in 3D" in {
     toRDD(num3)
-      .slideWithValue(Over(Second), TestMatrixSlide.DeltaWithValue[Position3D, Position1D, Position2D]("one"),
+      .slideWithValue(Over(Second),
+        TestMatrixSlide.DeltaWithValue[Position3D, Position1D, Position2D, Position2D]("one"),
         ext, true, Default())
       .toList.sortBy(_.position) shouldBe result19
   }
 
   it should "return its second along derived data in 3D" in {
     toRDD(num3)
-      .slideWithValue(Along(Second), TestMatrixSlide.DeltaWithValue[Position3D, Position2D, Position1D]("one"),
+      .slideWithValue(Along(Second),
+        TestMatrixSlide.DeltaWithValue[Position3D, Position2D, Position1D, Position3D]("one"),
         ext, true, Default())
       .toList.sortBy(_.position) shouldBe result20
   }
 
   it should "return its third over derived data in 3D" in {
     toRDD(num3)
-      .slideWithValue(Over(Third), TestMatrixSlide.DeltaWithValue[Position3D, Position1D, Position2D]("one"),
+      .slideWithValue(Over(Third),
+        TestMatrixSlide.DeltaWithValue[Position3D, Position1D, Position2D, Position2D]("one"),
         ext, false, Default())
       .toList.sortBy(_.position) shouldBe result21
   }
 
   it should "return its third along derived data in 3D" in {
     toRDD(num3)
-      .slideWithValue(Along(Third), TestMatrixSlide.DeltaWithValue[Position3D, Position2D, Position1D]("one"),
+      .slideWithValue(Along(Third),
+        TestMatrixSlide.DeltaWithValue[Position3D, Position2D, Position1D, Position3D]("one"),
         ext, false, Default())
       .toList.sortBy(_.position) shouldBe result22
   }
@@ -8297,52 +8489,75 @@ trait TestMatrixExpand extends TestMatrix {
 
 object TestMatrixExpand {
 
-  type PwE = Position with ExpandablePosition
+  def expander1D[
+    P <: Position[P] with ExpandablePosition[P, M],
+    M <: Position[M] with ReduceablePosition[M, P]
+  ](cell: Cell[P]): Option[M] = Some(cell.position.append("abc"))
+  def expander2D[
+    P <: Position[P] with ExpandablePosition[P, Q],
+    Q <: Position[Q] with ExpandablePosition[Q, M],
+    M <: Position[M] with ReduceablePosition[M, Q]
+  ](cell: Cell[P]): Option[M] = Some(cell.position.append("abc").append("def"))
+  def expander3D[
+    P <: Position[P] with ExpandablePosition[P, Q],
+    Q <: Position[Q] with ExpandablePosition[Q, R],
+    R <: Position[R] with ExpandablePosition[R, M],
+    M <: Position[M] with ReduceablePosition[M, R]
+  ](cell: Cell[P]): Option[M] = Some(cell.position.append("abc").append("def").append("ghi"))
+  def expander4D[
+    P <: Position[P] with ExpandablePosition[P, Q],
+    Q <: Position[Q] with ExpandablePosition[Q, R],
+    R <: Position[R] with ExpandablePosition[R, S],
+    S <: Position[S] with ExpandablePosition[S, M],
+    M <: Position[M] with ReduceablePosition[M, S]
+  ](cell: Cell[P]): Option[M] = Some(cell.position.append("abc").append("def").append("ghi").append("jkl"))
 
-  def expander1D[P <: PwE](cell: Cell[P]): Option[P#M] = Some(cell.position.append("abc"))
-  def expander2D[P <: PwE, Q <: PwE](cell: Cell[P])(implicit ev: P#M =:= Q): Option[Q#M] = {
-    Some(cell.position.append("abc").append("def"))
-  }
-  def expander3D[P <: PwE, Q <: PwE, R <: PwE](cell: Cell[P])(implicit ev1: P#M =:= Q, ev2: Q#M =:= R): Option[R#M] = {
-    Some(cell.position.append("abc").append("def").append("ghi"))
-  }
-  def expander4D[P <: PwE, Q <: PwE, R <: PwE, S <: PwE](cell: Cell[P])(implicit ev1: P#M =:= Q, ev2: Q#M =:= R,
-    ev3: R#M =:= S): Option[S#M] = Some(cell.position.append("abc").append("def").append("ghi").append("jkl"))
+  val expand1D2D = expander1D[Position1D, Position2D] _
+  val expand1D3D = expander2D[Position1D, Position2D, Position3D] _
+  val expand1D4D = expander3D[Position1D, Position2D, Position3D, Position4D] _
+  val expand1D5D = expander4D[Position1D, Position2D, Position3D, Position4D, Position5D] _
 
-  val expand1D2D = expander1D[Position1D] _
-  val expand1D3D = expander2D[Position1D, Position2D] _
-  val expand1D4D = expander3D[Position1D, Position2D, Position3D] _
-  val expand1D5D = expander4D[Position1D, Position2D, Position3D, Position4D] _
+  val expand2D3D = expander1D[Position2D, Position3D] _
+  val expand2D4D = expander2D[Position2D, Position3D, Position4D] _
+  val expand2D5D = expander3D[Position2D, Position3D, Position4D, Position5D] _
 
-  val expand2D3D = expander1D[Position2D] _
-  val expand2D4D = expander2D[Position2D, Position3D] _
-  val expand2D5D = expander3D[Position2D, Position3D, Position4D] _
+  val expand3D4D = expander1D[Position3D, Position4D] _
+  val expand3D5D = expander2D[Position3D, Position4D, Position5D] _
 
-  val expand3D4D = expander1D[Position3D] _
-  val expand3D5D = expander2D[Position3D, Position4D] _
+  def expander1DWithValue[
+    P <: Position[P] with ExpandablePosition[P, M],
+    M <: Position[M] with ReduceablePosition[M, P]
+  ](cell: Cell[P], ext: String): Option[M] = Some(cell.position.append(ext))
+  def expander2DWithValue[
+    P <: Position[P] with ExpandablePosition[P, Q],
+    Q <: Position[Q] with ExpandablePosition[Q, M],
+    M <: Position[M] with ReduceablePosition[M, Q]
+  ](cell: Cell[P], ext: String): Option[M] = Some(cell.position.append(ext).append("def"))
+  def expander3DWithValue[
+    P <: Position[P] with ExpandablePosition[P, Q],
+    Q <: Position[Q] with ExpandablePosition[Q, R],
+    R <: Position[R] with ExpandablePosition[R, M],
+    M <: Position[M] with ReduceablePosition[M, R]
+  ](cell: Cell[P], ext: String): Option[M] = Some(cell.position.append(ext).append("def").append("ghi"))
+  def expander4DWithValue[
+    P <: Position[P] with ExpandablePosition[P, Q],
+    Q <: Position[Q] with ExpandablePosition[Q, R],
+    R <: Position[R] with ExpandablePosition[R, S],
+    S <: Position[S] with ExpandablePosition[S, M],
+    M <: Position[M] with ReduceablePosition[M, S]
+  ](cell: Cell[P], ext: String): Option[M] = Some(cell.position.append(ext).append("def").append("ghi").append("jkl"))
 
-  def expander1DWithValue[P <: PwE](cell: Cell[P], ext: String): Option[P#M] = Some(cell.position.append(ext))
-  def expander2DWithValue[P <: PwE, Q <: PwE](cell: Cell[P], ext: String)(implicit ev: P#M =:= Q): Option[Q#M] = {
-    Some(cell.position.append(ext).append("def"))
-  }
-  def expander3DWithValue[P <: PwE, Q <: PwE, R <: PwE](cell: Cell[P], ext: String)(implicit ev1: P#M =:= Q,
-    ev2: Q#M =:= R): Option[R#M] = Some(cell.position.append(ext).append("def").append("ghi"))
-  def expander4DWithValue[P <: PwE, Q <: PwE, R <: PwE, S <: PwE](cell: Cell[P], ext: String)(implicit ev1: P#M =:= Q,
-    ev2: Q#M =:= R, ev3: R#M =:= S): Option[S#M] = {
-    Some(cell.position.append(ext).append("def").append("ghi").append("jkl"))
-  }
+  val expand1D2DWithValue = expander1DWithValue[Position1D, Position2D] _
+  val expand1D3DWithValue = expander2DWithValue[Position1D, Position2D, Position3D] _
+  val expand1D4DWithValue = expander3DWithValue[Position1D, Position2D, Position3D, Position4D] _
+  val expand1D5DWithValue = expander4DWithValue[Position1D, Position2D, Position3D, Position4D, Position5D] _
 
-  val expand1D2DWithValue = expander1DWithValue[Position1D] _
-  val expand1D3DWithValue = expander2DWithValue[Position1D, Position2D] _
-  val expand1D4DWithValue = expander3DWithValue[Position1D, Position2D, Position3D] _
-  val expand1D5DWithValue = expander4DWithValue[Position1D, Position2D, Position3D, Position4D] _
+  val expand2D3DWithValue = expander1DWithValue[Position2D, Position3D] _
+  val expand2D4DWithValue = expander2DWithValue[Position2D, Position3D, Position4D] _
+  val expand2D5DWithValue = expander3DWithValue[Position2D, Position3D, Position4D, Position5D] _
 
-  val expand2D3DWithValue = expander1DWithValue[Position2D] _
-  val expand2D4DWithValue = expander2DWithValue[Position2D, Position3D] _
-  val expand2D5DWithValue = expander3DWithValue[Position2D, Position3D, Position4D] _
-
-  val expand3D4DWithValue = expander1DWithValue[Position3D] _
-  val expand3D5DWithValue = expander2DWithValue[Position3D, Position4D] _
+  val expand3D4DWithValue = expander1DWithValue[Position3D, Position4D] _
+  val expand3D5DWithValue = expander2DWithValue[Position3D, Position4D, Position5D] _
 }
 
 class TestScaldingMatrixExpand extends TestMatrixExpand {
@@ -8874,31 +9089,31 @@ class TestScaldingMatrixReshape extends TestMatrixReshape {
 
   "A Matrix.reshape" should "reshape its first dimension in 2D" in {
     toPipe(dataA)
-      .reshape(First, "baz", TestMatrixReshape.cast, InMemory())
+      .reshape(First, "baz", TestMatrixReshape.cast[Position2D, Position3D], InMemory())
       .toList.sortBy(_.position) shouldBe result1
   }
 
   it should "reshape its second dimension in 2D" in {
     toPipe(dataA)
-      .reshape(Second, "letter", TestMatrixReshape.cast, Default())
+      .reshape(Second, "letter", TestMatrixReshape.cast[Position2D, Position3D], Default())
       .toList.sortBy(_.position) shouldBe result2
   }
 
   it should "reshape its first dimension in 3D" in {
     toPipe(dataB)
-      .reshape(First, "qux", TestMatrixReshape.cast, Default(Reducers(123)))
+      .reshape(First, "qux", TestMatrixReshape.cast[Position3D, Position4D], Default(Reducers(123)))
       .toList.sortBy(_.position) shouldBe result3
   }
 
   it should "reshape its second dimension in 3D" in {
     toPipe(dataB)
-      .reshape(Second, "number", TestMatrixReshape.cast, Unbalanced(Reducers(123)))
+      .reshape(Second, "number", TestMatrixReshape.cast[Position3D, Position4D], Unbalanced(Reducers(123)))
       .toList.sortBy(_.position) shouldBe result4
   }
 
   it should "reshape its third dimension in 3D" in {
     toPipe(dataB)
-      .reshape(Third, true, TestMatrixReshape.cast, InMemory())
+      .reshape(Third, true, TestMatrixReshape.cast[Position3D, Position4D], InMemory())
       .toList.sortBy(_.position) shouldBe result5
   }
 }
@@ -8907,31 +9122,31 @@ class TestSparkMatrixReshape extends TestMatrixReshape {
 
   "A Matrix.reshape" should "reshape its first dimension in 2D" in {
     toRDD(dataA)
-      .reshape(First, "baz", TestMatrixReshape.cast, Default())
+      .reshape(First, "baz", TestMatrixReshape.cast[Position2D, Position3D], Default())
       .toList.sortBy(_.position) shouldBe result1
   }
 
   it should "reshape its second dimension in 2D" in {
     toRDD(dataA)
-      .reshape(Second, "letter", TestMatrixReshape.cast, Default(Reducers(12)))
+      .reshape(Second, "letter", TestMatrixReshape.cast[Position2D, Position3D], Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result2
   }
 
   it should "reshape its first dimension in 3D" in {
     toRDD(dataB)
-      .reshape(First, "qux", TestMatrixReshape.cast, Default())
+      .reshape(First, "qux", TestMatrixReshape.cast[Position3D, Position4D], Default())
       .toList.sortBy(_.position) shouldBe result3
   }
 
   it should "reshape its second dimension in 3D" in {
     toRDD(dataB)
-      .reshape(Second, "number", TestMatrixReshape.cast, Default(Reducers(12)))
+      .reshape(Second, "number", TestMatrixReshape.cast[Position3D, Position4D], Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result4
   }
 
   it should "reshape its third dimension in 3D" in {
     toRDD(dataB)
-      .reshape(Third, true, TestMatrixReshape.cast, Default())
+      .reshape(Third, true, TestMatrixReshape.cast[Position3D, Position4D], Default())
       .toList.sortBy(_.position) shouldBe result5
   }
 }

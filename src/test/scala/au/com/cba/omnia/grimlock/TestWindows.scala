@@ -42,31 +42,31 @@ trait TestBatchMovingAverage extends TestGrimlock {
 class TestSimpleMovingAverage extends TestBatchMovingAverage {
 
   "A SimpleMovingAverage" should "prepare correctly" in {
-    SimpleMovingAverage(1, Locate.AppendRemainderDimension[Position1D, Position2D](First), false)
+    SimpleMovingAverage(1, Locate.AppendRemainderDimension[Position1D, Position2D, Position2D](First), false)
       .prepare(cell) shouldBe (in)
   }
 
   it should "initialise correctly" in {
-    SimpleMovingAverage(1, Locate.AppendRemainderDimension[Position1D, Position2D](First), false)
+    SimpleMovingAverage(1, Locate.AppendRemainderDimension[Position1D, Position2D, Position2D](First), false)
       .initialise(rem, in) shouldBe ((List(first), List()))
-    SimpleMovingAverage(1, Locate.AppendRemainderDimension[Position1D, Position2D](First), true)
+    SimpleMovingAverage(1, Locate.AppendRemainderDimension[Position1D, Position2D, Position2D](First), true)
       .initialise(rem, in) shouldBe ((List(first), List((rem, 1.0))))
-    SimpleMovingAverage(1, Locate.AppendRemainderDimension[Position1D, Position2D](Second), false)
+    SimpleMovingAverage(1, Locate.AppendRemainderDimension[Position1D, Position2D, Position2D](Second), false)
       .initialise(rem, in) shouldBe ((List(second), List()))
-    SimpleMovingAverage(1, Locate.AppendRemainderDimension[Position1D, Position2D](Second), true)
+    SimpleMovingAverage(1, Locate.AppendRemainderDimension[Position1D, Position2D, Position2D](Second), true)
       .initialise(rem, in) shouldBe ((List(second), List((rem, 1.0))))
-    SimpleMovingAverage(5, Locate.AppendRemainderDimension[Position1D, Position2D](First), false)
+    SimpleMovingAverage(5, Locate.AppendRemainderDimension[Position1D, Position2D](First), false, Position2D)
       .initialise(rem, in) shouldBe ((List(first), List()))
-    SimpleMovingAverage(5, Locate.AppendRemainderDimension[Position1D, Position2D](First), true)
+    SimpleMovingAverage(5, Locate.AppendRemainderDimension[Position1D, Position2D, Position2D](First), true)
       .initialise(rem, in) shouldBe ((List(first), List((rem, 1.0))))
-    SimpleMovingAverage(5, Locate.AppendRemainderDimension[Position1D, Position2D](Second), false)
+    SimpleMovingAverage(5, Locate.AppendRemainderDimension[Position1D, Position2D, Position2D](Second), false)
       .initialise(rem, in) shouldBe ((List(second), List()))
-    SimpleMovingAverage(5, Locate.AppendRemainderDimension[Position1D, Position2D](Second), true)
+    SimpleMovingAverage(5, Locate.AppendRemainderDimension[Position1D, Position2D, Position2D](Second), true)
       .initialise(rem, in) shouldBe ((List(second), List((rem, 1.0))))
   }
 
   it should "update correctly" in {
-    val obj = SimpleMovingAverage(5, Locate.AppendRemainderDimension[Position1D, Position1D](First), false)
+    val obj = SimpleMovingAverage(5, Locate.AppendRemainderDimension[Position1D, Position1D, Position2D](First), false)
 
     val init = obj.initialise(Position1D("2003"), 4.0)
     init shouldBe ((List((Position1D("2003"), 4.0)), List()))
@@ -91,7 +91,7 @@ class TestSimpleMovingAverage extends TestBatchMovingAverage {
   }
 
   it should "update all correctly" in {
-    val obj = SimpleMovingAverage(5, Locate.AppendRemainderDimension[Position1D, Position1D](First), true)
+    val obj = SimpleMovingAverage(5, Locate.AppendRemainderDimension[Position1D, Position1D, Position2D](First), true)
 
     val init = obj.initialise(Position1D("2003"), 4.0)
     init shouldBe ((List((Position1D("2003"), 4.0)), List((Position1D("2003"), 4.0))))
@@ -117,7 +117,7 @@ class TestSimpleMovingAverage extends TestBatchMovingAverage {
   }
 
   it should "present" in {
-    SimpleMovingAverage(1, Locate.AppendRemainderDimension[Position1D, Position1D](First), false)
+    SimpleMovingAverage(1, Locate.AppendRemainderDimension[Position1D, Position1D, Position2D](First), false)
       .present(sel, (Position1D("2008"), 6.6)) shouldBe createCell("2008", 6.6)
   }
 }
@@ -125,23 +125,23 @@ class TestSimpleMovingAverage extends TestBatchMovingAverage {
 class TestCenteredMovingAverage extends TestBatchMovingAverage {
 
   "A CenteredMovingAverage" should "prepare correctly" in {
-    CenteredMovingAverage(1, Locate.AppendRemainderDimension[Position1D, Position2D](First))
+    CenteredMovingAverage(1, Locate.AppendRemainderDimension[Position1D, Position2D, Position2D](First))
       .prepare(cell) shouldBe (in)
   }
 
   it should "initialise correctly" in {
-    CenteredMovingAverage(1, Locate.AppendRemainderDimension[Position1D, Position2D](First))
+    CenteredMovingAverage(1, Locate.AppendRemainderDimension[Position1D, Position2D, Position2D](First))
       .initialise(rem, in) shouldBe ((List(first), List()))
-    CenteredMovingAverage(1, Locate.AppendRemainderDimension[Position1D, Position2D](Second))
+    CenteredMovingAverage(1, Locate.AppendRemainderDimension[Position1D, Position2D, Position2D](Second))
       .initialise(rem, in) shouldBe ((List(second), List()))
-    CenteredMovingAverage(5, Locate.AppendRemainderDimension[Position1D, Position2D](First))
+    CenteredMovingAverage(5, Locate.AppendRemainderDimension[Position1D, Position2D, Position2D](First))
       .initialise(rem, in) shouldBe ((List(first), List()))
-    CenteredMovingAverage(5, Locate.AppendRemainderDimension[Position1D, Position2D](Second))
+    CenteredMovingAverage(5, Locate.AppendRemainderDimension[Position1D, Position2D, Position2D](Second))
       .initialise(rem, in) shouldBe ((List(second), List()))
   }
 
   it should "update correctly" in {
-    val obj = CenteredMovingAverage(2, Locate.AppendRemainderDimension[Position1D, Position1D](First))
+    val obj = CenteredMovingAverage(2, Locate.AppendRemainderDimension[Position1D, Position1D, Position2D](First))
 
     val init = obj.initialise(Position1D("2003"), 4.0)
     init shouldBe ((List((Position1D("2003"), 4.0)), List()))
@@ -166,7 +166,7 @@ class TestCenteredMovingAverage extends TestBatchMovingAverage {
   }
 
   it should "present correctly" in {
-    CenteredMovingAverage(2, Locate.AppendRemainderDimension[Position1D, Position1D](First))
+    CenteredMovingAverage(2, Locate.AppendRemainderDimension[Position1D, Position1D, Position2D](First))
       .present(sel, (Position1D("2006"), 6.6)) shouldBe createCell("2006", 6.6)
   }
 }
@@ -174,31 +174,32 @@ class TestCenteredMovingAverage extends TestBatchMovingAverage {
 class TestWeightedMovingAverage extends TestBatchMovingAverage {
 
   "A WeightedMovingAverage" should "prepare correctly" in {
-    WeightedMovingAverage(1, Locate.AppendRemainderDimension[Position1D, Position2D](First), false)
+    WeightedMovingAverage(1, Locate.AppendRemainderDimension[Position1D, Position2D, Position2D](First), false)
       .prepare(cell) shouldBe (in)
   }
 
   it should "initialise correctly" in {
-    WeightedMovingAverage(1, Locate.AppendRemainderDimension[Position1D, Position2D](First), false)
+    WeightedMovingAverage(1, Locate.AppendRemainderDimension[Position1D, Position2D, Position2D](First), false)
       .initialise(rem, in) shouldBe ((List(first), List()))
-    WeightedMovingAverage(1, Locate.AppendRemainderDimension[Position1D, Position2D](First), true)
+    WeightedMovingAverage(1, Locate.AppendRemainderDimension[Position1D, Position2D, Position2D](First), true)
       .initialise(rem, in) shouldBe ((List(first), List((rem, in))))
-    WeightedMovingAverage(1, Locate.AppendRemainderDimension[Position1D, Position2D](Second), false)
+    WeightedMovingAverage(1, Locate.AppendRemainderDimension[Position1D, Position2D, Position2D](Second), false)
       .initialise(rem, in) shouldBe ((List(second), List()))
-    WeightedMovingAverage(1, Locate.AppendRemainderDimension[Position1D, Position2D](Second), true)
+    WeightedMovingAverage(1, Locate.AppendRemainderDimension[Position1D, Position2D, Position2D](Second), true)
       .initialise(rem, in) shouldBe ((List(second), List((rem, in))))
-    WeightedMovingAverage(5, Locate.AppendRemainderDimension[Position1D, Position2D](First), false)
+    WeightedMovingAverage(5, Locate.AppendRemainderDimension[Position1D, Position2D, Position2D](First), false)
       .initialise(rem, in) shouldBe ((List(first), List()))
-    WeightedMovingAverage(5, Locate.AppendRemainderDimension[Position1D, Position2D](First), true)
+    WeightedMovingAverage(5, Locate.AppendRemainderDimension[Position1D, Position2D, Position2D](First), true)
       .initialise(rem, in) shouldBe ((List(first), List((rem, in))))
-    WeightedMovingAverage(5, Locate.AppendRemainderDimension[Position1D, Position2D](Second), false)
+    WeightedMovingAverage(5, Locate.AppendRemainderDimension[Position1D, Position2D, Position2D](Second), false)
       .initialise(rem, in) shouldBe ((List(second), List()))
-    WeightedMovingAverage(5, Locate.AppendRemainderDimension[Position1D, Position2D](Second), true)
+    WeightedMovingAverage(5, Locate.AppendRemainderDimension[Position1D, Position2D, Position2D](Second), true)
       .initialise(rem, in) shouldBe ((List(second), List((rem, in))))
   }
 
   it should "update correctly" in {
-    val obj = WeightedMovingAverage(5, Locate.AppendRemainderDimension[Position1D, Position1D](First), false)
+    val obj = WeightedMovingAverage(5, Locate.AppendRemainderDimension[Position1D, Position1D, Position2D](First),
+      false)
 
     val init = obj.initialise(Position1D("2003"), 4.0)
     init shouldBe ((List((Position1D("2003"), 4.0)), List()))
@@ -223,7 +224,8 @@ class TestWeightedMovingAverage extends TestBatchMovingAverage {
   }
 
   it should "update all correctly" in {
-    val obj = WeightedMovingAverage(5, Locate.AppendRemainderDimension[Position1D, Position1D](First), true)
+    val obj = WeightedMovingAverage(5, Locate.AppendRemainderDimension[Position1D, Position1D, Position2D](First),
+      true)
 
     val init = obj.initialise(Position1D("2003"), 4.0)
     init shouldBe ((List((Position1D("2003"), 4.0)), List((Position1D("2003"), 4.0))))
@@ -250,7 +252,7 @@ class TestWeightedMovingAverage extends TestBatchMovingAverage {
   }
 
   it should "present correctly" in {
-    WeightedMovingAverage(5, Locate.AppendRemainderDimension[Position1D, Position1D](First), false)
+    WeightedMovingAverage(5, Locate.AppendRemainderDimension[Position1D, Position1D, Position2D](First), false)
       .present(sel, (Position1D("2008"), 6.733333333333333)) shouldBe createCell("2008", 6.733333333333333)
   }
 }
@@ -273,19 +275,19 @@ trait TestOnlineMovingAverage extends TestGrimlock {
 class TestCumulativeMovingAverage extends TestOnlineMovingAverage {
 
   "A CumulativeMovingAverage" should "prepare correctly" in {
-    CumulativeMovingAverage(Locate.AppendRemainderDimension[Position1D, Position2D](First))
+    CumulativeMovingAverage(Locate.AppendRemainderDimension[Position1D, Position2D, Position2D](First))
       .prepare(cell) shouldBe in
   }
 
   it should "initialise correctly" in {
-    CumulativeMovingAverage(Locate.AppendRemainderDimension[Position1D, Position2D](First))
+    CumulativeMovingAverage(Locate.AppendRemainderDimension[Position1D, Position2D, Position2D](First))
       .initialise(rem, in) shouldBe first
-    CumulativeMovingAverage(Locate.AppendRemainderDimension[Position1D, Position2D](Second))
+    CumulativeMovingAverage(Locate.AppendRemainderDimension[Position1D, Position2D, Position2D](Second))
       .initialise(rem, in) shouldBe second
   }
 
   it should "update correctly" in {
-    val obj = CumulativeMovingAverage(Locate.AppendRemainderDimension[Position0D, Position1D](First))
+    val obj = CumulativeMovingAverage(Locate.AppendRemainderDimension[Position0D, Position1D, Position1D](First))
 
     val init = obj.initialise(Position1D("val.1"), 1.0)
     init shouldBe (((1.0, 1), List((Position1D("val.1"), 1.0))))
@@ -304,7 +306,7 @@ class TestCumulativeMovingAverage extends TestOnlineMovingAverage {
   }
 
   it should "present correctly" in {
-    CumulativeMovingAverage(Locate.AppendRemainderDimension[Position0D, Position1D](First))
+    CumulativeMovingAverage(Locate.AppendRemainderDimension[Position0D, Position1D, Position1D](First))
       .present(sel, (Position1D("val.5"), 3.0)) shouldBe createCell("val.5", 3)
   }
 }
@@ -312,23 +314,23 @@ class TestCumulativeMovingAverage extends TestOnlineMovingAverage {
 class TestExponentialMovingAverage extends TestOnlineMovingAverage {
 
   "A ExponentialMovingAverage" should "prepare correctly" in {
-    ExponentialMovingAverage(3, Locate.AppendRemainderDimension[Position1D, Position2D](First))
+    ExponentialMovingAverage(3, Locate.AppendRemainderDimension[Position1D, Position2D, Position2D](First))
       .prepare(cell) shouldBe in
   }
 
   it should "initialise correctly" in {
-    ExponentialMovingAverage(0.33, Locate.AppendRemainderDimension[Position1D, Position2D](First))
+    ExponentialMovingAverage(0.33, Locate.AppendRemainderDimension[Position1D, Position2D, Position2D](First))
       .initialise(rem, in) shouldBe first
-    ExponentialMovingAverage(3, Locate.AppendRemainderDimension[Position1D, Position2D](First))
+    ExponentialMovingAverage(3, Locate.AppendRemainderDimension[Position1D, Position2D, Position2D](First))
       .initialise(rem, in) shouldBe first
-    ExponentialMovingAverage(0.33, Locate.AppendRemainderDimension[Position1D, Position2D](Second))
+    ExponentialMovingAverage(0.33, Locate.AppendRemainderDimension[Position1D, Position2D, Position2D](Second))
       .initialise(rem, in) shouldBe second
-    ExponentialMovingAverage(3, Locate.AppendRemainderDimension[Position1D, Position2D](Second))
+    ExponentialMovingAverage(3, Locate.AppendRemainderDimension[Position1D, Position2D, Position2D](Second))
       .initialise(rem, in) shouldBe second
   }
 
   it should "update correctly" in {
-    val obj = ExponentialMovingAverage(0.33, Locate.AppendRemainderDimension[Position0D, Position1D](First))
+    val obj = ExponentialMovingAverage(0.33, Locate.AppendRemainderDimension[Position0D, Position1D, Position1D](First))
 
     val init = obj.initialise(Position1D("day.1"), 16.0)
     init shouldBe (((16.0, 1), List((Position1D("day.1"), 16.0))))
@@ -347,7 +349,7 @@ class TestExponentialMovingAverage extends TestOnlineMovingAverage {
   }
 
   it should "present correctly" in {
-    ExponentialMovingAverage(0.33, Locate.AppendRemainderDimension[Position0D, Position1D](First))
+    ExponentialMovingAverage(0.33, Locate.AppendRemainderDimension[Position0D, Position1D, Position1D](First))
       .present(sel, (Position1D("day.5"), 15.250788789999998)) shouldBe createCell("day.5", 15.250788789999998)
   }
 }
@@ -370,18 +372,18 @@ class TestCumulativeSum extends TestWindow {
   }
 
   "A CumulativeSum" should "prepare correctly" in {
-    CumulativeSum(Locate.AppendRemainderString[Position1D, Position2D](), true)
+    CumulativeSum(Locate.AppendRemainderString[Position1D, Position2D, Position2D](), true)
       .prepare(cell1) shouldBe in1
-    CumulativeSum(Locate.AppendRemainderString[Position1D, Position2D](), false)
+    CumulativeSum(Locate.AppendRemainderString[Position1D, Position2D, Position2D](), false)
       .prepare(cell1) shouldBe in1
-    CumulativeSum(Locate.AppendRemainderString[Position1D, Position2D](), true)
+    CumulativeSum(Locate.AppendRemainderString[Position1D, Position2D, Position2D](), true)
       .prepare(cell2).map(_.compare(Double.NaN)) shouldBe (Some(0))
-    CumulativeSum(Locate.AppendRemainderString[Position1D, Position2D](), false)
+    CumulativeSum(Locate.AppendRemainderString[Position1D, Position2D, Position2D](), false)
       .prepare(cell2) shouldBe in2f
   }
 
   it should "initialise correctly" in {
-    val obj = CumulativeSum(Locate.AppendRemainderString[Position1D, Position2D](), true)
+    val obj = CumulativeSum(Locate.AppendRemainderString[Position1D, Position2D, Position2D](), true)
 
     obj.initialise(rem, Some(1.0)) shouldBe ((Some(1.0), List((rem, 1.0))))
     obj.initialise(rem, None) shouldBe ((None, List()))
@@ -392,7 +394,7 @@ class TestCumulativeSum extends TestWindow {
   }
 
   it should "update correctly strict" in {
-    val obj = CumulativeSum(Locate.AppendRemainderString[Position1D, Position2D](), true)
+    val obj = CumulativeSum(Locate.AppendRemainderString[Position1D, Position2D, Position2D](), true)
 
     val init = obj.initialise(rem, in1)
     init shouldBe ((Some(1.0), List((rem, 1.0))))
@@ -410,7 +412,7 @@ class TestCumulativeSum extends TestWindow {
   }
 
   it should "update correctly strict on first" in {
-    val obj = CumulativeSum(Locate.AppendRemainderString[Position1D, Position2D](), true)
+    val obj = CumulativeSum(Locate.AppendRemainderString[Position1D, Position2D, Position2D](), true)
 
     val init = obj.initialise(rem, in2t)
     init._1.map(_.compare(Double.NaN)) shouldBe (Some(0))
@@ -430,7 +432,7 @@ class TestCumulativeSum extends TestWindow {
   }
 
   it should "update correctly non-strict" in {
-    val obj = CumulativeSum(Locate.AppendRemainderString[Position1D, Position2D](), false)
+    val obj = CumulativeSum(Locate.AppendRemainderString[Position1D, Position2D, Position2D](), false)
 
     val init = obj.initialise(rem, in1)
     init shouldBe ((Some(1.0), List((rem, 1.0))))
@@ -446,7 +448,7 @@ class TestCumulativeSum extends TestWindow {
   }
 
   it should "update correctly non-strict on first" in {
-    val obj = CumulativeSum(Locate.AppendRemainderString[Position1D, Position2D](), false)
+    val obj = CumulativeSum(Locate.AppendRemainderString[Position1D, Position2D, Position2D](), false)
 
     val init = obj.initialise(rem, in2f)
     init shouldBe ((None, List()))
@@ -462,7 +464,7 @@ class TestCumulativeSum extends TestWindow {
   }
 
   it should "present correctly strict" in {
-    CumulativeSum(Locate.AppendRemainderString[Position1D, Position2D](), true)
+    CumulativeSum(Locate.AppendRemainderString[Position1D, Position2D, Position2D](), true)
       .present(sel, (rem, 1.0)) shouldBe (createCell(1.0))
   }
 }
@@ -474,32 +476,32 @@ class TestBinOp extends TestWindow {
   }
 
   "A BinOp" should "prepare correctly" in {
-    BinOp(_ + _, Locate.AppendPairwiseString[Position1D, Position2D]("p(%1$s, %2$s)"), true)
+    BinOp(_ + _, Locate.AppendPairwiseString[Position1D, Position2D, Position2D]("p(%1$s, %2$s)"), true)
       .prepare(cell1) shouldBe in1
-    BinOp(_ + _, Locate.AppendPairwiseString[Position1D, Position2D]("p(%1$s, %2$s)"), false)
+    BinOp(_ + _, Locate.AppendPairwiseString[Position1D, Position2D, Position2D]("p(%1$s, %2$s)"), false)
       .prepare(cell1) shouldBe in1
-    BinOp(_ + _, Locate.AppendPairwiseString[Position1D, Position2D]("p(%1$s, %2$s)"), true)
+    BinOp(_ + _, Locate.AppendPairwiseString[Position1D, Position2D, Position2D]("p(%1$s, %2$s)"), true)
       .prepare(cell2).map(_.compare(Double.NaN)) shouldBe (Some(0))
-    BinOp(_ + _, Locate.AppendPairwiseString[Position1D, Position2D]("p(%1$s, %2$s)"), false)
+    BinOp(_ + _, Locate.AppendPairwiseString[Position1D, Position2D, Position2D]("p(%1$s, %2$s)"), false)
       .prepare(cell2) shouldBe in2f
   }
 
   it should "initialise correctly" in {
-    BinOp(_ + _, Locate.AppendPairwiseString[Position1D, Position2D]("p(%1$s, %2$s)"), true)
+    BinOp(_ + _, Locate.AppendPairwiseString[Position1D, Position2D, Position2D]("p(%1$s, %2$s)"), true)
       .initialise(rem, in1) shouldBe (((in1, rem), List()))
-    BinOp(_ + _, Locate.AppendPairwiseString[Position1D, Position2D]("p(%1$s, %2$s)"), false)
+    BinOp(_ + _, Locate.AppendPairwiseString[Position1D, Position2D, Position2D]("p(%1$s, %2$s)"), false)
       .initialise(rem, in1) shouldBe (((in1, rem), List()))
-    val init = BinOp(_ + _, Locate.AppendPairwiseString[Position1D, Position2D]("p(%1$s, %2$s)"), true)
+    val init = BinOp(_ + _, Locate.AppendPairwiseString[Position1D, Position2D, Position2D]("p(%1$s, %2$s)"), true)
       .initialise(rem, in2t)
     init._1._1.map(_.compare(Double.NaN)) shouldBe (Some(0))
     init._1._2 shouldBe (rem)
     init._2 shouldBe (List())
-    BinOp(_ + _, Locate.AppendPairwiseString[Position1D, Position2D]("p(%1$s, %2$s)"), false)
+    BinOp(_ + _, Locate.AppendPairwiseString[Position1D, Position2D, Position2D]("p(%1$s, %2$s)"), false)
       .initialise(rem, in2f) shouldBe (((None, rem), List()))
   }
 
   it should "update correctly strict" in {
-    val obj = BinOp(_ + _, Locate.AppendPairwiseString[Position1D, Position2D]("p(%1$s, %2$s)"), true)
+    val obj = BinOp(_ + _, Locate.AppendPairwiseString[Position1D, Position2D, Position2D]("p(%1$s, %2$s)"), true)
 
     val init = obj.initialise(rem, in1)
     init shouldBe (((Some(1.0), rem), List()))
@@ -519,7 +521,7 @@ class TestBinOp extends TestWindow {
   }
 
   it should "update correctly strict on first" in {
-    val obj = BinOp(_ + _, Locate.AppendPairwiseString[Position1D, Position2D]("p(%1$s, %2$s)"), true)
+    val obj = BinOp(_ + _, Locate.AppendPairwiseString[Position1D, Position2D, Position2D]("p(%1$s, %2$s)"), true)
 
     val init = obj.initialise(rem, in2t)
     init._1._1.map(_.compare(Double.NaN)) shouldBe (Some(0))
@@ -543,7 +545,7 @@ class TestBinOp extends TestWindow {
   }
 
   it should "update correctly non-strict" in {
-    val obj = BinOp(_ + _, Locate.AppendPairwiseString[Position1D, Position2D]("p(%1$s, %2$s)"), false)
+    val obj = BinOp(_ + _, Locate.AppendPairwiseString[Position1D, Position2D, Position2D]("p(%1$s, %2$s)"), false)
 
     val init = obj.initialise(rem, in1)
     init shouldBe (((Some(1.0), rem), List()))
@@ -559,7 +561,7 @@ class TestBinOp extends TestWindow {
   }
 
   it should "update correctly non-strict on first" in {
-    val obj = BinOp(_ + _, Locate.AppendPairwiseString[Position1D, Position2D]("p(%1$s, %2$s)"), false)
+    val obj = BinOp(_ + _, Locate.AppendPairwiseString[Position1D, Position2D, Position2D]("p(%1$s, %2$s)"), false)
 
     val init = obj.initialise(rem, in2f)
     init shouldBe (((None, rem), List()))
@@ -575,7 +577,7 @@ class TestBinOp extends TestWindow {
   }
 
   it should "present correctly" in {
-    BinOp(_ + _, Locate.AppendPairwiseString[Position1D, Position2D]("p(%1$s, %2$s)"), false)
+    BinOp(_ + _, Locate.AppendPairwiseString[Position1D, Position2D, Position2D]("p(%1$s, %2$s)"), false)
       .present(sel, (1.0, rem, rem)) shouldBe createCell(1.0)
   }
 }
@@ -589,9 +591,9 @@ class TestCombinationWindow extends TestGrimlock {
   "A CombinationWindow" should "present correctly" in {
     val sel = Position1D("sales")
     val obj = Windowable.LW2W[Position2D, Position1D, Position1D, Position2D](List(
-      SimpleMovingAverage(5, Locate.AppendRemainderDimension[Position1D, Position1D](First), false)
+      SimpleMovingAverage(5, Locate.AppendRemainderDimension[Position1D, Position1D, Position2D](First), false)
         .andThenRelocate(renamer("%1$s.simple")),
-      WeightedMovingAverage(5, Locate.AppendRemainderDimension[Position1D, Position1D](First), false)
+      WeightedMovingAverage(5, Locate.AppendRemainderDimension[Position1D, Position1D, Position2D](First), false)
         .andThenRelocate(renamer("%1$s.weighted"))))()
 
     val prep3 = obj.prepare(Cell(Position2D("sales", "2003"), createContent(4)))
