@@ -909,7 +909,7 @@ object TestSpark26 {
 
     left
       .pairwiseBetween(Over(First), All, right,
-        Times(Locate.PrependPairwiseSelectedStringToRemainder[Position2D](Over(First), "(%1$s*%2$s)")))
+        Times(Locate.PrependPairwiseSelectedStringToRemainder[Position1D, Position2D, Position1D, Position1D, Position2D](Over(First), "(%1$s*%2$s)")))
       .saveAsText(s"./tmp.${tool}/alg.out")
       .toUnit
   }
@@ -926,35 +926,35 @@ object TestSpark27 {
     loadText(path + "/simMovAvgInputfile.txt", Cell.parse2D(first = LongCodec))
       .data
       .slide(Over(Second), SimpleMovingAverage[Position2D, Position1D, Position1D, Position2D](5,
-        Locate.AppendRemainderDimension[Position1D, Position1D](First)))
+        Locate.AppendRemainderDimension[Position1D, Position1D, Position2D](First)))
       .saveAsText(s"./tmp.${tool}/sma1.out")
       .toUnit
 
     loadText(path + "/simMovAvgInputfile.txt", Cell.parse2D(first = LongCodec))
       .data
       .slide(Over(Second), SimpleMovingAverage[Position2D, Position1D, Position1D, Position2D](5,
-        Locate.AppendRemainderDimension[Position1D, Position1D](First), all = true))
+        Locate.AppendRemainderDimension[Position1D, Position1D, Position2D](First), all = true))
       .saveAsText(s"./tmp.${tool}/sma2.out")
       .toUnit
 
     loadText(path + "/simMovAvgInputfile.txt", Cell.parse2D(first = LongCodec))
       .data
       .slide(Over(Second), CenteredMovingAverage[Position2D, Position1D, Position1D, Position2D](2,
-        Locate.AppendRemainderDimension[Position1D, Position1D](First)))
+        Locate.AppendRemainderDimension[Position1D, Position1D, Position2D](First)))
       .saveAsText(s"./tmp.${tool}/tma.out")
       .toUnit
 
     loadText(path + "/simMovAvgInputfile.txt", Cell.parse2D(first = LongCodec))
       .data
       .slide(Over(Second), WeightedMovingAverage[Position2D, Position1D, Position1D, Position2D](5,
-        Locate.AppendRemainderDimension[Position1D, Position1D](First)))
+        Locate.AppendRemainderDimension[Position1D, Position1D, Position2D](First)))
       .saveAsText(s"./tmp.${tool}/wma1.out")
       .toUnit
 
     loadText(path + "/simMovAvgInputfile.txt", Cell.parse2D(first = LongCodec))
       .data
       .slide(Over(Second), WeightedMovingAverage[Position2D, Position1D, Position1D, Position2D](5,
-        Locate.AppendRemainderDimension[Position1D, Position1D](First), all = true))
+        Locate.AppendRemainderDimension[Position1D, Position1D, Position2D](First), all = true))
       .saveAsText(s"./tmp.${tool}/wma2.out")
       .toUnit
 
@@ -963,7 +963,7 @@ object TestSpark27 {
     loadText(path + "/cumMovAvgInputfile.txt", Cell.parse1D())
       .data
       .slide(Along(First), CumulativeMovingAverage[Position1D, Position0D, Position1D, Position1D](
-        Locate.AppendRemainderDimension[Position0D, Position1D](First)))
+        Locate.AppendRemainderDimension[Position0D, Position1D, Position1D](First)))
       .saveAsText(s"./tmp.${tool}/cma.out")
       .toUnit
 
@@ -972,7 +972,7 @@ object TestSpark27 {
     loadText(path + "/expMovAvgInputfile.txt", Cell.parse1D())
       .data
       .slide(Along(First), ExponentialMovingAverage[Position1D, Position0D, Position1D, Position1D](0.33,
-        Locate.AppendRemainderDimension[Position0D, Position1D](First)))
+        Locate.AppendRemainderDimension[Position0D, Position1D, Position1D](First)))
       .saveAsText(s"./tmp.${tool}/ema.out")
       .toUnit
   }

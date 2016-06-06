@@ -59,7 +59,7 @@ object LabelWeighting {
 
     // Compute histogram over the label values.
     val histogram = labels
-      .histogram(Along(First), Locate.AppendContentString[Position0D](), false)
+      .histogram(Along(First), Locate.AppendContentString[Position0D, Position1D](), false)
 
     // Compute the total number of labels and compact result into a Map.
     val sum = labels

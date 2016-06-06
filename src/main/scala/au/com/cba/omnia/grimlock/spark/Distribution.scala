@@ -34,7 +34,7 @@ import scala.reflect.ClassTag
 import shapeless.=:!=
 
 trait ApproximateDistribution[
-  L <: Position[L] with ReduceablePosition[L, P],
+  L <: Position[L] with ExpandablePosition[L, P],
   P <: Position[P] with ReduceablePosition[P, L] with CompactablePosition[P]
 ] extends FwApproximateDistribution[L, P] { self: Matrix[L, P] =>
 
