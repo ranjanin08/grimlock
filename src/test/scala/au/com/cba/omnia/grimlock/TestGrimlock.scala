@@ -38,7 +38,7 @@ trait TestGrimlock extends FlatSpec with Matchers {
   implicit val scaldingCtx = au.com.cba.omnia.grimlock.scalding.environment.Context()
   implicit val sparkCtx = au.com.cba.omnia.grimlock.spark.environment.Context(TestGrimlock.spark)
 
-  implicit def PositionOrdering[T <: Position] = Position.Ordering[T]()
+  implicit def PositionOrdering[T <: Position[T]] = Position.Ordering[T]()
 
   def toRDD[T](list: List[T])(implicit ev: ClassTag[T]): RDD[T] = TestGrimlock.spark.parallelize(list)
   def toPipe[T](list: List[T]): TypedPipe[T] = IterablePipe(list)

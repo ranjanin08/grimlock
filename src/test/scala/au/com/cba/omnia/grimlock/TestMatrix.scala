@@ -1333,7 +1333,7 @@ trait TestMatrixWhich extends TestMatrix {
 
 object TestMatrixWhich {
 
-  def predicate[P <: Position](cell: Cell[P]): Boolean = {
+  def predicate[P <: Position[P]](cell: Cell[P]): Boolean = {
     (cell.content.schema == NominalSchema[String]()) ||
     (cell.content.value.codec.isInstanceOf[DateCodec]) ||
     (cell.content.value equ "12.56")
@@ -2371,7 +2371,7 @@ trait TestMatrixSummarise extends TestMatrix {
 }
 
 object TestMatrixSummarise {
-  case class ExtractWithName[P <: Position](dim: Dimension, name: String)
+  case class ExtractWithName[P <: Position[P]](dim: Dimension, name: String)
     extends Extract[P, Map[Position1D, Double], Double] {
     def extract(cell: Cell[P], ext: Map[Position1D, Double]): Option[Double] = {
       ext.get(Position1D(name.format(cell.position(dim).toShortString)))
@@ -3074,16 +3074,16 @@ trait TestMatrixSplit extends TestMatrix {
 
 object TestMatrixSplit {
 
-  case class TestPartitioner[P <: Position](dim: Dimension) extends Partitioner[P, String] {
+  case class TestPartitioner[P <: Position[P]](dim: Dimension) extends Partitioner[P, String] {
     def assign(cell: Cell[P]): TraversableOnce[String] = Some(cell.position(dim).toShortString)
   }
 
-  case class TestPartitionerWithValue[P <: Position]() extends PartitionerWithValue[P, String] {
+  case class TestPartitionerWithValue[P <: Position[P]]() extends PartitionerWithValue[P, String] {
     type V = Dimension
     def assignWithValue(cell: Cell[P], ext: V): TraversableOnce[String] = Some(cell.position(ext).toShortString)
   }
 
-  def TupleOrdering[P <: Position]() = new Ordering[(String, Cell[P])] {
+  def TupleOrdering[P <: Position[P]]() = new Ordering[(String, Cell[P])] {
     def compare(x: (String, Cell[P]), y: (String, Cell[P])): Int = {
       x._1.compare(y._1) match {
         case cmp if (cmp == 0) => x._2.position.compare(y._2.position)
@@ -3282,13 +3282,13 @@ trait TestMatrixSubset extends TestMatrix {
 
 object TestMatrixSubset {
 
-  case class TestSampler[P <: Position]() extends Sampler[P] {
+  case class TestSampler[P <: Position[P]]() extends Sampler[P] {
     def select(cell: Cell[P]): Boolean = {
       cell.position.coordinates.contains(StringValue("foo")) || cell.position.coordinates.contains(LongValue(2))
     }
   }
 
-  case class TestSamplerWithValue[P <: Position]() extends SamplerWithValue[P] {
+  case class TestSamplerWithValue[P <: Position[P]]() extends SamplerWithValue[P] {
     type V = String
     def selectWithValue(cell: Cell[P], ext: V): Boolean = cell.position.coordinates.contains(StringValue(ext))
   }
@@ -4885,18 +4885,30 @@ trait TestMatrixPairwise extends TestMatrix {
     Cell(Position2D("(qux|1+baz|1)", "xyz"), Content(ContinuousSchema[Double](), 12.56 + 4 + 1)),
     Cell(Position2D("(qux|1+baz|2)", "xyz"), Content(ContinuousSchema[Double](), 12.56 + 5 + 1)))
 
-  def plus[P <: Position with ReduceablePosition](slice: Slice[P]) = {
-    Locate.PrependPairwiseSelectedStringToRemainder[P](slice, "(%1$s+%2$s)")
+  def plus[
+    L <: Position[L] with ExpandablePosition[L, P],
+    P <: Position[P] with ReduceablePosition[P, L],
+    S <: Position[S] with ExpandablePosition[S, _],
+    R <: Position[R] with ExpandablePosition[R, M],
+    M <: Position[M] with ReduceablePosition[M, R]
+  ](slice: Slice[L, P, S, R]) = {
+    Locate.PrependPairwiseSelectedStringToRemainder[P, S, R, M](slice, "(%1$s+%2$s)")
   }
 
-  def minus[P <: Position with ReduceablePosition](slice: Slice[P]) = {
-    Locate.PrependPairwiseSelectedStringToRemainder[P](slice, "(%1$s-%2$s)")
+  def minus[
+    L <: Position[L] with ExpandablePosition[L, P],
+    P <: Position[P] with ReduceablePosition[P, L],
+    S <: Position[S] with ExpandablePosition[S, _],
+    R <: Position[R] with ExpandablePosition[R, M],
+    M <: Position[M] with ReduceablePosition[M, R]
+  ](slice: Slice[L, P, S, R]) = {
+    Locate.PrependPairwiseSelectedStringToRemainder[P, S, R, M](slice, "(%1$s-%2$s)")
   }
 }
 
 object TestMatrixPairwise {
 
-  case class PlusX[P <: Position, Q <: Position](pos: Locate.FromPairwiseCells[P, Q]) extends OperatorWithValue[P, Q] {
+  case class PlusX[P <: Position[P], Q <: Position[Q]](pos: Locate.FromPairwiseCells[P, Q]) extends OperatorWithValue[P, Q] {
     type V = Double
 
     val plus = Plus(pos)
@@ -4908,7 +4920,7 @@ object TestMatrixPairwise {
     }
   }
 
-  case class MinusX[P <: Position, Q <: Position](pos: Locate.FromPairwiseCells[P, Q]) extends OperatorWithValue[P, Q] {
+  case class MinusX[P <: Position[P], Q <: Position[Q]](pos: Locate.FromPairwiseCells[P, Q]) extends OperatorWithValue[P, Q] {
     type V = Double
 
     val minus = Minus(pos)
@@ -6226,7 +6238,7 @@ trait TestMatrixTransform extends TestMatrix {
 
   type W = Map[Position1D, Map[Position1D, Content]]
 
-  def extractor[P <: Position](dim: Dimension, key: String)(implicit ev: PosDimDep[P, dim.type]) = {
+  def extractor[P <: Position[P]](dim: Dimension, key: String)(implicit ev: PosDimDep[P, dim.type]) = {
     ExtractWithDimensionAndKey[P, Content](dim, key).andThenPresent(_.value.asDouble)
   }
 }
@@ -6628,7 +6640,7 @@ trait TestMatrixSlide extends TestMatrix {
 
 object TestMatrixSlide {
 
-  case class Delta[P <: Position, S <: Position with ExpandablePosition, R <: Position with ExpandablePosition](
+  case class Delta[P <: Position[P], S <: Position[S] with ExpandablePosition[S, _], R <: Position[R] with ExpandablePosition[R, _]](
     times: Int) extends Window[P, S, R, S#M] {
     type I = Option[Double]
     type T = (Option[Double], R)
@@ -6651,7 +6663,7 @@ object TestMatrixSlide {
     }
   }
 
-  case class DeltaWithValue[P <: Position, S <: Position with ExpandablePosition, R <: Position with ExpandablePosition](
+  case class DeltaWithValue[P <: Position[P], S <: Position[S] with ExpandablePosition[S, _], R <: Position[R] with ExpandablePosition[R, _]](
     key: String) extends WindowWithValue[P, S, R, S#M] {
     type V = Map[String, Int]
     type I = Option[Double]
@@ -7592,11 +7604,11 @@ trait TestMatrixRename extends TestMatrix {
 
 object TestMatrixRename {
 
-  def renamer[P <: Position](dim: Dimension)(cell: Cell[P]): Option[P] = {
+  def renamer[P <: Position[P]](dim: Dimension)(cell: Cell[P]): Option[P] = {
     Some(cell.position.update(dim, cell.position(dim).toShortString + ".new"))
   }
 
-  def renamerWithValue[P <: Position](dim: Dimension)(cell: Cell[P], ext: String): Option[P] = {
+  def renamerWithValue[P <: Position[P]](dim: Dimension)(cell: Cell[P], ext: String): Option[P] = {
     Some(cell.position.update(dim, cell.position(dim).toShortString + ext))
   }
 }
@@ -7830,7 +7842,7 @@ trait TestMatrixSquash extends TestMatrix {
 
 object TestMatrixSquash {
 
-  case class PreservingMaxPositionWithValue[P <: Position]() extends SquasherWithValue[P] {
+  case class PreservingMaxPositionWithValue[P <: Position[P]]() extends SquasherWithValue[P] {
     type V = String
 
     val squasher = PreservingMaxPosition[P]()
@@ -8672,7 +8684,7 @@ object TestMatrixToVector {
 
   val separator = ":"
 
-  def melt[P <: Position](coords: List[Value]): Valueable = coords.map(_.toShortString).mkString(separator)
+  def melt[P <: Position[P]](coords: List[Value]): Valueable = coords.map(_.toShortString).mkString(separator)
 }
 
 class TestScaldingMatrixToVector extends TestMatrixToVector {
@@ -8847,7 +8859,10 @@ trait TestMatrixReshape extends TestMatrix {
 }
 
 object TestMatrixReshape {
-  def cast[P <: Position with ExpandablePosition](cell: Cell[P], value: Option[Value]): Option[P#M] = {
+  def cast[
+    P <: Position[P] with ExpandablePosition[P, M],
+    M <: Position[M] with ReduceablePosition[M, P]
+  ](cell: Cell[P], value: Option[Value]): Option[M] = {
     Some(cell.position.append(value match {
       case Some(v) => v.toShortString
       case None => "NA"

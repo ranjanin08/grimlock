@@ -44,7 +44,7 @@ class TestAppendValue extends TestGrimlock {
   val cell = Cell(Position1D("foo"), Content(ContinuousSchema[Double](), 1.0))
 
   "A AppendValue" should "extract" in {
-    Locate.AppendValue[Position1D](42)(cell) shouldBe (Some(Position2D("foo", 42)))
+    Locate.AppendValue[Position1D, Position2D](42)(cell) shouldBe (Some(Position2D("foo", 42)))
   }
 }
 
@@ -54,17 +54,17 @@ class TestPrependPairwiseSelectedStringToRemainder extends TestGrimlock {
   val right = Cell(Position3D("right", "def", 456), Content(ContinuousSchema[Double](), 2.0))
 
   "A PrependPairwiseSelectedToRemainder" should "extract with all" in {
-    Locate.PrependPairwiseSelectedStringToRemainder[Position3D](Over(First), "%1$s-%2$s", false)(left, right) shouldBe
-      (None)
-    Locate.PrependPairwiseSelectedStringToRemainder[Position3D](Over(First), "%1$s-%2$s", false)(right, right) shouldBe
-      (Some(Position3D("right-right", "def", 456)))
+    Locate.PrependPairwiseSelectedStringToRemainder[Position3D, Position1D, Position2D, Position3D](Over(First),
+      "%1$s-%2$s", false)(left, right) shouldBe (None)
+    Locate.PrependPairwiseSelectedStringToRemainder[Position3D, Position1D, Position2D, Position3D](Over(First),
+      "%1$s-%2$s", false)(right, right) shouldBe (Some(Position3D("right-right", "def", 456)))
   }
 
   it should "extract with non-all" in {
-    Locate.PrependPairwiseSelectedStringToRemainder[Position3D](Over(First), "%1$s-%2$s", true)(left, right) shouldBe
-      (Some(Position3D("left-right", "abc", 123)))
-    Locate.PrependPairwiseSelectedStringToRemainder[Position3D](Over(First), "%1$s-%2$s", true)(right, left) shouldBe
-      (Some(Position3D("right-left", "def", 456)))
+    Locate.PrependPairwiseSelectedStringToRemainder[Position3D, Position1D, Position2D, Position3D](Over(First),
+      "%1$s-%2$s", true)(left, right) shouldBe (Some(Position3D("left-right", "abc", 123)))
+    Locate.PrependPairwiseSelectedStringToRemainder[Position3D, Position1D, Position2D, Position3D](Over(First),
+      "%1$s-%2$s", true)(right, left) shouldBe (Some(Position3D("right-left", "def", 456)))
   }
 }
 
@@ -74,9 +74,9 @@ class TestAppendRemainderDimension extends TestGrimlock {
   val rem = Position2D("abc", 123)
 
   "A AppendRemainderDimension" should "extract" in {
-    val loc1 = Locate.AppendRemainderDimension[Position1D, Position2D](First)
+    val loc1 = Locate.AppendRemainderDimension[Position1D, Position2D, Position2D](First)
     loc1(sel, rem) shouldBe (Some(Position2D("foo", "abc")))
-    val loc2 = Locate.AppendRemainderDimension[Position1D, Position2D](Second)
+    val loc2 = Locate.AppendRemainderDimension[Position1D, Position2D, Position2D](Second)
     loc2(sel, rem) shouldBe (Some(Position2D("foo", 123)))
   }
 }
@@ -87,7 +87,8 @@ class TestAppendRemainderString extends TestGrimlock {
   val rem = Position2D("abc", 123)
 
   "A AppendRemainderString" should "extract" in {
-    Locate.AppendRemainderString[Position1D, Position2D](":")(sel, rem) shouldBe (Some(Position2D("foo", "abc:123")))
+    Locate.AppendRemainderString[Position1D, Position2D, Position2D](":")(sel,
+      rem) shouldBe (Some(Position2D("foo", "abc:123")))
   }
 }
 
@@ -98,7 +99,7 @@ class TestAppendPairwiseString extends TestGrimlock {
   val prev = Position2D("def", 456)
 
   "A AppendPairwiseString" should "extract" in {
-    Locate.AppendPairwiseString[Position1D, Position2D]("g(%2$s, %1$s)", ":")(sel, curr, prev) shouldBe
+    Locate.AppendPairwiseString[Position1D, Position2D, Position2D]("g(%2$s, %1$s)", ":")(sel, curr, prev) shouldBe
       (Some(Position2D("foo", "g(abc:123, def:456)")))
   }
 }
@@ -108,7 +109,8 @@ class TestAppendDoubleString extends TestGrimlock {
   val pos = Position1D("foo")
 
   "A AppendDoubleString" should "extract" in {
-    Locate.AppendDoubleString[Position1D]("value=%1$s")(pos, 42) shouldBe (Some(Position2D("foo", "value=42.0")))
+    Locate.AppendDoubleString[Position1D, Position2D]("value=%1$s")(pos,
+      42) shouldBe (Some(Position2D("foo", "value=42.0")))
   }
 }
 
@@ -118,7 +120,7 @@ class TestAppendContentString extends TestGrimlock {
   val con = Content(DiscreteSchema[Long](), 42)
 
   "A AppendContentString" should "extract" in {
-    Locate.AppendContentString[Position1D]()(pos, con) shouldBe (Some(Position2D("foo", "42")))
+    Locate.AppendContentString[Position1D, Position2D]()(pos, con) shouldBe (Some(Position2D("foo", "42")))
   }
 }
 
@@ -128,7 +130,7 @@ class TestAppendDimensionAndContentString extends TestGrimlock {
   val con = Content(DiscreteSchema[Long](), 42)
 
   "A AppendDimensionAndContentString" should "extract" in {
-    val loc = Locate.AppendDimensionAndContentString[Position1D](First, "%2$s!=%1$s")
+    val loc = Locate.AppendDimensionAndContentString[Position1D, Position2D](First, "%2$s!=%1$s")
     loc(pos, con) shouldBe (Some(Position2D("foo", "42!=foo")))
   }
 }
