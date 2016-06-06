@@ -78,45 +78,45 @@ class MutualInformation(args: Args) extends Job(args) {
 
   // Compute histogram on the data.
   val mhist = data
-    .histogram(Along(First), Locate.AppendContentString[Position1D, Position2D](), false)
+    .histogram(Along[Position1D, Position2D](First), Locate.AppendContentString[Position1D, Position2D](), false)
 
   // Compute count of histogram elements.
   val mcount = mhist
-    .summarise(Over(First), Sum[Position2D, Position1D]())
+    .summarise(Over[Position1D, Position2D](First), Sum[Position2D, Position1D]())
     .compact()
 
   // Compute sum of marginal entropy
   // 1/ Compute the marginal entropy over the features (second dimension).
   // 2/ Compute pairwise sum of marginal entropies for all upper triangular values.
   val marginal = mhist
-    .summariseWithValue(Over(First), Entropy[Position2D, Position1D, W](extractor)
+    .summariseWithValue(Over[Position1D, Position2D](First), Entropy[Position2D, Position1D, W](extractor)
       .andThenRelocate(_.position.append("marginal").toOption), mcount)
-    .pairwise(Over(First), Upper,
-      Plus(Locate.PrependPairwiseSelectedStringToRemainder[Position1D, Position2D, Position1D, Position1D, Position2D](Over(First), "%s,%s")))
+    .pairwise(Over[Position1D, Position2D](First), Upper,
+      Plus(Locate.PrependPairwiseSelectedStringToRemainder[Position2D, Position1D, Position1D, Position2D](Over[Position1D, Position2D](First), "%s,%s")))
 
   // Compute histogram on pairwise data.
   // 1/ Generate pairwise values for all upper triangular values.
   // 2/ Compute histogram on pairwise values.
   val jhist = data
-    .pairwise(Over(Second), Upper,
-      Concatenate(Locate.PrependPairwiseSelectedStringToRemainder[Position1D, Position2D, Position1D, Position1D, Position2D](Over(Second), "%s,%s")))
-    .histogram(Along(Second), Locate.AppendContentString[Position1D, Position2D](), false)
+    .pairwise(Over[Position1D, Position2D](Second), Upper,
+      Concatenate(Locate.PrependPairwiseSelectedStringToRemainder[Position2D, Position1D, Position1D, Position2D](Over[Position1D, Position2D](Second), "%s,%s")))
+    .histogram(Along[Position1D, Position2D](Second), Locate.AppendContentString[Position1D, Position2D](), false)
 
   // Compute count of histogram elements.
   val jcount = jhist
-    .summarise(Over(First), Sum[Position2D, Position1D]())
+    .summarise(Over[Position1D, Position2D](First), Sum[Position2D, Position1D]())
     .compact()
 
   // Compute joint entropy
   val joint = jhist
-    .summariseWithValue(Over(First), Entropy[Position2D, Position1D, W](extractor, negate = true)
+    .summariseWithValue(Over[Position1D, Position2D](First), Entropy[Position2D, Position1D, W](extractor, negate = true)
       .andThenRelocate(_.position.append("joint").toOption), jcount)
 
   // Generate mutual information
   // 1/ Sum marginal and negated joint entropy
   // 2/ Persist mutual information.
   (marginal ++ joint)
-    .summarise(Over(First), Sum[Position2D, Position1D]())
+    .summarise(Over[Position1D, Position2D](First), Sum[Position2D, Position1D]())
     .saveAsText(s"./demo.${output}/mi.out")
     .toUnit
 }

@@ -85,7 +85,7 @@ class DerivedData(args: Args) extends Job(args) {
   // 5/ Persist 2D gradient features.
   loadText(s"${path}/exampleDerived.txt", Cell.parse3D(third = DateCodec()))
     .data
-    .slide(Along(Third), Gradient(Third))
+    .slide(Along[Position2D, Position3D](Third), Gradient(Third))
     .melt(Third, Second, Value.concatenate(".from."))
     .saveAsText(s"./demo.${output}/gradient.out")
     .toUnit

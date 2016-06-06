@@ -36,11 +36,10 @@ import shapeless.=:!=
  * @param data The `RDD[Position]`.
  */
 case class Positions[
-  L <: Position[L] with ExpandablePosition[L, P],
-  P <: Position[P] with ReduceablePosition[P, L]
+  P <: Position[P] with ReduceablePosition[P, _]
 ](
   data: RDD[P]
-) extends FwPositions[L, P] with Persist[P] {
+) extends FwPositions[P] with Persist[P] {
 
   import SparkImplicits._
 
@@ -50,7 +49,7 @@ case class Positions[
     R <: Position[R] with ExpandablePosition[R, _],
     T <: Tuner : NamesTuners
   ](
-    slice: Slice[L, P, S, R],
+    slice: Slice[P, S, R],
     tuner: T = Default()
   )(implicit
     ev1: S =:!= Position0D,
@@ -70,11 +69,10 @@ case class Positions[
 object Positions {
   /** Converts a `RDD[Position]` to a Spark `Positions`. */
   implicit def RDDP2RDDP[
-    L <: Position[L] with ExpandablePosition[L, P],
-    P <: Position[P] with ReduceablePosition[P, L]
+    P <: Position[P] with ReduceablePosition[P, _]
   ](
     data: RDD[P]
-  ): Positions[L, P] = Positions(data)
+  ): Positions[P] = Positions(data)
 }
 
 /** Spark Companion object for the `PositionDistributable` type class. */

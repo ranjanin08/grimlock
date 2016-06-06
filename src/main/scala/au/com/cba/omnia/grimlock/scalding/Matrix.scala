@@ -161,11 +161,9 @@ private[scalding] object ScaldingImplicits {
 
 /** Base trait for matrix operations using a `TypedPipe[Cell[P]]`. */
 trait Matrix[
-  L <: Position[L] with ExpandablePosition[L, P],
-  P <: Position[P] with ReduceablePosition[P, L] with CompactablePosition[P]
-] extends FwMatrix[L, P]
-  with Persist[Cell[P]] with UserData {
-  type M = Matrix[L, P]
+  P <: Position[P] with ReduceablePosition[P, _] with CompactablePosition[P]
+] extends FwMatrix[P] with Persist[Cell[P]] with UserData {
+  type M = Matrix[P]
 
   import ScaldingImplicits._
 
@@ -176,7 +174,7 @@ trait Matrix[
     I,
     T <: Tuner : ChangeTuners
   ](
-    slice: Slice[L, P, S, R],
+    slice: Slice[P, S, R],
     positions: I,
     schema: Content.Parser,
     tuner: T = InMemory()
@@ -219,12 +217,12 @@ trait Matrix[
     R <: Position[R] with ExpandablePosition[R, _],
     T <: Tuner : CompactTuners
   ](
-    slice: Slice[L, P, S, R],
+    slice: Slice[P, S, R],
     tuner: T = Default()
   )(implicit
     ev1: S =:!= Position0D,
     ev2: ClassTag[S],
-    ev3: Compactable[L, P]
+    ev3: Compactable[P]
   ): E[Map[S, P#C[R]]] = {
     val semigroup = new com.twitter.algebird.Semigroup[Map[S, P#C[R]]] {
       def plus(l: Map[S, P#C[R]], r: Map[S, P#C[R]]): Map[S, P#C[R]] = l ++ r
@@ -250,7 +248,7 @@ trait Matrix[
     R <: Position[R] with ExpandablePosition[R, _],
     T <: Tuner : FillHeterogeneousTuners
   ](
-    slice: Slice[L, P, S, R],
+    slice: Slice[P, S, R],
     values: U[Cell[S]],
     tuner: T = Default()
   )(implicit
@@ -338,7 +336,7 @@ trait Matrix[
     R <: Position[R] with ExpandablePosition[R, _],
     T <: Tuner : JoinTuners
   ](
-    slice: Slice[L, P, S, R],
+    slice: Slice[P, S, R],
     that: M,
     tuner: T = Default()
   )(implicit
@@ -388,7 +386,7 @@ trait Matrix[
     R <: Position[R] with ExpandablePosition[R, _],
     T <: Tuner : NamesTuners
   ](
-    slice: Slice[L, P, S, R],
+    slice: Slice[P, S, R],
     tuner: T = Default()
   )(implicit
     ev1: S =:!= Position0D,
@@ -419,7 +417,7 @@ trait Matrix[
     Q <: Position[Q],
     T <: Tuner : PairwiseTuners
   ](
-    slice: Slice[L, P, S, R],
+    slice: Slice[P, S, R],
     comparer: Comparer,
     operators: Operable[P, Q],
     tuner: T = Default()
@@ -441,7 +439,7 @@ trait Matrix[
     W,
     T <: Tuner : PairwiseTuners
   ](
-    slice: Slice[L, P, S, R],
+    slice: Slice[P, S, R],
     comparer: Comparer,
     operators: OperableWithValue[P, Q, W],
     value: E[W],
@@ -464,7 +462,7 @@ trait Matrix[
     Q <: Position[Q],
     T <: Tuner : PairwiseTuners
   ](
-    slice: Slice[L, P, S, R],
+    slice: Slice[P, S, R],
     comparer: Comparer,
     that: M,
     operators: Operable[P, Q],
@@ -487,7 +485,7 @@ trait Matrix[
     W,
     T <: Tuner : PairwiseTuners
   ](
-    slice: Slice[L, P, S, R],
+    slice: Slice[P, S, R],
     comparer: Comparer,
     that: M,
     operators: OperableWithValue[P, Q, W],
@@ -573,7 +571,7 @@ trait Matrix[
     I,
     T <: Tuner : SliceTuners
   ](
-    slice: Slice[L, P, S, R],
+    slice: Slice[P, S, R],
     positions: I,
     keep: Boolean,
     tuner: T = InMemory()
@@ -606,7 +604,7 @@ trait Matrix[
     Q <: Position[Q],
     T <: Tuner : SlideTuners
   ](
-    slice: Slice[L, P, S, R],
+    slice: Slice[P, S, R],
     windows: Windowable[P, S, R, Q],
     ascending: Boolean = true,
     tuner: T = Default()
@@ -647,7 +645,7 @@ trait Matrix[
     W,
     T <: Tuner : SlideTuners
   ](
-    slice: Slice[L, P, S, R],
+    slice: Slice[P, S, R],
     windows: WindowableWithValue[P, S, R, Q, W],
     value: E[W],
     ascending: Boolean = true,
@@ -784,7 +782,7 @@ trait Matrix[
     Q <: Position[Q],
     T <: Tuner : SummariseTuners
   ](
-    slice: Slice[L, P, S, R],
+    slice: Slice[P, S, R],
     aggregators: Aggregatable[P, S, Q],
     tuner: T = Default()
   )(implicit
@@ -816,7 +814,7 @@ trait Matrix[
     W,
     T <: Tuner : SummariseTuners
   ](
-    slice: Slice[L, P, S, R],
+    slice: Slice[P, S, R],
     aggregators: AggregatableWithValue[P, S, Q, W],
     value: E[W],
     tuner: T = Default()
@@ -880,7 +878,7 @@ trait Matrix[
     R <: Position[R] with ExpandablePosition[R, _],
     T <: Tuner : TypesTuners
   ](
-    slice: Slice[L, P, S, R],
+    slice: Slice[P, S, R],
     specific: Boolean,
     tuner: T = Default()
   )(implicit
@@ -907,7 +905,7 @@ trait Matrix[
     R <: Position[R] with ExpandablePosition[R, _],
     T <: Tuner : UniqueTuners
   ](
-    slice: Slice[L, P, S, R],
+    slice: Slice[P, S, R],
     tuner: T = Default()
   )(implicit
     ev1: S =:!= Position0D
@@ -931,7 +929,7 @@ trait Matrix[
     I,
     T <: Tuner : WhichTuners
   ](
-    slice: Slice[L, P, S, R],
+    slice: Slice[P, S, R],
     predicates: I,
     tuner: T = InMemory()
   )(implicit
@@ -967,7 +965,7 @@ trait Matrix[
     S <: Position[S] with ExpandablePosition[S, _],
     R <: Position[R] with ExpandablePosition[R, _]
   ](
-    slice: Slice[L, P, S, R],
+    slice: Slice[P, S, R],
     file: String,
     dictionary: String,
     separator: String
@@ -994,7 +992,7 @@ trait Matrix[
     R <: Position[R] with ExpandablePosition[R, _],
     T <: Tuner : PairwiseTuners
   ](
-    slice: Slice[L, P, S, R],
+    slice: Slice[P, S, R],
     comparer: Comparer,
     tuner: T
   )(
@@ -1056,7 +1054,7 @@ trait Matrix[
 trait ReduceableMatrix[
   L <: Position[L] with ExpandablePosition[L, P],
   P <: Position[P] with ReduceablePosition[P, L] with CompactablePosition[P]
-] extends FwReduceableMatrix[L, P] { self: Matrix[L, P] =>
+] extends FwReduceableMatrix[L, P] { self: Matrix[P] =>
 
   import ScaldingImplicits._
 
@@ -1119,7 +1117,7 @@ trait ReshapeableMatrix[
   L <: Position[L] with ExpandablePosition[L, P],
   P <: Position[P] with ExpandablePosition[P, M] with ReduceablePosition[P, L] with CompactablePosition[P],
   M <: Position[M] with ReduceablePosition[M, P]
-] extends FwReshapeableMatrix[L, P, M] { self: Matrix[L, P] =>
+] extends FwReshapeableMatrix[L, P, M] { self: Matrix[P] =>
 
   import ScaldingImplicits._
 
@@ -1158,7 +1156,7 @@ trait ReshapeableMatrix[
 }
 
 // TODO: Make this work on more than 2D matrices and share with Spark
-trait MatrixDistance { self: Matrix[Position1D, Position2D] with ReduceableMatrix[Position1D, Position2D] =>
+trait MatrixDistance { self: Matrix[Position2D] with ReduceableMatrix[Position1D, Position2D] =>
 
   import au.com.cba.omnia.grimlock.library.aggregate._
   import au.com.cba.omnia.grimlock.library.pairwise._
@@ -1180,7 +1178,7 @@ trait MatrixDistance { self: Matrix[Position1D, Position2D] with ReduceableMatri
     ST <: Tuner : SummariseTuners,
     PT <: Tuner : PairwiseTuners
   ](
-    slice: Slice[Position1D, Position2D, Position1D, Position1D],
+    slice: Slice[Position2D, Position1D, Position1D],
     stuner: ST = Default(),
     ptuner: PT = Default()
   )(implicit
@@ -1188,7 +1186,7 @@ trait MatrixDistance { self: Matrix[Position1D, Position2D] with ReduceableMatri
   ): U[Cell[Position1D]] = {
     val mean = data
       .summarise(slice, Mean[Position2D, Position1D](), stuner)
-      .compact(Over(First))
+      .compact(Over[Position0D, Position1D](First))
 
     implicit object P2D extends PosDimDep[Position2D, slice.dimension.type]
 
@@ -1199,15 +1197,15 @@ trait MatrixDistance { self: Matrix[Position1D, Position2D] with ReduceableMatri
     val denom = centered
       .transform(Power[Position2D](2))
       .summarise(slice, Sum[Position2D, Position1D](), stuner)
-      .pairwise(Over(First), Lower,
-        Times(Locate.PrependPairwiseSelectedStringToRemainder[Position0D, Position1D, Position1D, Position0D, Position1D](Over(First), "(%1$s*%2$s)")), ptuner)
+      .pairwise(Over[Position0D, Position1D](First), Lower,
+        Times(Locate.PrependPairwiseSelectedStringToRemainder[Position1D, Position1D, Position0D, Position1D](Over(First), "(%1$s*%2$s)")), ptuner)
       .transform(SquareRoot[Position1D]())
-      .compact(Over(First))
+      .compact(Over[Position0D, Position1D](First))
 
     centered
       .pairwise(slice, Lower,
-        Times(Locate.PrependPairwiseSelectedStringToRemainder[Position1D, Position2D, Position1D, Position1D, Position2D](slice, "(%1$s*%2$s)")), ptuner)
-      .summarise(Over(First), Sum[Position2D, Position1D](), stuner)
+        Times(Locate.PrependPairwiseSelectedStringToRemainder[Position2D, Position1D, Position1D, Position2D](slice, "(%1$s*%2$s)")), ptuner)
+      .summarise(Over[Position1D, Position2D](First), Sum[Position2D, Position1D](), stuner)
       .transformWithValue(Fraction(ExtractWithDimension[Position1D, Content](First)
         .andThenPresent(_.value.asDouble)), denom)
   }
@@ -1225,7 +1223,7 @@ trait MatrixDistance { self: Matrix[Position1D, Position2D] with ReduceableMatri
     ST <: Tuner : SummariseTuners,
     PT <: Tuner : PairwiseTuners
   ](
-    slice: Slice[Position1D, Position2D, Position1D, Position1D],
+    slice: Slice[Position2D, Position1D, Position1D],
     stuner: ST = Default(),
     ptuner: PT = Default()
   )(implicit
@@ -1245,35 +1243,36 @@ trait MatrixDistance { self: Matrix[Position1D, Position2D] with ReduceableMatri
     val extractor = ExtractWithDimension[Position2D, Content](First).andThenPresent(_.value.asDouble)
 
     val mhist = data
-      .relocate(c => Some(c.position.append(c.content.value.toShortString)))
-      .summarise(Along(dim), Count[Position3D, Position2D](), stuner)
+      .relocate[Position3D](c => Some(c.position.append(c.content.value.toShortString)))
+      .summarise(Along[Position2D, Position3D](dim), Count[Position3D, Position2D](), stuner)
 
     val mcount = mhist
-      .summarise(Over(First), Sum[Position2D, Position1D](), stuner)
+      .summarise(Over[Position1D, Position2D](First), Sum[Position2D, Position1D](), stuner)
       .compact()
 
     val marginal = mhist
-      .summariseWithValue(Over(First), Entropy[Position2D, Position1D, W](extractor)
+      .summariseWithValue(Over[Position1D, Position2D](First), Entropy[Position2D, Position1D, W](extractor)
         .andThenRelocate(_.position.append("marginal").toOption), mcount, stuner)
-      .pairwise(Over(First), Upper,
-        Plus(Locate.PrependPairwiseSelectedStringToRemainder[Position1D, Position2D, Position1D, Position1D, Position2D](Over(First), "%s,%s")), ptuner)
+      .pairwise(Over[Position1D, Position2D](First), Upper,
+        Plus(Locate.PrependPairwiseSelectedStringToRemainder[Position2D, Position1D, Position1D, Position2D](Over(First), "%s,%s")), ptuner)
 
     val jhist = data
       .pairwise(slice, Upper,
-        Concatenate(Locate.PrependPairwiseSelectedStringToRemainder[Position1D, Position2D, Position1D, Position1D, Position2D](slice, "%s,%s")), ptuner)
-      .relocate(c => Some(c.position.append(c.content.value.toShortString)))
-      .summarise(Along(Second), Count[Position3D, Position2D](), stuner)
+        Concatenate(Locate.PrependPairwiseSelectedStringToRemainder[Position2D, Position1D, Position1D, Position2D](slice, "%s,%s")), ptuner)
+      .relocate[Position3D](c => Some(c.position.append(c.content.value.toShortString)))
+      .summarise(Along[Position2D, Position3D](Second), Count[Position3D, Position2D](), stuner)
 
     val jcount = jhist
-      .summarise(Over(First), Sum[Position2D, Position1D](), stuner)
+      .summarise(Over[Position1D, Position2D](First), Sum[Position2D, Position1D](), stuner)
       .compact()
 
     val joint = jhist
-      .summariseWithValue(Over(First), Entropy[Position2D, Position1D, W](extractor, negate = true)
-        .andThenRelocate(_.position.append("joint").toOption), jcount, stuner)
+      .summariseWithValue(Over[Position1D, Position2D](First),
+        Entropy[Position2D, Position1D, W](extractor, negate = true)
+          .andThenRelocate(_.position.append("joint").toOption), jcount, stuner)
 
     (marginal ++ joint)
-      .summarise(Over(First), Sum[Position2D, Position1D](), stuner)
+      .summarise(Over[Position1D, Position2D](First), Sum[Position2D, Position1D](), stuner)
   }
 
   /**
@@ -1291,7 +1290,7 @@ trait MatrixDistance { self: Matrix[Position1D, Position2D] with ReduceableMatri
     WT <: Tuner : SlideTuners,
     PT <: Tuner : PairwiseTuners
   ](
-    slice: Slice[Position1D, Position2D, Position1D, Position1D],
+    slice: Slice[Position2D, Position1D, Position1D],
     stuner: ST = Default(),
     wtuner: WT = Default(),
     ptuner: PT = Default()
@@ -1306,33 +1305,35 @@ trait MatrixDistance { self: Matrix[Position1D, Position2D] with ReduceableMatri
     val pos = data
       .transform(Compare[Position2D](isPositive))
       .summarise(slice, Sum[Position2D, Position1D](false), stuner)
-      .compact(Over(First))
+      .compact(Over[Position0D, Position1D](First))
 
     val neg = data
       .transform(Compare[Position2D](isNegative))
       .summarise(slice, Sum[Position2D, Position1D](false), stuner)
-      .compact(Over(First))
+      .compact(Over[Position0D, Position1D](First))
 
     val tpr = data
       .transform(Compare[Position2D](isPositive))
       .slide(slice, CumulativeSum[Position2D, Position1D, Position1D, Position2D](Locate.AppendRemainderString()),
         true, wtuner)
       .transformWithValue(Fraction(extractor), pos)
-      .slide(Over(First), BinOp[Position2D, Position1D, Position1D, Position2D]((l: Double, r: Double) => r + l,
-        Locate.AppendPairwiseString[Position1D, Position1D, Position2D]("%2$s.%1$s")), true, wtuner)
+      .slide(Over[Position1D, Position2D](First), BinOp[Position2D, Position1D, Position1D, Position2D](
+        (l: Double, r: Double) => r + l, Locate.AppendPairwiseString[Position1D, Position1D, Position2D]("%2$s.%1$s")),
+          true, wtuner)
 
     val fpr = data
       .transform(Compare[Position2D](isNegative))
       .slide(slice, CumulativeSum[Position2D, Position1D, Position1D, Position2D](Locate.AppendRemainderString()),
         true, wtuner)
       .transformWithValue(Fraction(extractor), neg)
-      .slide(Over(First), BinOp[Position2D, Position1D, Position1D, Position2D]((l: Double, r: Double) => r - l,
-        Locate.AppendPairwiseString[Position1D, Position1D, Position2D]("%2$s.%1$s")), true, wtuner)
+      .slide(Over[Position1D, Position2D](First), BinOp[Position2D, Position1D, Position1D, Position2D](
+        (l: Double, r: Double) => r - l, Locate.AppendPairwiseString[Position1D, Position1D, Position2D]("%2$s.%1$s")),
+          true, wtuner)
 
     tpr
-      .pairwiseBetween(Along(First), Diagonal, fpr,
-        Times(Locate.PrependPairwiseSelectedStringToRemainder[Position1D, Position2D, Position1D, Position1D, Position2D](Along(First), "(%1$s*%2$s)")), ptuner)
-      .summarise(Along(First), Sum[Position2D, Position1D](), stuner)
+      .pairwiseBetween(Along[Position1D, Position2D](First), Diagonal, fpr,
+        Times(Locate.PrependPairwiseSelectedStringToRemainder[Position2D, Position1D, Position1D, Position2D](Along(First), "(%1$s*%2$s)")), ptuner)
+      .summarise(Along[Position1D, Position2D](First), Sum[Position2D, Position1D](), stuner)
       .transformWithValue(Subtract(ExtractWithKey[Position1D, Double]("one"), true),
         ValuePipe(Map(Position1D("one") -> 1.0)))
   }
@@ -1539,16 +1540,18 @@ object Matrix extends Consume with DistributedData with Environment {
  * @param data `TypedPipe[Cell[Position1D]]`.
  */
 case class Matrix1D(data: TypedPipe[Cell[Position1D]]) extends FwMatrix1D
-  with Matrix[Position0D, Position1D]
-  with ApproximateDistribution[Position0D, Position1D] {
-  def domain[T <: Tuner : DomainTuners](tuner: T = Default()): U[Position1D] = names(Over(First))
+  with Matrix[Position1D]
+  with ApproximateDistribution[Position1D] {
+  def domain[T <: Tuner : DomainTuners](tuner: T = Default()): U[Position1D] = {
+    names(Over[Position0D, Position1D](First))
+  }
 
   def saveAsIV(file: String, dictionary: String, separator: String)(implicit ctx: C): U[Cell[Position1D]] = {
     import ctx._
 
     data
       .groupBy { case c => c.position }
-      .join(saveDictionary(Over(First), file, dictionary, separator))
+      .join(saveDictionary(Over[Position0D, Position1D](First), file, dictionary, separator))
       .map { case (_, (c, i)) => i + separator + c.content.value.toShortString }
       .write(TypedSink(TextLine(file)))
 
@@ -1562,15 +1565,15 @@ case class Matrix1D(data: TypedPipe[Cell[Position1D]]) extends FwMatrix1D
  * @param data `TypedPipe[Cell[Position2D]]`.
  */
 case class Matrix2D(data: TypedPipe[Cell[Position2D]]) extends FwMatrix2D
-  with Matrix[Position1D, Position2D]
+  with Matrix[Position2D]
   with ReduceableMatrix[Position1D, Position2D]
   with ReshapeableMatrix[Position1D, Position2D, Position3D]
   with MatrixDistance
-  with ApproximateDistribution[Position1D, Position2D] {
+  with ApproximateDistribution[Position2D] {
   def domain[T <: Tuner : DomainTuners](tuner: T = Default()): U[Position2D] = {
-    names(Over(First))
+    names(Over[Position1D, Position2D](First))
       .map { case Position1D(c) => c }
-      .cross(names(Over(Second)).map { case Position1D(c) => c })
+      .cross(names(Over[Position1D, Position2D](Second)).map { case Position1D(c) => c })
       .map { case (c1, c2) => Position2D(c1, c2) }
   }
 
@@ -1584,7 +1587,7 @@ case class Matrix2D(data: TypedPipe[Cell[Position2D]]) extends FwMatrix2D
   ): U[Cell[Position2D]] = data.map { case Cell(p, c) => Cell(p.permute(List(dim1, dim2)), c) }
 
   def saveAsCSV(
-    slice: Slice[Position1D, Position2D, Position1D, Position1D],
+    slice: Slice[Position2D, Position1D, Position1D],
     file: String,
     separator: String,
     escapee: Escape,
@@ -1635,10 +1638,10 @@ case class Matrix2D(data: TypedPipe[Cell[Position2D]]) extends FwMatrix2D
 
     data
       .groupBy { case c => Position1D(c.position(First)) }
-      .join(saveDictionary(Over(First), file, dictionary, separator))
+      .join(saveDictionary(Over[Position1D, Position2D](First), file, dictionary, separator))
       .values
       .groupBy { case (c, i) => Position1D(c.position(Second)) }
-      .join(saveDictionary(Over(Second), file, dictionary, separator))
+      .join(saveDictionary(Over[Position1D, Position2D](Second), file, dictionary, separator))
       .map { case (_, ((c, i), j)) => i + separator + j + separator + c.content.value.toShortString }
       .write(TypedSink(TextLine(file)))
 
@@ -1646,7 +1649,7 @@ case class Matrix2D(data: TypedPipe[Cell[Position2D]]) extends FwMatrix2D
   }
 
   def saveAsVW(
-    slice: Slice[Position1D, Position2D, Position1D, Position1D],
+    slice: Slice[Position2D, Position1D, Position1D],
     file: String,
     dictionary: String,
     tag: Boolean,
@@ -1657,7 +1660,7 @@ case class Matrix2D(data: TypedPipe[Cell[Position2D]]) extends FwMatrix2D
   ): U[Cell[Position2D]] = saveAsVW(slice, file, None, None, tag, dictionary, separator)
 
   def saveAsVWWithLabels(
-    slice: Slice[Position1D, Position2D, Position1D, Position1D],
+    slice: Slice[Position2D, Position1D, Position1D],
     file: String,
     labels: U[Cell[Position1D]],
     dictionary: String,
@@ -1669,7 +1672,7 @@ case class Matrix2D(data: TypedPipe[Cell[Position2D]]) extends FwMatrix2D
   ): U[Cell[Position2D]] = saveAsVW(slice, file, Some(labels), None, tag, dictionary, separator)
 
   def saveAsVWWithImportance(
-    slice: Slice[Position1D, Position2D, Position1D, Position1D],
+    slice: Slice[Position2D, Position1D, Position1D],
     file: String,
     importance: U[Cell[Position1D]],
     dictionary: String,
@@ -1681,7 +1684,7 @@ case class Matrix2D(data: TypedPipe[Cell[Position2D]]) extends FwMatrix2D
   ): U[Cell[Position2D]] = saveAsVW(slice, file, None, Some(importance), tag, dictionary, separator)
 
   def saveAsVWWithLabelsAndImportance(
-    slice: Slice[Position1D, Position2D, Position1D, Position1D],
+    slice: Slice[Position2D, Position1D, Position1D],
     file: String,
     labels: U[Cell[Position1D]],
     importance: U[Cell[Position1D]],
@@ -1694,7 +1697,7 @@ case class Matrix2D(data: TypedPipe[Cell[Position2D]]) extends FwMatrix2D
   ): U[Cell[Position2D]] = saveAsVW(slice, file, Some(labels), Some(importance), tag, dictionary, separator)
 
   private def saveAsVW(
-    slice: Slice[Position1D, Position2D, Position1D, Position1D],
+    slice: Slice[Position2D, Position1D, Position1D],
     file: String,
     labels: Option[U[Cell[Position1D]]],
     importance: Option[U[Cell[Position1D]]],
@@ -1762,15 +1765,15 @@ case class Matrix2D(data: TypedPipe[Cell[Position2D]]) extends FwMatrix2D
  * @param data `TypedPipe[Cell[Position3D]]`.
  */
 case class Matrix3D(data: TypedPipe[Cell[Position3D]]) extends FwMatrix3D
-  with Matrix[Position2D, Position3D]
+  with Matrix[Position3D]
   with ReduceableMatrix[Position2D, Position3D]
   with ReshapeableMatrix[Position2D, Position3D, Position4D]
-  with ApproximateDistribution[Position2D, Position3D] {
+  with ApproximateDistribution[Position3D] {
   def domain[T <: Tuner : DomainTuners](tuner: T = Default()): U[Position3D] = {
-    names(Over(First))
+    names(Over[Position2D, Position3D](First))
       .map { case Position1D(c) => c }
-      .cross(names(Over(Second)).map { case Position1D(c) => c })
-      .cross(names(Over(Third)).map { case Position1D(c) => c })
+      .cross(names(Over[Position2D, Position3D](Second)).map { case Position1D(c) => c })
+      .cross(names(Over[Position2D, Position3D](Third)).map { case Position1D(c) => c })
       .map { case ((c1, c2), c3) => Position3D(c1, c2, c3) }
   }
 
@@ -1790,13 +1793,13 @@ case class Matrix3D(data: TypedPipe[Cell[Position3D]]) extends FwMatrix3D
 
     data
       .groupBy { case c => Position1D(c.position(First)) }
-      .join(saveDictionary(Over(First), file, dictionary, separator))
+      .join(saveDictionary(Over[Position2D, Position3D](First), file, dictionary, separator))
       .values
       .groupBy { case (c, i) => Position1D(c.position(Second)) }
-      .join(saveDictionary(Over(Second), file, dictionary, separator))
+      .join(saveDictionary(Over[Position2D, Position3D](Second), file, dictionary, separator))
       .map { case (_, ((c, i), j)) => (c, i, j) }
       .groupBy { case (c, i, j) => Position1D(c.position(Third)) }
-      .join(saveDictionary(Over(Third), file, dictionary, separator))
+      .join(saveDictionary(Over[Position2D, Position3D](Third), file, dictionary, separator))
       .map { case (_, ((c, i, j), k)) => i + separator + j + separator + k + separator + c.content.value.toShortString }
       .write(TypedSink(TextLine(file)))
 
@@ -1810,16 +1813,16 @@ case class Matrix3D(data: TypedPipe[Cell[Position3D]]) extends FwMatrix3D
  * @param data `TypedPipe[Cell[Position4D]]`.
  */
 case class Matrix4D(data: TypedPipe[Cell[Position4D]]) extends FwMatrix4D
-  with Matrix[Position3D, Position4D]
+  with Matrix[Position4D]
   with ReduceableMatrix[Position3D, Position4D]
   with ReshapeableMatrix[Position3D, Position4D, Position5D]
-  with ApproximateDistribution[Position3D, Position4D] {
+  with ApproximateDistribution[Position4D] {
   def domain[T <: Tuner : DomainTuners](tuner: T = Default()): U[Position4D] = {
-    names(Over(First))
+    names(Over[Position3D, Position4D](First))
       .map { case Position1D(c) => c }
-      .cross(names(Over(Second)).map { case Position1D(c) => c })
-      .cross(names(Over(Third)).map { case Position1D(c) => c })
-      .cross(names(Over(Fourth)).map { case Position1D(c) => c })
+      .cross(names(Over[Position3D, Position4D](Second)).map { case Position1D(c) => c })
+      .cross(names(Over[Position3D, Position4D](Third)).map { case Position1D(c) => c })
+      .cross(names(Over[Position3D, Position4D](Fourth)).map { case Position1D(c) => c })
       .map { case (((c1, c2), c3), c4) => Position4D(c1, c2, c3, c4) }
   }
 
@@ -1841,16 +1844,16 @@ case class Matrix4D(data: TypedPipe[Cell[Position4D]]) extends FwMatrix4D
 
     data
       .groupBy { case c => Position1D(c.position(First)) }
-      .join(saveDictionary(Over(First), file, dictionary, separator))
+      .join(saveDictionary(Over[Position3D, Position4D](First), file, dictionary, separator))
       .values
       .groupBy { case (c, i) => Position1D(c.position(Second)) }
-      .join(saveDictionary(Over(Second), file, dictionary, separator))
+      .join(saveDictionary(Over[Position3D, Position4D](Second), file, dictionary, separator))
       .map { case (_, ((c, i), j)) => (c, i, j) }
       .groupBy { case (c, i, j) => Position1D(c.position(Third)) }
-      .join(saveDictionary(Over(Third), file, dictionary, separator))
+      .join(saveDictionary(Over[Position3D, Position4D](Third), file, dictionary, separator))
       .map { case (_, ((c, i, j), k)) => (c, i, j, k) }
       .groupBy { case (c, i, j, k) => Position1D(c.position(Fourth)) }
-      .join(saveDictionary(Over(Fourth), file, dictionary, separator))
+      .join(saveDictionary(Over[Position3D, Position4D](Fourth), file, dictionary, separator))
       .map {
         case (_, ((c, i, j, k), l)) =>
           i + separator + j + separator + k + separator + l + separator + c.content.value.toShortString
@@ -1867,17 +1870,17 @@ case class Matrix4D(data: TypedPipe[Cell[Position4D]]) extends FwMatrix4D
  * @param data `TypedPipe[Cell[Position5D]]`.
  */
 case class Matrix5D(data: TypedPipe[Cell[Position5D]]) extends FwMatrix5D
-  with Matrix[Position4D, Position5D]
+  with Matrix[Position5D]
   with ReduceableMatrix[Position4D, Position5D]
   with ReshapeableMatrix[Position4D, Position5D, Position6D]
-  with ApproximateDistribution[Position4D, Position5D] {
+  with ApproximateDistribution[Position5D] {
   def domain[T <: Tuner : DomainTuners](tuner: T = Default()): U[Position5D] = {
-    names(Over(First))
+    names(Over[Position4D, Position5D](First))
       .map { case Position1D(c) => c }
-      .cross(names(Over(Second)).map { case Position1D(c) => c })
-      .cross(names(Over(Third)).map { case Position1D(c) => c })
-      .cross(names(Over(Fourth)).map { case Position1D(c) => c })
-      .cross(names(Over(Fifth)).map { case Position1D(c) => c })
+      .cross(names(Over[Position4D, Position5D](Second)).map { case Position1D(c) => c })
+      .cross(names(Over[Position4D, Position5D](Third)).map { case Position1D(c) => c })
+      .cross(names(Over[Position4D, Position5D](Fourth)).map { case Position1D(c) => c })
+      .cross(names(Over[Position4D, Position5D](Fifth)).map { case Position1D(c) => c })
       .map { case ((((c1, c2), c3), c4), c5) => Position5D(c1, c2, c3, c4, c5) }
   }
 
@@ -1901,19 +1904,19 @@ case class Matrix5D(data: TypedPipe[Cell[Position5D]]) extends FwMatrix5D
 
     data
       .groupBy { case c => Position1D(c.position(First)) }
-      .join(saveDictionary(Over(First), file, dictionary, separator))
+      .join(saveDictionary(Over[Position4D, Position5D](First), file, dictionary, separator))
       .values
       .groupBy { case (c, i) => Position1D(c.position(Second)) }
-      .join(saveDictionary(Over(Second), file, dictionary, separator))
+      .join(saveDictionary(Over[Position4D, Position5D](Second), file, dictionary, separator))
       .map { case (_, ((c, i), j)) => (c, i, j) }
       .groupBy { case (c, i, j) => Position1D(c.position(Third)) }
-      .join(saveDictionary(Over(Third), file, dictionary, separator))
+      .join(saveDictionary(Over[Position4D, Position5D](Third), file, dictionary, separator))
       .map { case (_, ((c, i, j), k)) => (c, i, j, k) }
       .groupBy { case (c, i, j, k) => Position1D(c.position(Fourth)) }
-      .join(saveDictionary(Over(Fourth), file, dictionary, separator))
+      .join(saveDictionary(Over[Position4D, Position5D](Fourth), file, dictionary, separator))
       .map { case (_, ((c, i, j, k), l)) => (c, i, j, k, l) }
       .groupBy { case (c, i, j, k, l) => Position1D(c.position(Fifth)) }
-      .join(saveDictionary(Over(Fifth), file, dictionary, separator))
+      .join(saveDictionary(Over[Position4D, Position5D](Fifth), file, dictionary, separator))
       .map {
         case (_, ((c, i, j, k, l), m)) =>
           i + separator + j + separator + k + separator + l + separator + m + separator + c.content.value.toShortString
@@ -1930,18 +1933,18 @@ case class Matrix5D(data: TypedPipe[Cell[Position5D]]) extends FwMatrix5D
  * @param data `TypedPipe[Cell[Position6D]]`.
  */
 case class Matrix6D(data: TypedPipe[Cell[Position6D]]) extends FwMatrix6D
-  with Matrix[Position5D, Position6D]
+  with Matrix[Position6D]
   with ReduceableMatrix[Position5D, Position6D]
   with ReshapeableMatrix[Position5D, Position6D, Position7D]
-  with ApproximateDistribution[Position5D, Position6D] {
+  with ApproximateDistribution[Position6D] {
   def domain[T <: Tuner : DomainTuners](tuner: T = Default()): U[Position6D] = {
-    names(Over(First))
+    names(Over[Position5D, Position6D](First))
       .map { case Position1D(c) => c }
-      .cross(names(Over(Second)).map { case Position1D(c) => c })
-      .cross(names(Over(Third)).map { case Position1D(c) => c })
-      .cross(names(Over(Fourth)).map { case Position1D(c) => c })
-      .cross(names(Over(Fifth)).map { case Position1D(c) => c })
-      .cross(names(Over(Sixth)).map { case Position1D(c) => c })
+      .cross(names(Over[Position5D, Position6D](Second)).map { case Position1D(c) => c })
+      .cross(names(Over[Position5D, Position6D](Third)).map { case Position1D(c) => c })
+      .cross(names(Over[Position5D, Position6D](Fourth)).map { case Position1D(c) => c })
+      .cross(names(Over[Position5D, Position6D](Fifth)).map { case Position1D(c) => c })
+      .cross(names(Over[Position5D, Position6D](Sixth)).map { case Position1D(c) => c })
       .map { case (((((c1, c2), c3), c4), c5), c6) => Position6D(c1, c2, c3, c4, c5, c6) }
   }
 
@@ -1967,22 +1970,22 @@ case class Matrix6D(data: TypedPipe[Cell[Position6D]]) extends FwMatrix6D
 
     data
       .groupBy { case c => Position1D(c.position(First)) }
-      .join(saveDictionary(Over(First), file, dictionary, separator))
+      .join(saveDictionary(Over[Position5D, Position6D](First), file, dictionary, separator))
       .values
       .groupBy { case (c, i) => Position1D(c.position(Second)) }
-      .join(saveDictionary(Over(Second), file, dictionary, separator))
+      .join(saveDictionary(Over[Position5D, Position6D](Second), file, dictionary, separator))
       .map { case (_, ((c, i), j)) => (c, i, j) }
       .groupBy { case (c, i, j) => Position1D(c.position(Third)) }
-      .join(saveDictionary(Over(Third), file, dictionary, separator))
+      .join(saveDictionary(Over[Position5D, Position6D](Third), file, dictionary, separator))
       .map { case (_, ((c, i, j), k)) => (c, i, j, k) }
       .groupBy { case (c, i, j, k) => Position1D(c.position(Fourth)) }
-      .join(saveDictionary(Over(Fourth), file, dictionary, separator))
+      .join(saveDictionary(Over[Position5D, Position6D](Fourth), file, dictionary, separator))
       .map { case (_, ((c, i, j, k), l)) => (c, i, j, k, l) }
       .groupBy { case (c, i, j, k, l) => Position1D(c.position(Fifth)) }
-      .join(saveDictionary(Over(Fifth), file, dictionary, separator))
+      .join(saveDictionary(Over[Position5D, Position6D](Fifth), file, dictionary, separator))
       .map { case (_, ((c, i, j, k, l), m)) => (c, i, j, k, l, m) }
       .groupBy { case (c, i, j, k, l, m) => Position1D(c.position(Sixth)) }
-      .join(saveDictionary(Over(Sixth), file, dictionary, separator))
+      .join(saveDictionary(Over[Position5D, Position6D](Sixth), file, dictionary, separator))
       .map {
         case (_, ((c, i, j, k, l, m), n)) =>
           i + separator + j + separator + k + separator + l + separator + m + separator +
@@ -2000,19 +2003,19 @@ case class Matrix6D(data: TypedPipe[Cell[Position6D]]) extends FwMatrix6D
  * @param data `TypedPipe[Cell[Position7D]]`.
  */
 case class Matrix7D(data: TypedPipe[Cell[Position7D]]) extends FwMatrix7D
-  with Matrix[Position6D, Position7D]
+  with Matrix[Position7D]
   with ReduceableMatrix[Position6D, Position7D]
   with ReshapeableMatrix[Position6D, Position7D, Position8D]
-  with ApproximateDistribution[Position6D, Position7D] {
+  with ApproximateDistribution[Position7D] {
   def domain[T <: Tuner : DomainTuners](tuner: T = Default()): U[Position7D] = {
-    names(Over(First))
+    names(Over[Position6D, Position7D](First))
       .map { case Position1D(c) => c }
-      .cross(names(Over(Second)).map { case Position1D(c) => c })
-      .cross(names(Over(Third)).map { case Position1D(c) => c })
-      .cross(names(Over(Fourth)).map { case Position1D(c) => c })
-      .cross(names(Over(Fifth)).map { case Position1D(c) => c })
-      .cross(names(Over(Sixth)).map { case Position1D(c) => c })
-      .cross(names(Over(Seventh)).map { case Position1D(c) => c })
+      .cross(names(Over[Position6D, Position7D](Second)).map { case Position1D(c) => c })
+      .cross(names(Over[Position6D, Position7D](Third)).map { case Position1D(c) => c })
+      .cross(names(Over[Position6D, Position7D](Fourth)).map { case Position1D(c) => c })
+      .cross(names(Over[Position6D, Position7D](Fifth)).map { case Position1D(c) => c })
+      .cross(names(Over[Position6D, Position7D](Sixth)).map { case Position1D(c) => c })
+      .cross(names(Over[Position6D, Position7D](Seventh)).map { case Position1D(c) => c })
       .map { case ((((((c1, c2), c3), c4), c5), c6), c7) => Position7D(c1, c2, c3, c4, c5, c6, c7) }
   }
 
@@ -2042,25 +2045,25 @@ case class Matrix7D(data: TypedPipe[Cell[Position7D]]) extends FwMatrix7D
 
     data
       .groupBy { case c => Position1D(c.position(First)) }
-      .join(saveDictionary(Over(First), file, dictionary, separator))
+      .join(saveDictionary(Over[Position6D, Position7D](First), file, dictionary, separator))
       .values
       .groupBy { case (c, i) => Position1D(c.position(Second)) }
-      .join(saveDictionary(Over(Second), file, dictionary, separator))
+      .join(saveDictionary(Over[Position6D, Position7D](Second), file, dictionary, separator))
       .map { case (_, ((c, i), j)) => (c, i, j) }
       .groupBy { case (c, i, j) => Position1D(c.position(Third)) }
-      .join(saveDictionary(Over(Third), file, dictionary, separator))
+      .join(saveDictionary(Over[Position6D, Position7D](Third), file, dictionary, separator))
       .map { case (_, ((c, i, j), k)) => (c, i, j, k) }
       .groupBy { case (c, i, j, k) => Position1D(c.position(Fourth)) }
-      .join(saveDictionary(Over(Fourth), file, dictionary, separator))
+      .join(saveDictionary(Over[Position6D, Position7D](Fourth), file, dictionary, separator))
       .map { case (_, ((c, i, j, k), l)) => (c, i, j, k, l) }
       .groupBy { case (c, i, j, k, l) => Position1D(c.position(Fifth)) }
-      .join(saveDictionary(Over(Fifth), file, dictionary, separator))
+      .join(saveDictionary(Over[Position6D, Position7D](Fifth), file, dictionary, separator))
       .map { case (_, ((c, i, j, k, l), m)) => (c, i, j, k, l, m) }
       .groupBy { case (c, i, j, k, l, m) => Position1D(c.position(Sixth)) }
-      .join(saveDictionary(Over(Sixth), file, dictionary, separator))
+      .join(saveDictionary(Over[Position6D, Position7D](Sixth), file, dictionary, separator))
       .map { case (_, ((c, i, j, k, l, m), n)) => (c, i, j, k, l, m, n) }
       .groupBy { case (c, i, j, k, l, m, n) => Position1D(c.position(Seventh)) }
-      .join(saveDictionary(Over(Seventh), file, dictionary, separator))
+      .join(saveDictionary(Over[Position6D, Position7D](Seventh), file, dictionary, separator))
       .map {
         case (_, ((c, i, j, k, l, m, n), o)) =>
           i + separator + j + separator + k + separator + l + separator + m + separator +
@@ -2078,20 +2081,20 @@ case class Matrix7D(data: TypedPipe[Cell[Position7D]]) extends FwMatrix7D
  * @param data `TypedPipe[Cell[Position8D]]`.
  */
 case class Matrix8D(data: TypedPipe[Cell[Position8D]]) extends FwMatrix8D
-  with Matrix[Position7D, Position8D]
+  with Matrix[Position8D]
   with ReduceableMatrix[Position7D, Position8D]
   with ReshapeableMatrix[Position7D, Position8D, Position9D]
-  with ApproximateDistribution[Position7D, Position8D] {
+  with ApproximateDistribution[Position8D] {
   def domain[T <: Tuner : DomainTuners](tuner: T = Default()): U[Position8D] = {
-    names(Over(First))
+    names(Over[Position7D, Position8D](First))
       .map { case Position1D(c) => c }
-      .cross(names(Over(Second)).map { case Position1D(c) => c })
-      .cross(names(Over(Third)).map { case Position1D(c) => c })
-      .cross(names(Over(Fourth)).map { case Position1D(c) => c })
-      .cross(names(Over(Fifth)).map { case Position1D(c) => c })
-      .cross(names(Over(Sixth)).map { case Position1D(c) => c })
-      .cross(names(Over(Seventh)).map { case Position1D(c) => c })
-      .cross(names(Over(Eighth)).map { case Position1D(c) => c })
+      .cross(names(Over[Position7D, Position8D](Second)).map { case Position1D(c) => c })
+      .cross(names(Over[Position7D, Position8D](Third)).map { case Position1D(c) => c })
+      .cross(names(Over[Position7D, Position8D](Fourth)).map { case Position1D(c) => c })
+      .cross(names(Over[Position7D, Position8D](Fifth)).map { case Position1D(c) => c })
+      .cross(names(Over[Position7D, Position8D](Sixth)).map { case Position1D(c) => c })
+      .cross(names(Over[Position7D, Position8D](Seventh)).map { case Position1D(c) => c })
+      .cross(names(Over[Position7D, Position8D](Eighth)).map { case Position1D(c) => c })
       .map { case (((((((c1, c2), c3), c4), c5), c6), c7), c8) => Position8D(c1, c2, c3, c4, c5, c6, c7, c8) }
   }
 
@@ -2123,28 +2126,28 @@ case class Matrix8D(data: TypedPipe[Cell[Position8D]]) extends FwMatrix8D
 
     data
       .groupBy { case c => Position1D(c.position(First)) }
-      .join(saveDictionary(Over(First), file, dictionary, separator))
+      .join(saveDictionary(Over[Position7D, Position8D](First), file, dictionary, separator))
       .values
       .groupBy { case (c, i) => Position1D(c.position(Second)) }
-      .join(saveDictionary(Over(Second), file, dictionary, separator))
+      .join(saveDictionary(Over[Position7D, Position8D](Second), file, dictionary, separator))
       .map { case (_, ((c, i), j)) => (c, i, j) }
       .groupBy { case (c, i, j) => Position1D(c.position(Third)) }
-      .join(saveDictionary(Over(Third), file, dictionary, separator))
+      .join(saveDictionary(Over[Position7D, Position8D](Third), file, dictionary, separator))
       .map { case (_, ((c, i, j), k)) => (c, i, j, k) }
       .groupBy { case (c, i, j, k) => Position1D(c.position(Fourth)) }
-      .join(saveDictionary(Over(Fourth), file, dictionary, separator))
+      .join(saveDictionary(Over[Position7D, Position8D](Fourth), file, dictionary, separator))
       .map { case (_, ((c, i, j, k), l)) => (c, i, j, k, l) }
       .groupBy { case (c, i, j, k, l) => Position1D(c.position(Fifth)) }
-      .join(saveDictionary(Over(Fifth), file, dictionary, separator))
+      .join(saveDictionary(Over[Position7D, Position8D](Fifth), file, dictionary, separator))
       .map { case (_, ((c, i, j, k, l), m)) => (c, i, j, k, l, m) }
       .groupBy { case (c, i, j, k, l, m) => Position1D(c.position(Sixth)) }
-      .join(saveDictionary(Over(Sixth), file, dictionary, separator))
+      .join(saveDictionary(Over[Position7D, Position8D](Sixth), file, dictionary, separator))
       .map { case (_, ((c, i, j, k, l, m), n)) => (c, i, j, k, l, m, n) }
       .groupBy { case (c, i, j, k, l, m, n) => Position1D(c.position(Seventh)) }
-      .join(saveDictionary(Over(Seventh), file, dictionary, separator))
+      .join(saveDictionary(Over[Position7D, Position8D](Seventh), file, dictionary, separator))
       .map { case (_, ((c, i, j, k, l, m, n), o)) => (c, i, j, k, l, m, n, o) }
       .groupBy { case (c, i, j, k, l, m, n, o) => Position1D(c.position(Eighth)) }
-      .join(saveDictionary(Over(Eighth), file, dictionary, separator))
+      .join(saveDictionary(Over[Position7D, Position8D](Eighth), file, dictionary, separator))
       .map {
         case (_, ((c, i, j, k, l, m, n, o), p)) =>
           i + separator + j + separator + k + separator + l + separator + m + separator +
@@ -2162,20 +2165,20 @@ case class Matrix8D(data: TypedPipe[Cell[Position8D]]) extends FwMatrix8D
  * @param data `TypedPipe[Cell[Position9D]]`.
  */
 case class Matrix9D(data: TypedPipe[Cell[Position9D]]) extends FwMatrix9D
-  with Matrix[Position8D, Position9D]
+  with Matrix[Position9D]
   with ReduceableMatrix[Position8D, Position9D]
-  with ApproximateDistribution[Position8D, Position9D] {
+  with ApproximateDistribution[Position9D] {
   def domain[T <: Tuner : DomainTuners](tuner: T = Default()): U[Position9D] = {
-    names(Over(First))
+    names(Over[Position8D, Position9D](First))
       .map { case Position1D(c) => c }
-      .cross(names(Over(Second)).map { case Position1D(c) => c })
-      .cross(names(Over(Third)).map { case Position1D(c) => c })
-      .cross(names(Over(Fourth)).map { case Position1D(c) => c })
-      .cross(names(Over(Fifth)).map { case Position1D(c) => c })
-      .cross(names(Over(Sixth)).map { case Position1D(c) => c })
-      .cross(names(Over(Seventh)).map { case Position1D(c) => c })
-      .cross(names(Over(Eighth)).map { case Position1D(c) => c })
-      .cross(names(Over(Ninth)).map { case Position1D(c) => c })
+      .cross(names(Over[Position8D, Position9D](Second)).map { case Position1D(c) => c })
+      .cross(names(Over[Position8D, Position9D](Third)).map { case Position1D(c) => c })
+      .cross(names(Over[Position8D, Position9D](Fourth)).map { case Position1D(c) => c })
+      .cross(names(Over[Position8D, Position9D](Fifth)).map { case Position1D(c) => c })
+      .cross(names(Over[Position8D, Position9D](Sixth)).map { case Position1D(c) => c })
+      .cross(names(Over[Position8D, Position9D](Seventh)).map { case Position1D(c) => c })
+      .cross(names(Over[Position8D, Position9D](Eighth)).map { case Position1D(c) => c })
+      .cross(names(Over[Position8D, Position9D](Ninth)).map { case Position1D(c) => c })
       .map { case ((((((((c1, c2), c3), c4), c5), c6), c7), c8), c9) => Position9D(c1, c2, c3, c4, c5, c6, c7, c8, c9) }
   }
 
@@ -2209,31 +2212,31 @@ case class Matrix9D(data: TypedPipe[Cell[Position9D]]) extends FwMatrix9D
 
     data
       .groupBy { case c => Position1D(c.position(First)) }
-      .join(saveDictionary(Over(First), file, dictionary, separator))
+      .join(saveDictionary(Over[Position8D, Position9D](First), file, dictionary, separator))
       .values
       .groupBy { case (c, i) => Position1D(c.position(Second)) }
-      .join(saveDictionary(Over(Second), file, dictionary, separator))
+      .join(saveDictionary(Over[Position8D, Position9D](Second), file, dictionary, separator))
       .map { case (_, ((c, i), j)) => (c, i, j) }
       .groupBy { case (c, i, j) => Position1D(c.position(Third)) }
-      .join(saveDictionary(Over(Third), file, dictionary, separator))
+      .join(saveDictionary(Over[Position8D, Position9D](Third), file, dictionary, separator))
       .map { case (_, ((c, i, j), k)) => (c, i, j, k) }
       .groupBy { case (c, i, j, k) => Position1D(c.position(Fourth)) }
-      .join(saveDictionary(Over(Fourth), file, dictionary, separator))
+      .join(saveDictionary(Over[Position8D, Position9D](Fourth), file, dictionary, separator))
       .map { case (_, ((c, i, j, k), l)) => (c, i, j, k, l) }
       .groupBy { case (c, i, j, k, l) => Position1D(c.position(Fifth)) }
-      .join(saveDictionary(Over(Fifth), file, dictionary, separator))
+      .join(saveDictionary(Over[Position8D, Position9D](Fifth), file, dictionary, separator))
       .map { case (_, ((c, i, j, k, l), m)) => (c, i, j, k, l, m) }
       .groupBy { case (c, i, j, k, l, m) => Position1D(c.position(Sixth)) }
-      .join(saveDictionary(Over(Sixth), file, dictionary, separator))
+      .join(saveDictionary(Over[Position8D, Position9D](Sixth), file, dictionary, separator))
       .map { case (_, ((c, i, j, k, l, m), n)) => (c, i, j, k, l, m, n) }
       .groupBy { case (c, i, j, k, l, m, n) => Position1D(c.position(Seventh)) }
-      .join(saveDictionary(Over(Seventh), file, dictionary, separator))
+      .join(saveDictionary(Over[Position8D, Position9D](Seventh), file, dictionary, separator))
       .map { case (_, ((c, i, j, k, l, m, n), o)) => (c, i, j, k, l, m, n, o) }
       .groupBy { case (c, i, j, k, l, m, n, o) => Position1D(c.position(Eighth)) }
-      .join(saveDictionary(Over(Eighth), file, dictionary, separator))
+      .join(saveDictionary(Over[Position8D, Position9D](Eighth), file, dictionary, separator))
       .map { case (_, ((c, i, j, k, l, m, n, o), p)) => (c, i, j, k, l, m, n, o, p) }
       .groupBy { case (c, i, j, k, l, m, n, o, p) => Position1D(c.position(Ninth)) }
-      .join(saveDictionary(Over(Ninth), file, dictionary, separator))
+      .join(saveDictionary(Over[Position8D, Position9D](Ninth), file, dictionary, separator))
       .map {
         case (_, ((c, i, j, k, l, m, n, o, p), q)) =>
           i + separator + j + separator + k + separator + l + separator + m + separator +

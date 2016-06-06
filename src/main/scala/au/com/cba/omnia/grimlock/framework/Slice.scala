@@ -15,11 +15,11 @@
 package au.com.cba.omnia.grimlock.framework.position
 
 /** Base trait that encapsulates dimension on which to operate. */
-sealed trait Slice[L <: Position[L] with ExpandablePosition[L, P],
-                   P <: Position[P] with ReduceablePosition[P, L],
-                   S <: Position[S] with ExpandablePosition[S, _],
-                   R <: Position[R] with ExpandablePosition[R, _]] {
-
+sealed trait Slice[
+  P <: Position[P] with ReduceablePosition[P, _],
+  S <: Position[S] with ExpandablePosition[S, _],
+  R <: Position[R] with ExpandablePosition[R, _]
+] {
   /** The dimension of this slice. */
   val dimension: Dimension
 
@@ -27,9 +27,6 @@ sealed trait Slice[L <: Position[L] with ExpandablePosition[L, P],
   def selected(pos: P): S
   /** Returns the remaining coordinate(s) for the given `pos`. */
   def remainder(pos: P): R
-
-  protected def remove(pos: P): L = pos.remove(dimension)
-  protected def single(pos: P): Position1D = Position1D(pos(dimension))
 }
 
 /**
@@ -38,10 +35,12 @@ sealed trait Slice[L <: Position[L] with ExpandablePosition[L, P],
  *
  * @param dimension Dimension of the selected coordinate.
  */
-trait Over[L <: Position[L] with ExpandablePosition[L, P],
-           P <: Position[P] with ReduceablePosition[P, L]] extends Slice[L, P, Position1D, L] {
-  def selected(pos: P): Position1D = single(pos)
-  def remainder(pos: P): L = remove(pos)
+trait Over[
+  L <: Position[L] with ExpandablePosition[L, P],
+  P <: Position[P] with ReduceablePosition[P, L]
+] extends Slice[P, Position1D, L] {
+  def selected(pos: P): Position1D = Position1D(pos(dimension))
+  def remainder(pos: P): L = pos.remove(dimension)
 }
 
 /** Companion object to `Over` trait. */
@@ -77,10 +76,12 @@ private[position] case class OverImpl[
  * groupBy is performed, it is performed using a `Position` (type `ReduceablePosition.L`) consisting of all coordinates
  * except that at index `dimension`.
  */
-trait Along[L <: Position[L] with ExpandablePosition[L, P],
-            P <: Position[P] with ReduceablePosition[P, L]] extends Slice[L, P, L, Position1D] {
-  def selected(pos: P): L = remove(pos)
-  def remainder(pos: P): Position1D = single(pos)
+trait Along[
+  L <: Position[L] with ExpandablePosition[L, P],
+  P <: Position[P] with ReduceablePosition[P, L]
+] extends Slice[P, L, Position1D] {
+  def selected(pos: P): L = pos.remove(dimension)
+  def remainder(pos: P): Position1D = Position1D(pos(dimension))
 }
 
 /** Companion object to `Along` trait. */

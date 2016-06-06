@@ -58,12 +58,12 @@ class LabelWeighting(args: Args) extends Job(args) {
 
   // Compute histogram over the label values.
   val histogram = labels
-    .histogram(Along(First), Locate.AppendContentString[Position0D, Position1D](), false)
+    .histogram(Along[Position0D, Position1D](First), Locate.AppendContentString[Position0D, Position1D](), false)
 
   // Compute the total number of labels and compact result into a Map.
   val sum = labels
     .size(First)
-    .compact(Over(First))
+    .compact(Over[Position0D, Position1D](First))
 
   // Define extract object to get data out of sum/min map.
   def extractor(key: String) = ExtractWithKey[Position1D, Content](key).andThenPresent(_.value.asDouble)
@@ -74,13 +74,13 @@ class LabelWeighting(args: Args) extends Job(args) {
 
   // Find the minimum ratio, and compact the result into a Map.
   val min = ratio
-    .summarise(Along(First), Min[Position1D, Position0D]().andThenRelocate(_.position.append("min").toOption))
-    .compact(Over(First))
+    .summarise(Along[Position0D, Position1D](First), Min[Position1D, Position0D]().andThenRelocate(_.position.append("min").toOption))
+    .compact(Over[Position0D, Position1D](First))
 
   // Divide the ratio by the minimum ratio, and compact the result into a Map.
   val weights = ratio
     .transformWithValue(Fraction(extractor("min")), min)
-    .compact(Over(First))
+    .compact(Over[Position0D, Position1D](First))
 
   // Re-read labels and add the computed weight.
   loadText(s"${path}/exampleLabels.txt",

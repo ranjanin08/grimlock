@@ -18,8 +18,8 @@ import au.com.cba.omnia.grimlock.framework.position._
 
 /** Trait for compacting a cell to a `Map`. */
 trait Compactable[
-  L <: Position[L] with ExpandablePosition[L, P],
-  P <: Position[P] with ReduceablePosition[P, L] with CompactablePosition[P]] extends java.io.Serializable {
+  P <: Position[P] with ReduceablePosition[P, _] with CompactablePosition[P]
+] extends java.io.Serializable {
   /**
    * Convert a single cell to a `Map`.
    *
@@ -32,7 +32,7 @@ trait Compactable[
     S <: Position[S] with ExpandablePosition[S, _],
     R <: Position[R] with ExpandablePosition[R, _]
     ](
-      slice: Slice[L, P, S, R],
+      slice: Slice[P, S, R],
       cell: Cell[P]
     ): Map[S, P#C[R]] = {
     Map(slice.selected(cell.position) -> cell.position.toMapValue(slice.remainder(cell.position), cell.content))
@@ -60,7 +60,7 @@ trait Compactable[
 /** Companion object to the `Compactable` trait. */
 object Compactable {
   /** Return a `Compactable` for `Position1D`. */
-  implicit val cp1: Compactable[Position0D, Position1D] = new Compactable[Position0D, Position1D] {
+  implicit val cp1: Compactable[Position1D] = new Compactable[Position1D] {
     protected def combineMapValues[
       R <: Position[R] with ExpandablePosition[R, _]
     ](
@@ -70,7 +70,7 @@ object Compactable {
   }
 
   /** Return a `Compactable` for `Position2D`. */
-  implicit val cp2: Compactable[Position1D, Position2D] = new Compactable[Position1D, Position2D] {
+  implicit val cp2: Compactable[Position2D] = new Compactable[Position2D] {
     protected def combineMapValues[
       R <: Position[R] with ExpandablePosition[R, _]
     ](
@@ -80,7 +80,7 @@ object Compactable {
   }
 
   /** Return a `Compactable` for `Position3D`. */
-  implicit val cp3: Compactable[Position2D, Position3D] = new Compactable[Position2D, Position3D] {
+  implicit val cp3: Compactable[Position3D] = new Compactable[Position3D] {
     protected def combineMapValues[
       R <: Position[R] with ExpandablePosition[R, _]
     ](
@@ -90,7 +90,7 @@ object Compactable {
   }
 
   /** Return a `Compactable` for `Position4D`. */
-  implicit val cp4: Compactable[Position3D, Position4D] = new Compactable[Position3D, Position4D] {
+  implicit val cp4: Compactable[Position4D] = new Compactable[Position4D] {
     protected def combineMapValues[
       R <: Position[R] with ExpandablePosition[R, _]
     ](
@@ -100,7 +100,7 @@ object Compactable {
   }
 
   /** Return a `Compactable` for `Position5D`. */
-  implicit val cp5: Compactable[Position4D, Position5D] = new Compactable[Position4D, Position5D] {
+  implicit val cp5: Compactable[Position5D] = new Compactable[Position5D] {
     protected def combineMapValues[
       R <: Position[R] with ExpandablePosition[R, _]
     ](
@@ -110,7 +110,7 @@ object Compactable {
   }
 
   /** Return a `Compactable` for `Position6D`. */
-  implicit val cp6: Compactable[Position5D, Position6D] = new Compactable[Position5D, Position6D] {
+  implicit val cp6: Compactable[Position6D] = new Compactable[Position6D] {
     protected def combineMapValues[
       R <: Position[R] with ExpandablePosition[R, _]
     ](
@@ -120,7 +120,7 @@ object Compactable {
   }
 
   /** Return a `Compactable` for `Position7D`. */
-  implicit val cp7: Compactable[Position6D, Position7D] = new Compactable[Position6D, Position7D] {
+  implicit val cp7: Compactable[Position7D] = new Compactable[Position7D] {
     protected def combineMapValues[
       R <: Position[R] with ExpandablePosition[R, _]
     ](
@@ -130,7 +130,7 @@ object Compactable {
   }
 
   /** Return a `Compactable` for `Position8D`. */
-  implicit val cp8: Compactable[Position7D, Position8D] = new Compactable[Position7D, Position8D] {
+  implicit val cp8: Compactable[Position8D] = new Compactable[Position8D] {
     protected def combineMapValues[
       R <: Position[R] with ExpandablePosition[R, _]
     ](
@@ -140,7 +140,7 @@ object Compactable {
   }
 
   /** Return a `Compactable` for `Position9D`. */
-  implicit val cp9: Compactable[Position8D, Position9D] = new Compactable[Position8D, Position9D] {
+  implicit val cp9: Compactable[Position9D] = new Compactable[Position9D] {
     protected def combineMapValues[
       R <: Position[R] with ExpandablePosition[R, _]
     ](

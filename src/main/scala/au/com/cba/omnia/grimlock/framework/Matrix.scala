@@ -39,11 +39,10 @@ import shapeless.=:!=
 
 /** Base trait for matrix operations. */
 trait Matrix[
-  L <: Position[L] with ExpandablePosition[L, P],
-  P <: Position[P] with ReduceablePosition[P, L] with CompactablePosition[P]
+  P <: Position[P] with ReduceablePosition[P, _] with CompactablePosition[P]
 ] extends Persist[Cell[P]] with UserData with DefaultTuners with PositionOrdering {
   /** Self-type of a specific implementation of this API. */
-  type M <: Matrix[L, P]
+  type M <: Matrix[P]
 
   /** Specifies tuners permitted on a call to `change`. */
   type ChangeTuners[_]
@@ -64,7 +63,7 @@ trait Matrix[
     I,
     T <: Tuner : ChangeTuners
   ](
-    slice: Slice[L, P, S, R],
+    slice: Slice[P, S, R],
     positions: I,
     schema: Content.Parser,
     tuner: T
@@ -100,12 +99,12 @@ trait Matrix[
     R <: Position[R] with ExpandablePosition[R, _],
     T <: Tuner : CompactTuners
   ](
-    slice: Slice[L, P, S, R],
+    slice: Slice[P, S, R],
     tuner: T
   )(implicit
     ev1: S =:!= Position0D,
     ev2: ClassTag[S],
-    ev3: Compactable[L, P]
+    ev3: Compactable[P]
   ): E[Map[S, P#C[R]]]
 
   /** Specifies tuners permitted on a call to `domain`. */
@@ -139,7 +138,7 @@ trait Matrix[
     R <: Position[R] with ExpandablePosition[R, _],
     T <: Tuner : FillHeterogeneousTuners
   ](
-    slice: Slice[L, P, S, R],
+    slice: Slice[P, S, R],
     values: U[Cell[S]],
     tuner: T
   )(implicit
@@ -207,7 +206,7 @@ trait Matrix[
     R <: Position[R] with ExpandablePosition[R, _],
     T <: Tuner : JoinTuners
   ](
-    slice: Slice[L, P, S, R],
+    slice: Slice[P, S, R],
     that: M,
     tuner: T
   )(implicit
@@ -245,7 +244,7 @@ trait Matrix[
     R <: Position[R] with ExpandablePosition[R, _],
     T <: Tuner : NamesTuners
   ](
-    slice: Slice[L, P, S, R],
+    slice: Slice[P, S, R],
     tuner: T
   )(implicit
     ev1: S =:!= Position0D,
@@ -271,7 +270,7 @@ trait Matrix[
     Q <: Position[Q],
     T <: Tuner : PairwiseTuners
   ](
-    slice: Slice[L, P, S, R],
+    slice: Slice[P, S, R],
     comparer: Comparer,
     operators: Operable[P, Q],
     tuner: T
@@ -300,7 +299,7 @@ trait Matrix[
     W,
     T <: Tuner : PairwiseTuners
   ](
-    slice: Slice[L, P, S, R],
+    slice: Slice[P, S, R],
     comparer: Comparer,
     operators: OperableWithValue[P, Q, W],
     value: E[W],
@@ -329,7 +328,7 @@ trait Matrix[
     Q <: Position[Q],
     T <: Tuner : PairwiseTuners
   ](
-    slice: Slice[L, P, S, R],
+    slice: Slice[P, S, R],
     comparer: Comparer,
     that: M,
     operators: Operable[P, Q],
@@ -360,7 +359,7 @@ trait Matrix[
     W,
     T <: Tuner : PairwiseTuners
   ](
-    slice: Slice[L, P, S, R],
+    slice: Slice[P, S, R],
     comparer: Comparer,
     that: M,
     operators: OperableWithValue[P, Q, W],
@@ -495,7 +494,7 @@ trait Matrix[
     I,
     T <: Tuner : SliceTuners
   ](
-    slice: Slice[L, P, S, R],
+    slice: Slice[P, S, R],
     positions: I,
     keep: Boolean,
     tuner: T
@@ -523,7 +522,7 @@ trait Matrix[
     Q <: Position[Q],
     T <: Tuner: SlideTuners
   ](
-    slice: Slice[L, P, S, R],
+    slice: Slice[P, S, R],
     windows: Windowable[P, S, R, Q],
     ascending: Boolean = true,
     tuner: T
@@ -552,7 +551,7 @@ trait Matrix[
     W,
     T <: Tuner : SlideTuners
   ](
-    slice: Slice[L, P, S, R],
+    slice: Slice[P, S, R],
     windows: WindowableWithValue[P, S, R, Q, W],
     value: E[W],
     ascendig: Boolean = true,
@@ -643,7 +642,7 @@ trait Matrix[
     Q <: Position[Q],
     T <: Tuner : SummariseTuners
   ](
-    slice: Slice[L, P, S, R],
+    slice: Slice[P, S, R],
     aggregators: Aggregatable[P, S, Q],
     tuner: T
   )(implicit
@@ -668,7 +667,7 @@ trait Matrix[
     W,
     T <: Tuner : SummariseTuners
   ](
-    slice: Slice[L, P, S, R],
+    slice: Slice[P, S, R],
     aggregators: AggregatableWithValue[P, S, Q, W],
     value: E[W],
     tuner: T
@@ -750,7 +749,7 @@ trait Matrix[
     R <: Position[R] with ExpandablePosition[R, _],
     T <: Tuner : TypesTuners
   ](
-    slice: Slice[L, P, S, R],
+    slice: Slice[P, S, R],
     specific: Boolean = false,
     tuner: T
   )(implicit
@@ -785,7 +784,7 @@ trait Matrix[
     R <: Position[R] with ExpandablePosition[R, _],
     T <: Tuner : UniqueTuners
   ](
-    slice: Slice[L, P, S, R],
+    slice: Slice[P, S, R],
     tuner: T
   )(implicit
     ev1: S =:!= Position0D
@@ -820,7 +819,7 @@ trait Matrix[
     I,
     T <: Tuner : WhichTuners
   ](
-    slice: Slice[L, P, S, R],
+    slice: Slice[P, S, R],
     predicates: I,
     tuner: T
   )(implicit
@@ -886,7 +885,7 @@ trait Consume extends DistributedData with Environment {
 trait ReduceableMatrix[
   L <: Position[L] with ExpandablePosition[L, P],
   P <: Position[P] with ReduceablePosition[P, L] with CompactablePosition[P]
-] { self: Matrix[L, P] =>
+] { self: Matrix[P] =>
   /**
    * Melt one dimension of a matrix into another.
    *
@@ -961,7 +960,7 @@ trait ReshapeableMatrix[
   L <: Position[L] with ExpandablePosition[L, P],
   P <: Position[P] with CompactablePosition[P] with ExpandablePosition[P, M] with ReduceablePosition[P, L],
   M <: Position[M] with ReduceablePosition[M, P]
-] { self: Matrix[L, P] =>
+] { self: Matrix[P] =>
 
   /** Specifies tuners permitted on a call to `reshape` functions. */
   type ReshapeTuners[_]
@@ -992,13 +991,13 @@ trait ReshapeableMatrix[
 }
 
 /** Base trait for 1D specific operations. */
-trait Matrix1D extends Matrix[Position0D, Position1D] with ApproximateDistribution[Position0D, Position1D] { }
+trait Matrix1D extends Matrix[Position1D] with ApproximateDistribution[Position1D] { }
 
 /** Base trait for 2D specific operations. */
-trait Matrix2D extends Matrix[Position1D, Position2D]
+trait Matrix2D extends Matrix[Position2D]
   with ReduceableMatrix[Position1D, Position2D]
   with ReshapeableMatrix[Position1D, Position2D, Position3D]
-  with ApproximateDistribution[Position1D, Position2D] {
+  with ApproximateDistribution[Position2D] {
   /**
    * Permute the order of the coordinates in a position.
    *
@@ -1031,7 +1030,7 @@ trait Matrix2D extends Matrix[Position1D, Position2D]
    * @return A `U[Cell[Position2D]]`; that is it returns `data`.
    */
   def saveAsCSV(
-    slice: Slice[Position1D, Position2D, Position1D, Position1D],
+    slice: Slice[Position2D, Position1D, Position1D],
     file: String,
     separator: String = "|",
     escapee: Escape = Quote("|"),
@@ -1056,7 +1055,7 @@ trait Matrix2D extends Matrix[Position1D, Position2D]
    * @return A `U[Cell[Position2D]]`; that is it returns `data`.
    */
   def saveAsVW(
-    slice: Slice[Position1D, Position2D, Position1D, Position1D],
+    slice: Slice[Position2D, Position1D, Position1D],
     file: String,
     dictionary: String = "%s.dict",
     tag: Boolean = false,
@@ -1081,7 +1080,7 @@ trait Matrix2D extends Matrix[Position1D, Position2D]
    * @note The labels are joined to the data keeping only those examples for which data and a label are available.
    */
   def saveAsVWWithLabels(
-    slice: Slice[Position1D, Position2D, Position1D, Position1D],
+    slice: Slice[Position2D, Position1D, Position1D],
     file: String,
     labels: U[Cell[Position1D]],
     dictionary: String = "%s.dict",
@@ -1107,7 +1106,7 @@ trait Matrix2D extends Matrix[Position1D, Position2D]
    * @note The weights are joined to the data keeping only those examples for which data and a weight are available.
    */
   def saveAsVWWithImportance(
-    slice: Slice[Position1D, Position2D, Position1D, Position1D],
+    slice: Slice[Position2D, Position1D, Position1D],
     file: String,
     importance: U[Cell[Position1D]],
     dictionary: String = "%s.dict",
@@ -1135,7 +1134,7 @@ trait Matrix2D extends Matrix[Position1D, Position2D]
    *       and weight are available.
    */
   def saveAsVWWithLabelsAndImportance(
-    slice: Slice[Position1D, Position2D, Position1D, Position1D],
+    slice: Slice[Position2D, Position1D, Position1D],
     file: String,
     labels: U[Cell[Position1D]],
     importance: U[Cell[Position1D]],
@@ -1149,10 +1148,10 @@ trait Matrix2D extends Matrix[Position1D, Position2D]
 }
 
 /** Base trait for 3D specific operations. */
-trait Matrix3D extends Matrix[Position2D, Position3D]
+trait Matrix3D extends Matrix[Position3D]
   with ReduceableMatrix[Position2D, Position3D]
   with ReshapeableMatrix[Position2D, Position3D, Position4D]
-  with ApproximateDistribution[Position2D, Position3D] {
+  with ApproximateDistribution[Position3D] {
   /**
    * Permute the order of the coordinates in a position.
    *
@@ -1175,10 +1174,10 @@ trait Matrix3D extends Matrix[Position2D, Position3D]
 }
 
 /** Base trait for 4D specific operations. */
-trait Matrix4D extends Matrix[Position3D, Position4D]
+trait Matrix4D extends Matrix[Position4D]
   with ReduceableMatrix[Position3D, Position4D]
   with ReshapeableMatrix[Position3D, Position4D, Position5D]
-  with ApproximateDistribution[Position3D, Position4D] {
+  with ApproximateDistribution[Position4D] {
   /**
    * Permute the order of the coordinates in a position.
    *
@@ -1204,10 +1203,10 @@ trait Matrix4D extends Matrix[Position3D, Position4D]
 }
 
 /** Base trait for 5D specific operations. */
-trait Matrix5D extends Matrix[Position4D, Position5D]
+trait Matrix5D extends Matrix[Position5D]
   with ReduceableMatrix[Position4D, Position5D]
   with ReshapeableMatrix[Position4D, Position5D, Position6D]
-  with ApproximateDistribution[Position4D, Position5D] {
+  with ApproximateDistribution[Position5D] {
   /**
    * Permute the order of the coordinates in a position.
    *
@@ -1236,10 +1235,10 @@ trait Matrix5D extends Matrix[Position4D, Position5D]
 }
 
 /** Base trait for 6D specific operations. */
-trait Matrix6D extends Matrix[Position5D, Position6D]
+trait Matrix6D extends Matrix[Position6D]
   with ReduceableMatrix[Position5D, Position6D]
   with ReshapeableMatrix[Position5D, Position6D, Position7D]
-  with ApproximateDistribution[Position5D, Position6D] {
+  with ApproximateDistribution[Position6D] {
   /**
    * Permute the order of the coordinates in a position.
    *
@@ -1271,10 +1270,10 @@ trait Matrix6D extends Matrix[Position5D, Position6D]
 }
 
 /** Base trait for 7D specific operations. */
-trait Matrix7D extends Matrix[Position6D, Position7D]
+trait Matrix7D extends Matrix[Position7D]
   with ReduceableMatrix[Position6D, Position7D]
   with ReshapeableMatrix[Position6D, Position7D, Position8D]
-  with ApproximateDistribution[Position6D, Position7D] {
+  with ApproximateDistribution[Position7D] {
   /**
    * Permute the order of the coordinates in a position.
    *
@@ -1309,10 +1308,10 @@ trait Matrix7D extends Matrix[Position6D, Position7D]
 }
 
 /** Base trait for 8D specific operations. */
-trait  Matrix8D extends Matrix[Position7D, Position8D]
+trait  Matrix8D extends Matrix[Position8D]
   with ReduceableMatrix[Position7D, Position8D]
   with ReshapeableMatrix[Position7D, Position8D, Position9D]
-  with ApproximateDistribution[Position7D, Position8D] {
+  with ApproximateDistribution[Position8D] {
   /**
    * Permute the order of the coordinates in a position.
    *
@@ -1350,9 +1349,9 @@ trait  Matrix8D extends Matrix[Position7D, Position8D]
 }
 
 /** Base trait for 9D specific operations. */
-trait Matrix9D extends Matrix[Position8D, Position9D]
+trait Matrix9D extends Matrix[Position9D]
   with ReduceableMatrix[Position8D, Position9D]
-  with ApproximateDistribution[Position8D, Position9D] {
+  with ApproximateDistribution[Position9D] {
   /**
    * Permute the order of the coordinates in a position.
    *

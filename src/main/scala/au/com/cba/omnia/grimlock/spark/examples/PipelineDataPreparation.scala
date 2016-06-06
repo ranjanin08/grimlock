@@ -74,15 +74,15 @@ object PipelineDataPreparation {
 
     // Compute descriptive statistics on the training data.
     val descriptive = train
-      .summarise(Along(First), dstats)
+      .summarise(Along[Position1D, Position2D](First), dstats)
 
     // Compute histogram on the categorical features in the training data.
     val histogram = train
-      .histogram(Along(First), Locate.AppendDimensionAndContentString[Position1D, Position2D](First))
+      .histogram(Along[Position1D, Position2D](First), Locate.AppendDimensionAndContentString[Position1D, Position2D](First))
 
     // Compute the counts for each categorical features.
     val counts = histogram
-      .summarise(Over(First), Sum[Position2D, Position1D]())
+      .summarise(Over[Position1D, Position2D](First), Sum[Position2D, Position1D]())
       .compact()
 
     // Define type of the counts map.
@@ -99,7 +99,7 @@ object PipelineDataPreparation {
 
     // Compute summary statisics on the histogram.
     val summary = histogram
-      .summariseWithValue(Over(First), sstats, counts)
+      .summariseWithValue(Over[Position1D, Position2D](First), sstats, counts)
 
     // Combine all statistics and write result to file
     val stats = (descriptive ++ histogram ++ summary)
@@ -109,20 +109,20 @@ object PipelineDataPreparation {
     // fewer instances. These are removed first to prevent indicator features from being created.
     val rem1 = stats
       .which(cell => (cell.position(Second) equ "count") && (cell.content.value leq 2))
-      .names(Over(First))
+      .names(Over[Position1D, Position2D](First))
 
     // Also remove constant features (standard deviation is 0, or 1 category). These are removed after indicators have
     // been created.
     val rem2 = stats
       .which(cell => ((cell.position(Second) equ "sd") && (cell.content.value equ 0)) ||
           ((cell.position(Second) equ "num.cat") && (cell.content.value equ 1)))
-      .names(Over(First))
+      .names(Over[Position1D, Position2D](First))
 
     // Finally remove categoricals for which an individual category has only 1 value. These are removed after binarized
     // features have been created.
     val rem3 = stats
       .which(cell => (cell.position(Second) like ".*=.*".r) && (cell.content.value equ 1))
-      .names(Over(Second))
+      .names(Over[Position1D, Position2D](Second))
 
     // Define type of statistics map.
     type S = Map[Position1D, Map[Position1D, Content]]
@@ -148,19 +148,19 @@ object PipelineDataPreparation {
     //  4c/ Save the result as pipe separated CSV for use in modelling.
     def prepare(key: String, partition: RDD[Cell[Position2D]]): RDD[Cell[Position2D]] = {
       val d = partition
-        .slice(Over(Second), rem1, false)
+        .slice(Over[Position1D, Position2D](Second), rem1, false)
 
       val ind = d
         .transform(Indicator[Position2D]().andThenRelocate(Locate.RenameDimension(Second, "%1$s.ind")))
 
       val csb = d
-        .slice(Over(Second), rem2, false)
-        .transformWithValue(transforms, stats.compact(Over(First)))
-        .slice(Over(Second), rem3, false)
+        .slice(Over[Position1D, Position2D](Second), rem2, false)
+        .transformWithValue(transforms, stats.compact(Over[Position1D, Position2D](First)))
+        .slice(Over[Position1D, Position2D](Second), rem3, false)
 
       (ind ++ csb)
         //.fillHomogeneous(Content(ContinuousSchema[Double](), 0))
-        .saveAsCSV(Over(First), s"./demo.${output}/${key}.csv")
+        .saveAsCSV(Over[Position1D, Position2D](First), s"./demo.${output}/${key}.csv")
     }
 
     // Prepare each partition.

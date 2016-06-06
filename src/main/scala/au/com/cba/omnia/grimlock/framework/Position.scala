@@ -818,9 +818,7 @@ object Position9D {
 private case class Position9DImpl(coordinates: List[Value]) extends Position9D
 
 /** Base trait that represents the positions of a matrix. */
-trait Positions[
-  L <: Position[L] with ExpandablePosition[L, P],
-  P <: Position[P] with ReduceablePosition[P, L]] extends Persist[P] {
+trait Positions[P <: Position[P] with ReduceablePosition[P, _]] extends Persist[P] {
 
   /** Specifies tuners permitted on a call to `names`. */
   type NamesTuners[_]
@@ -841,7 +839,7 @@ trait Positions[
     R <: Position[R] with ExpandablePosition[R, _],
     T <: Tuner : NamesTuners
   ](
-    slice: Slice[L, P, S, R],
+    slice: Slice[P, S, R],
     tuner: T
   )(implicit
     ev1: S =:!= Position0D,

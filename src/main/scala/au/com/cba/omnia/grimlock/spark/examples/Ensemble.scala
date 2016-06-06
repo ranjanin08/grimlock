@@ -114,9 +114,9 @@ object Ensemble {
       .split(EnsembleSplit(scripts(0), scripts(1), scripts(2)))
       .forEach(scripts, trainAndScore)
       .merge(scripts)
-      .summariseWithValue(Over(First), WeightedSum[Position2D, Position1D, W](extractWeight), weights)
+      .summariseWithValue(Over[Position1D, Position2D](First), WeightedSum[Position2D, Position1D, W](extractWeight), weights)
       .saveAsText(s"./demo.${output}/ensemble.scores.out")
-      .compact(Over(First))
+      .compact(Over[Position0D, Position1D](First))
 
     // Rename instance id (first dimension) with its score
     def renameWithScore(cell: Cell[Position2D], ext: Map[Position1D, Content]): Option[Position2D] = {
@@ -129,9 +129,9 @@ object Ensemble {
     // 3/ Compute Gini Index (this sorts the labels by score as its a dimension);
     // 4/ Persist the Gini Index to file.
     data
-      .slice(Over(Second), "label", true)
+      .slice(Over[Position1D, Position2D](Second), "label", true)
       .relocateWithValue(renameWithScore, scores)
-      .gini(Over(Second))
+      .gini(Over[Position1D, Position2D](Second))
       .saveAsText(s"./demo.${output}/ensemble.gini.out")
       .toUnit
   }

@@ -39,9 +39,9 @@ class Scoring(args: Args) extends Job(args) {
   // Read the data (ignoring errors). This returns a 2D matrix (instance x feature).
   val (data, _) = loadText(s"${path}/exampleInput.txt", Cell.parse2D())
   // Read the statistics (ignoring errors) from the PipelineDataPreparation example.
-  val stats = loadText(s"./demo.${output}/stats.out", Cell.parse2D()).data.compact(Over(First))
+  val stats = loadText(s"./demo.${output}/stats.out", Cell.parse2D()).data.compact(Over[Position1D, Position2D](First))
   // Read externally learned weights (ignoring errors).
-  val weights = loadText(s"${path}/exampleWeights.txt", Cell.parse1D()).data.compact(Over(First))
+  val weights = loadText(s"${path}/exampleWeights.txt", Cell.parse1D()).data.compact(Over[Position0D, Position1D](First))
 
   // Define type of statistics map.
   type S = Map[Position1D, Map[Position1D, Content]]
@@ -68,7 +68,7 @@ class Scoring(args: Args) extends Job(args) {
 
   data
     .transformWithValue(transforms, stats)
-    .summariseWithValue(Over(First), WeightedSum[Position2D, Position1D, W](extractWeight), weights)
+    .summariseWithValue(Over[Position1D, Position2D](First), WeightedSum[Position2D, Position1D, W](extractWeight), weights)
     .saveAsText(s"./demo.${output}/scores.out")
     .toUnit
 }

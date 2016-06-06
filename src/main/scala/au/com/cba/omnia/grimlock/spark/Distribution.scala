@@ -34,9 +34,8 @@ import scala.reflect.ClassTag
 import shapeless.=:!=
 
 trait ApproximateDistribution[
-  L <: Position[L] with ExpandablePosition[L, P],
-  P <: Position[P] with ReduceablePosition[P, L] with CompactablePosition[P]
-] extends FwApproximateDistribution[L, P] { self: Matrix[L, P] =>
+  P <: Position[P] with ReduceablePosition[P, _] with CompactablePosition[P]
+] extends FwApproximateDistribution[P] { self: Matrix[P] =>
 
   import SparkImplicits._
 
@@ -47,7 +46,7 @@ trait ApproximateDistribution[
     Q <: Position[Q],
     T <: Tuner : HistogramTuners
   ](
-    slice: Slice[L, P, S, R],
+    slice: Slice[P, S, R],
     name: Locate.FromSelectedAndContent[S, Q],
     filter: Boolean,
     tuner: T = Default()
@@ -69,7 +68,7 @@ trait ApproximateDistribution[
     Q <: Position[Q],
     T <: Tuner : QuantileTuners
   ](
-    slice: Slice[L, P, S, R],
+    slice: Slice[P, S, R],
     probs: List[Double],
     quantiser: Quantile.Quantiser,
     name: Locate.FromSelectedAndOutput[S, Double, Q],
@@ -113,7 +112,7 @@ trait ApproximateDistribution[
     Q <: Position[Q],
     T <: Tuner : CountMapQuantilesTuners
   ](
-    slice: Slice[L, P, S, R],
+    slice: Slice[P, S, R],
     probs: List[Double],
     quantiser: Quantile.Quantiser,
     name: Locate.FromSelectedAndOutput[S, Double, Q],
@@ -145,7 +144,7 @@ trait ApproximateDistribution[
     Q <: Position[Q],
     T <: Tuner : TDigestQuantilesTuners
   ](
-    slice: Slice[L, P, S, R],
+    slice: Slice[P, S, R],
     probs: List[Double],
     compression: Double,
     name: Locate.FromSelectedAndOutput[S, Double, Q],
@@ -179,7 +178,7 @@ trait ApproximateDistribution[
     Q <: Position[Q],
     T <: Tuner : UniformQuantilesTuners
   ](
-    slice: Slice[L, P, S, R],
+    slice: Slice[P, S, R],
     count: Long,
     name: Locate.FromSelectedAndOutput[S, Double, Q],
     filter: Boolean,

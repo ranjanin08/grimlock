@@ -121,13 +121,12 @@ object Locate {
    * @note If a position is returned then it's always right cell's remainder with an additional coordinate prepended.
    */
   def PrependPairwiseSelectedStringToRemainder[
-    L <: Position[L] with ExpandablePosition[L, P],
-    P <: Position[P] with ReduceablePosition[P, L],
+    P <: Position[P] with ReduceablePosition[P, _],
     S <: Position[S] with ExpandablePosition[S, _],
     R <: Position[R] with ExpandablePosition[R, M],
     M <: Position[M] with ReduceablePosition[M, R]
   ](
-    slice: Slice[L, P, S, R],
+    slice: Slice[P, S, R],
     pattern: String,
     all: Boolean = false,
     separator: String = "|"

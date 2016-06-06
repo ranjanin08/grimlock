@@ -52,13 +52,13 @@ object BasicOperations {
 
     // Get the column names.
     data
-      .names(Over(Second))
+      .names(Over[Position1D, Position2D](Second))
       .saveAsText(s"./demo.${output}/column_names.out")
       .toUnit
 
     // Get the type of variables of each column.
     data
-      .types(Over(Second), true)
+      .types(Over[Position1D, Position2D](Second), true)
       .saveAsText(s"./demo.${output}/column_types.txt")
       .toUnit
 
@@ -84,8 +84,8 @@ object BasicOperations {
 
     // Keep columns A and B, and remove row 0221707
     data
-      .slice(Over(Second), List("fid:A", "fid:B"), true)
-      .slice(Over(First), "iid:0221707", false)
+      .slice(Over[Position1D, Position2D](Second), List("fid:A", "fid:B"), true)
+      .slice(Over[Position1D, Position2D](First), "iid:0221707", false)
       .saveAsText(s"./demo.${output}/sliced.txt")
       .toUnit
   }

@@ -74,15 +74,15 @@ object Conditional {
 
     // Get the gender counts. Sum out hair and eye color.
     val gcount = heg
-      .summarise(Along(First), Sum[Position3D, Position2D]())
-      .summarise(Along(First), Sum[Position2D, Position1D]())
+      .summarise(Along[Position2D, Position3D](First), Sum[Position3D, Position2D]())
+      .summarise(Along[Position1D, Position2D](First), Sum[Position2D, Position1D]())
       .compact()
 
     // Get eye color conditional on gender.
     // 1/ Sum out hair color.
     // 2/ Divide each element by the gender's count to get conditional distribution.
     heg
-      .summarise(Along(First), Sum[Position3D, Position2D]())
+      .summarise(Along[Position2D, Position3D](First), Sum[Position3D, Position2D]())
       .transformWithValue(Fraction(extractor), gcount)
       .saveAsText(s"./demo.${output}/eye.out")
       .toUnit
@@ -91,7 +91,7 @@ object Conditional {
     // 1/ Sum out eye color.
     // 2/ Divide each element by the gender's count to get conditional distribution.
     heg
-      .summarise(Along(Second), Sum[Position3D, Position2D]())
+      .summarise(Along[Position2D, Position3D](Second), Sum[Position3D, Position2D]())
       .transformWithValue(Fraction(extractor), gcount)
       .saveAsText(s"./demo.${output}/hair.out")
       .toUnit

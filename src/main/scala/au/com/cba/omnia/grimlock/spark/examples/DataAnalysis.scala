@@ -43,9 +43,9 @@ object DataAnalysis {
     //  3/ Compute the moments of the counts;
     //  4/ Save the moments.
     data
-      .summarise(Over(First), Count[Position2D, Position1D]())
+      .summarise(Over[Position1D, Position2D](First), Count[Position2D, Position1D]())
       .saveAsText(s"./demo.${output}/feature_count.out")
-      .summarise(Along(First), Moments[Position1D, Position0D, Position1D]("mean", "sd", "skewness", "kurtosis"))
+      .summarise(Along[Position0D, Position1D](First), Moments[Position1D, Position0D, Position1D]("mean", "sd", "skewness", "kurtosis"))
       .saveAsText(s"./demo.${output}/feature_density.out")
       .toUnit
 
@@ -55,9 +55,9 @@ object DataAnalysis {
     //  3/ Compute the moments of the counts;
     //  4/ Save the moments.
     data
-      .summarise(Over(Second), Count[Position2D, Position1D]())
+      .summarise(Over[Position1D, Position2D](Second), Count[Position2D, Position1D]())
       .saveAsText(s"./demo.${output}/instance_count.out")
-      .summarise(Along(First), Moments[Position1D, Position0D, Position1D]("mean", "sd", "skewness", "kurtosis"))
+      .summarise(Along[Position0D, Position1D](First), Moments[Position1D, Position0D, Position1D]("mean", "sd", "skewness", "kurtosis"))
       .saveAsText(s"./demo.${output}/instance_density.out")
       .toUnit
   }
