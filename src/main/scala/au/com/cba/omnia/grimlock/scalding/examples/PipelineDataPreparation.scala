@@ -67,8 +67,8 @@ class PipelineDataPreparation(args: Args) extends Job(args) {
 
   // Define descriptive statistics to be computed on the training data.
   val dstats = List(Count[Position2D, Position1D]().andThenRelocate(_.position.append("count").toOption),
-    Moments[Position2D, Position1D]("mean", "sd", "skewness", "kurtosis"),
-    Limits[Position2D, Position1D]("min", "max"),
+    Moments[Position2D, Position1D, Position2D]("mean", "sd", "skewness", "kurtosis"),
+    Limits[Position2D, Position1D, Position2D]("min", "max"),
     MaxAbs[Position2D, Position1D]().andThenRelocate(_.position.append("max.abs").toOption))
 
   // Compute descriptive statistics on the training data.
@@ -77,7 +77,7 @@ class PipelineDataPreparation(args: Args) extends Job(args) {
 
   // Compute histogram on the categorical features in the training data.
   val histogram = train
-    .histogram(Along(First), Locate.AppendDimensionAndContentString[Position1D](First))
+    .histogram(Along(First), Locate.AppendDimensionAndContentString[Position1D, Position2D](First))
 
   // Compute the counts for each categorical features.
   val counts = histogram

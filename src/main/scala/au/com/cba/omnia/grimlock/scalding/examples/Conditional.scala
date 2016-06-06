@@ -42,11 +42,16 @@ class Conditional(args: Args) extends Job(args) {
   val (data, _) = loadText(s"${path}/exampleConditional.txt", Cell.parse2D())
 
   // Define function that appends the value as a string, or "missing" if no value is available
-  def cast[P <: Position with ExpandablePosition](cell: Cell[P], value: Option[Value]): Option[P#M] = {
-    Some(cell.position.append(value match {
-      case Some(v) => v.toShortString
-      case None => "missing"
-    }))
+  def cast[
+    P <: Position[P] with ExpandablePosition[P, M],
+    M <: Position[M] with ReduceablePosition[M, P]
+  ](
+    cell: Cell[P],
+    value: Option[Value]
+  ): Option[M] = {
+    val column = value.map(_.toShortString).getOrElse("missing")
+
+    cell.position.append(column).toOption
   }
 
   // Generate 3D matrix (hair color x eye color x gender)
@@ -57,9 +62,9 @@ class Conditional(args: Args) extends Job(args) {
   // 5/ Squash the first dimension (row ids + value). As there is only one value for each
   //    hair/eye/gender triplet, any squash function can be used.
   val heg = data
-    .reshape(Second, "hair", cast)
-    .reshape(Second, "eye", cast)
-    .reshape(Second, "gender", cast)
+    .reshape(Second, "hair", cast[Position2D, Position3D])
+    .reshape(Second, "eye", cast[Position3D, Position4D])
+    .reshape(Second, "gender", cast[Position4D, Position5D])
     .melt(Second, First, Value.concatenate("."))
     .squash(First, PreservingMaxPosition[Position4D]())
 

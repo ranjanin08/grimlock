@@ -1478,7 +1478,7 @@ case class Matrix2D(data: RDD[Cell[Position2D]]) extends FwMatrix2D
     dictionary: String,
     separator: String
   )(implicit
-    ev: ClassTag[S]
+    ev: ClassTag[Position1D]
   ): U[Cell[Position2D]] = {
     val dict = data
       .map { c => slice.remainder(c.position)(First).toShortString }

@@ -70,7 +70,7 @@ case class Positions[
 object Positions {
   /** Converts a `RDD[Position]` to a Spark `Positions`. */
   implicit def RDDP2RDDP[
-    L <: Position[L] with ReduceablePosition[L, P],
+    L <: Position[L] with ExpandablePosition[L, P],
     P <: Position[P] with ReduceablePosition[P, L]
   ](
     data: RDD[P]

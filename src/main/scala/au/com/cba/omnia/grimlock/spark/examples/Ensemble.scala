@@ -95,7 +95,7 @@ object Ensemble {
       partition
         .stream("Rscript " + key, List(key), Cell.toString(false, "|", true, true), Cell.parse1D("|", StringCodec))
         .data // Keep only the data (ignoring errors).
-        .relocate(Locate.AppendValue[Position1D](key))
+        .relocate(Locate.AppendValue[Position1D, Position2D](key))
     }
 
     // Define extractor to get weight out of weights map.
