@@ -23,11 +23,15 @@ import au.com.cba.omnia.grimlock.framework.position._
 class TestCell extends TestGrimlock {
 
   "A Cell" should "return its string" in {
-    Cell(Position2D("foo", 123), Content(ContinuousSchema[Double](), 3.14)).toString(".", true) shouldBe
-      "Position2D(StringValue(foo,StringCodec),LongValue(123,LongCodec)).Content(ContinuousSchema[Double](),DoubleValue(3.14,DoubleCodec))"
-    Cell(Position2D("foo", 123), Content(ContinuousSchema[Double](), 3.14)).toString(".", false) shouldBe
+    Cell(Position2D("foo", 123), Content(ContinuousSchema[Double](), 3.14)).toString() shouldBe
+      "Cell(Position2D(StringValue(foo,StringCodec),LongValue(123,LongCodec)),Content(ContinuousSchema[Double](),DoubleValue(3.14,DoubleCodec)))"
+    Cell(Position2D("foo", 123), Content(ContinuousSchema[Double](), 3.14)).toShortString(".", true, true) shouldBe
       "foo.123.double.continuous.3.14"
-    Cell(Position2D("foo", 123), Content(ContinuousSchema[Double](), 3.14)).toString(".", false, false) shouldBe
+    Cell(Position2D("foo", 123), Content(ContinuousSchema[Double](), 3.14)).toShortString(".", false, true) shouldBe
+      "foo.123.continuous.3.14"
+    Cell(Position2D("foo", 123), Content(ContinuousSchema[Double](), 3.14)).toShortString(".", true, false) shouldBe
+      "foo.123.double.3.14"
+    Cell(Position2D("foo", 123), Content(ContinuousSchema[Double](), 3.14)).toShortString(".", false, false) shouldBe
       "foo.123.3.14"
   }
 

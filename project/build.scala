@@ -49,9 +49,10 @@ object build extends Build {
             noHadoop("org.apache.spark"   %% "spark-core"         % "1.5.0")
               exclude("com.twitter", "chill-java")
               exclude("com.twitter", "chill_2.11"),
+            "com.tdunning"                %  "t-digest"           % "3.1",
             "org.scalatest"               %% "scalatest"          % "2.2.4" % "test"
+           )
      )
-      )
     }),
     dependencyOverrides ++= Set(
       "org.scala-lang.modules" %% "scala-parser-combinators"      % "1.0.3",

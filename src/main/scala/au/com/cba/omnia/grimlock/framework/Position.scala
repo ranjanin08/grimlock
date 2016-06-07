@@ -107,12 +107,12 @@ object Position {
   /**
    * Return function that returns a string representation of a position.
    *
-   * @param separator   The separator to use between various fields.
    * @param descriptive Indicator if descriptive string is required or not.
+   * @param separator   The separator to use between various fields (only used if descriptive is `false`).
    */
-  def toString[P <: Position](separator: String = "|",
-    descriptive: Boolean = false): (P) => TraversableOnce[String] = {
-    (t: P) => if (descriptive) { Some(t.toString) } else { Some(t.toShortString(separator)) }
+  def toString[P <: Position](descriptive: Boolean = false,
+    separator: String = "|"): (P) => TraversableOnce[String] = {
+    (t: P) => List(if (descriptive) { t.toString } else { t.toShortString(separator) })
   }
 
   /** Define dependency between expansion from `Position0D` to `Position1D`. */
@@ -834,7 +834,7 @@ object Position9D {
 private case class Position9DImpl(coordinates: List[Value]) extends Position9D
 
 /** Base trait that represents the positions of a matrix. */
-trait Positions[P <: Position] extends Persist[P] {
+trait Positions[P <: Position with ReduceablePosition] extends Persist[P] {
 
   /** Specifies tuners permitted on a call to `names`. */
   type NamesTuners[_]

@@ -15,7 +15,6 @@
 package au.com.cba.omnia.grimlock.spark.examples
 
 import au.com.cba.omnia.grimlock.framework._
-import au.com.cba.omnia.grimlock.framework.aggregate._
 import au.com.cba.omnia.grimlock.framework.position._
 
 import au.com.cba.omnia.grimlock.library.aggregate._
@@ -38,13 +37,6 @@ object DataAnalysis {
     // Read the data (ignoring errors). This returns a 2D matrix (instance x feature).
     val (data, _) = loadText(s"${path}/exampleInput.txt", Cell.parse2D())
 
-    // Define moments to compute.
-    val moments: List[Aggregator[Position1D, Position0D, Position1D]] = List(
-      Mean().andThenRelocate(_.position.append("mean").toOption),
-      StandardDeviation().andThenRelocate(_.position.append("sd").toOption),
-      Skewness().andThenRelocate(_.position.append("skewness").toOption),
-      Kurtosis().andThenRelocate(_.position.append("kurtosis").toOption))
-
     // For the instances:
     //  1/ Compute the number of features for each instance;
     //  2/ Save the counts;
@@ -53,7 +45,7 @@ object DataAnalysis {
     data
       .summarise(Over(First), Count[Position2D, Position1D]())
       .saveAsText(s"./demo.${output}/feature_count.out")
-      .summarise(Along(First), moments)
+      .summarise(Along(First), Moments[Position1D, Position0D]("mean", "sd", "skewness", "kurtosis"))
       .saveAsText(s"./demo.${output}/feature_density.out")
       .toUnit
 
@@ -65,7 +57,7 @@ object DataAnalysis {
     data
       .summarise(Over(Second), Count[Position2D, Position1D]())
       .saveAsText(s"./demo.${output}/instance_count.out")
-      .summarise(Along(First), moments)
+      .summarise(Along(First), Moments[Position1D, Position0D]("mean", "sd", "skewness", "kurtosis"))
       .saveAsText(s"./demo.${output}/instance_density.out")
       .toUnit
   }

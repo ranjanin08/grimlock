@@ -27,6 +27,7 @@ import au.com.cba.omnia.grimlock.framework.squash._
 import au.com.cba.omnia.grimlock.framework.transform._
 import au.com.cba.omnia.grimlock.framework.utility._
 import au.com.cba.omnia.grimlock.framework.window._
+
 import com.twitter.scalding.typed.TypedPipe
 import com.twitter.scrooge.ThriftStruct
 
@@ -37,8 +38,8 @@ import scala.reflect.ClassTag
 import shapeless.=:!=
 
 /** Base trait for matrix operations. */
-trait Matrix[P <: Position with CompactablePosition] extends Persist[Cell[P]] with UserData with DefaultTuners
-  with PositionOrdering {
+trait Matrix[P <: Position with CompactablePosition with ReduceablePosition] extends Persist[Cell[P]] with UserData
+  with DefaultTuners with PositionOrdering {
   /** Self-type of a specific implementation of this API. */
   type M <: Matrix[P]
 
@@ -53,7 +54,7 @@ trait Matrix[P <: Position with CompactablePosition] extends Persist[Cell[P]] wi
    * @param schema    The schema to change to.
    * @param tuner     The tuner for the job.
    *
-   * @return A `U[Cell[P]]' with the changed contents.
+   * @return A `U[Cell[P]]` with the changed contents.
    */
   def change[I, T <: Tuner : ChangeTuners](slice: Slice[P], positions: I, schema: Content.Parser, tuner: T)(
     implicit ev1: PositionDistributable[I, slice.S, U], ev2: ClassTag[slice.S]): U[Cell[P]]
@@ -135,7 +136,7 @@ trait Matrix[P <: Position with CompactablePosition] extends Persist[Cell[P]] wi
    * @param positions The positions for which to get the contents.
    * @param tuner     The tuner for the job.
    *
-   * @return A `U[Cell[P]]' of the `positions` together with their content.
+   * @return A `U[Cell[P]]` of the `positions` together with their content.
    */
   def get[I, T <: Tuner : GetTuners](positions: I, tuner: T)(implicit ev1: PositionDistributable[I, P, U],
     ev2: ClassTag[P]): U[Cell[P]]
@@ -298,7 +299,7 @@ trait Matrix[P <: Position with CompactablePosition] extends Persist[Cell[P]] wi
    * @param values The values to set.
    * @param tuner  The tuner for the job.
    *
-   * @return A `U[Cell[P]]' with the `values` set.
+   * @return A `U[Cell[P]]` with the `values` set.
    */
   def set[T <: Tuner : SetTuners](values: Matrixable[P, U], tuner: T)(implicit ev1: ClassTag[P]): U[Cell[P]]
 
@@ -342,7 +343,7 @@ trait Matrix[P <: Position with CompactablePosition] extends Persist[Cell[P]] wi
    * @param keep      Indicates if the `positions` should be kept or removed.
    * @param tuner     The tuner for the job.
    *
-   * @return A `U[Cell[P]]' of the remaining content.
+   * @return A `U[Cell[P]]` of the remaining content.
    */
   def slice[I, T <: Tuner : SliceTuners](slice: Slice[P], positions: I, keep: Boolean, tuner: T)(
     implicit ev1: PositionDistributable[I, slice.S, U], ev2: ClassTag[slice.S]): U[Cell[P]]

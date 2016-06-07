@@ -14,11 +14,7 @@
 
 package au.com.cba.omnia.grimlock.spark
 
-import au.com.cba.omnia.ebenezer.scrooge.{ScroogeReadSupport, ParquetScroogeSource}
-import parquet.hadoop.ParquetInputFormat
-import org.apache.hadoop.mapreduce.Job
-
-import scala.reflect._
+import au.com.cba.omnia.ebenezer.scrooge.{ ScroogeReadSupport, ParquetScroogeSource }
 
 import au.com.cba.omnia.grimlock.framework.{
   Cell,
@@ -68,12 +64,15 @@ import au.com.cba.omnia.grimlock.spark.distribution._
 import au.com.cba.omnia.grimlock.spark.environment._
 
 import com.twitter.scrooge.ThriftStruct
-import org.apache.hadoop.io.Writable
 
+import org.apache.hadoop.io.Writable
+import org.apache.hadoop.mapreduce.Job
 import org.apache.spark.rdd.RDD
 
-import scala.collection.immutable.HashSet
+import parquet.hadoop.ParquetInputFormat
 
+import scala.collection.immutable.HashSet
+import scala.reflect.{ classTag, ClassTag }
 
 import shapeless.=:!=
 
@@ -119,7 +118,8 @@ private[spark] object SparkImplicits {
 }
 
 /** Base trait for matrix operations using a `RDD[Cell[P]]`. */
-trait Matrix[P <: Position with CompactablePosition] extends FwMatrix[P] with Persist[Cell[P]] with UserData {
+trait Matrix[P <: Position with CompactablePosition with ReduceablePosition] extends FwMatrix[P] with Persist[Cell[P]]
+  with UserData {
   type M = Matrix[P]
 
   import SparkImplicits._

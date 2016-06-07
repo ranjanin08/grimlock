@@ -15,7 +15,7 @@
 package au.com.cba.omnia.grimlock.framework.position
 
 /** Base trait that encapsulates dimension on which to operate. */
-sealed trait Slice[P <: Position] {
+sealed trait Slice[P <: Position with ReduceablePosition] {
   /**
    * Return type of the `selected` method; a position of dimension less than `P`.
    *
@@ -37,9 +37,7 @@ sealed trait Slice[P <: Position] {
   def selected(pos: P): S
   /** Returns the remaining coordinate(s) for the given `pos`. */
   def remainder(pos: P): R
-}
 
-private[position] trait Mapable[P <: Position with ReduceablePosition] { self: Slice[P] =>
   protected def remove(pos: P): pos.L = pos.remove(dimension)
   protected def single(pos: P): Position1D = Position1D(pos(dimension))
 }
@@ -50,7 +48,7 @@ private[position] trait Mapable[P <: Position with ReduceablePosition] { self: S
  *
  * @param dimension Dimension of the selected coordinate.
  */
-trait Over[P <: Position with ReduceablePosition] extends Slice[P] with Mapable[P] {
+trait Over[P <: Position with ReduceablePosition] extends Slice[P] {
   type S = Position1D
   type R = P#L
 
@@ -80,7 +78,7 @@ private[position] case class OverImpl[P <: Position with ReduceablePosition](dim
  * groupBy is performed, it is performed using a `Position` (type `ReduceablePosition.L`) consisting of all coordinates
  * except that at index `dimension`.
  */
-trait Along[P <: Position with ReduceablePosition] extends Slice[P] with Mapable[P] {
+trait Along[P <: Position with ReduceablePosition] extends Slice[P] {
   type S = P#L
   type R = Position1D
 

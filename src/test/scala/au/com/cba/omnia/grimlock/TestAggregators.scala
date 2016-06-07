@@ -47,7 +47,7 @@ class TestCount extends TestAggregators {
     val r = obj.reduce(t1.get, t2.get)
     r shouldBe 2
 
-    val c = obj.present(Position1D("foo"), r)
+    val c = obj.present(Position1D("foo"), r).result
     c shouldBe Some(Cell(Position1D("foo"), getLongContent(2)))
   }
 
@@ -64,7 +64,7 @@ class TestCount extends TestAggregators {
     val r = obj.reduce(t1.get, t2.get)
     r shouldBe 2
 
-    val c = obj.present(Position1D("foo"), r)
+    val c = obj.present(Position1D("foo"), r).result
     c shouldBe Some(Cell(Position2D("foo", "count"), getLongContent(2)))
   }
 }
@@ -87,7 +87,7 @@ class TestMean extends TestAggregators {
     val r = obj.reduce(t1.get, t2.get)
     r shouldBe com.twitter.algebird.Moments(2, 1.5, 0.5, 0.0, 0.125)
 
-    val c = obj.present(Position1D("foo"), r)
+    val c = obj.present(Position1D("foo"), r).result
     c shouldBe Some(Cell(Position1D("foo"), getDoubleContent(1.5)))
   }
 
@@ -109,9 +109,9 @@ class TestMean extends TestAggregators {
     val r2 = obj.reduce(r1, t3.get)
     r2.asInstanceOf[com.twitter.algebird.Moments].mean.compare(Double.NaN) shouldBe 0
 
-    val c = obj.present(Position1D("foo"), r2)
-    c.get.position shouldBe Position1D("foo")
-    c.get.content.value.asDouble.map(_.compare(Double.NaN)) shouldBe Some(0)
+    val c = obj.present(Position1D("foo"), r2).result.get
+    c.position shouldBe Position1D("foo")
+    c.content.value.asDouble.map(_.compare(Double.NaN)) shouldBe Some(0)
   }
 
   it should "prepare, reduce and present with strict and non-nan" in {
@@ -132,7 +132,7 @@ class TestMean extends TestAggregators {
     val r2 = obj.reduce(r1, t3.get)
     r2.asInstanceOf[com.twitter.algebird.Moments].mean.compare(Double.NaN) shouldBe 0
 
-    val c = obj.present(Position1D("foo"), r2)
+    val c = obj.present(Position1D("foo"), r2).result
     c shouldBe None
   }
 
@@ -154,7 +154,7 @@ class TestMean extends TestAggregators {
     val r2 = obj.reduce(r1, t3.get)
     r2 shouldBe com.twitter.algebird.Moments(2, 1.5, 0.5, 0.0, 0.125)
 
-    val c = obj.present(Position1D("foo"), r2)
+    val c = obj.present(Position1D("foo"), r2).result
     c shouldBe Some(Cell(Position1D("foo"), getDoubleContent(1.5)))
   }
 
@@ -176,7 +176,7 @@ class TestMean extends TestAggregators {
     val r2 = obj.reduce(r1, t3.get)
     r2 shouldBe com.twitter.algebird.Moments(2, 1.5, 0.5, 0.0, 0.125)
 
-    val c = obj.present(Position1D("foo"), r2)
+    val c = obj.present(Position1D("foo"), r2).result
     c shouldBe Some(Cell(Position1D("foo"), getDoubleContent(1.5)))
   }
 
@@ -193,7 +193,7 @@ class TestMean extends TestAggregators {
     val r = obj.reduce(t1.get, t2.get)
     r shouldBe com.twitter.algebird.Moments(2, 1.5, 0.5, 0.0, 0.125)
 
-    val c = obj.present(Position1D("foo"), r)
+    val c = obj.present(Position1D("foo"), r).result
     c shouldBe Some(Cell(Position2D("foo", "mean"), getDoubleContent(1.5)))
   }
 
@@ -216,9 +216,9 @@ class TestMean extends TestAggregators {
     val r2 = obj.reduce(r1, t3.get)
     r2.asInstanceOf[com.twitter.algebird.Moments].mean.compare(Double.NaN) shouldBe 0
 
-    val c = obj.present(Position1D("foo"), r2)
-    c.get.position shouldBe Position2D("foo", "mean")
-    c.get.content.value.asDouble.map(_.compare(Double.NaN)) shouldBe Some(0)
+    val c = obj.present(Position1D("foo"), r2).result.get
+    c.position shouldBe Position2D("foo", "mean")
+    c.content.value.asDouble.map(_.compare(Double.NaN)) shouldBe Some(0)
   }
 
   it should "prepare, reduce and present expanded with strict and non-nan" in {
@@ -240,7 +240,7 @@ class TestMean extends TestAggregators {
     val r2 = obj.reduce(r1, t3.get)
     r2.asInstanceOf[com.twitter.algebird.Moments].mean.compare(Double.NaN) shouldBe 0
 
-    val c = obj.present(Position1D("foo"), r2)
+    val c = obj.present(Position1D("foo"), r2).result
     c shouldBe None
   }
 
@@ -263,7 +263,7 @@ class TestMean extends TestAggregators {
     val r2 = obj.reduce(r1, t3.get)
     r2 shouldBe com.twitter.algebird.Moments(2, 1.5, 0.5, 0.0, 0.125)
 
-    val c = obj.present(Position1D("foo"), r2)
+    val c = obj.present(Position1D("foo"), r2).result
     c shouldBe Some(Cell(Position2D("foo", "mean"), getDoubleContent(1.5)))
   }
 
@@ -286,7 +286,7 @@ class TestMean extends TestAggregators {
     val r2 = obj.reduce(r1, t3.get)
     r2 shouldBe com.twitter.algebird.Moments(2, 1.5, 0.5, 0.0, 0.125)
 
-    val c = obj.present(Position1D("foo"), r2)
+    val c = obj.present(Position1D("foo"), r2).result
     c shouldBe Some(Cell(Position2D("foo", "mean"), getDoubleContent(1.5)))
   }
 
@@ -317,7 +317,7 @@ class TestStandardDeviation extends TestAggregators {
     val r = obj.reduce(t1.get, t2.get)
     r shouldBe com.twitter.algebird.Moments(2, 1.5, 0.5, 0.0, 0.125)
 
-    val c = obj.present(Position1D("foo"), r)
+    val c = obj.present(Position1D("foo"), r).result
     c shouldBe Some(Cell(Position1D("foo"), getDoubleContent(0.7071067811865476)))
   }
 
@@ -339,9 +339,9 @@ class TestStandardDeviation extends TestAggregators {
     val r2 = obj.reduce(r1, t3.get)
     r2.asInstanceOf[com.twitter.algebird.Moments].mean.compare(Double.NaN) shouldBe 0
 
-    val c = obj.present(Position1D("foo"), r2)
-    c.get.position shouldBe Position1D("foo")
-    c.get.content.value.asDouble.map(_.compare(Double.NaN)) shouldBe Some(0)
+    val c = obj.present(Position1D("foo"), r2).result.get
+    c.position shouldBe Position1D("foo")
+    c.content.value.asDouble.map(_.compare(Double.NaN)) shouldBe Some(0)
   }
 
   it should "prepare, reduce and present with strict and non-nan" in {
@@ -362,7 +362,7 @@ class TestStandardDeviation extends TestAggregators {
     val r2 = obj.reduce(r1, t3.get)
     r2.asInstanceOf[com.twitter.algebird.Moments].mean.compare(Double.NaN) shouldBe 0
 
-    val c = obj.present(Position1D("foo"), r2)
+    val c = obj.present(Position1D("foo"), r2).result
     c shouldBe None
   }
 
@@ -384,7 +384,7 @@ class TestStandardDeviation extends TestAggregators {
     val r2 = obj.reduce(r1, t3.get)
     r2 shouldBe com.twitter.algebird.Moments(2, 1.5, 0.5, 0.0, 0.125)
 
-    val c = obj.present(Position1D("foo"), r2)
+    val c = obj.present(Position1D("foo"), r2).result
     c shouldBe Some(Cell(Position1D("foo"), getDoubleContent(0.5)))
   }
 
@@ -406,7 +406,7 @@ class TestStandardDeviation extends TestAggregators {
     val r2 = obj.reduce(r1, t3.get)
     r2 shouldBe com.twitter.algebird.Moments(2, 1.5, 0.5, 0.0, 0.125)
 
-    val c = obj.present(Position1D("foo"), r2)
+    val c = obj.present(Position1D("foo"), r2).result
     c shouldBe Some(Cell(Position1D("foo"), getDoubleContent(0.7071067811865476)))
   }
 
@@ -423,7 +423,7 @@ class TestStandardDeviation extends TestAggregators {
     val r = obj.reduce(t1.get, t2.get)
     r shouldBe com.twitter.algebird.Moments(2, 1.5, 0.5, 0.0, 0.125)
 
-    val c = obj.present(Position1D("foo"), r)
+    val c = obj.present(Position1D("foo"), r).result
     c shouldBe Some(Cell(Position2D("foo", "sd"), getDoubleContent(0.7071067811865476)))
   }
 
@@ -446,9 +446,9 @@ class TestStandardDeviation extends TestAggregators {
     val r2 = obj.reduce(r1, t3.get)
     r2.asInstanceOf[com.twitter.algebird.Moments].mean.compare(Double.NaN) shouldBe 0
 
-    val c = obj.present(Position1D("foo"), r2)
-    c.get.position shouldBe Position2D("foo", "sd")
-    c.get.content.value.asDouble.map(_.compare(Double.NaN)) shouldBe Some(0)
+    val c = obj.present(Position1D("foo"), r2).result.get
+    c.position shouldBe Position2D("foo", "sd")
+    c.content.value.asDouble.map(_.compare(Double.NaN)) shouldBe Some(0)
   }
 
   it should "prepare, reduce and present expanded with strict and non-nan" in {
@@ -470,7 +470,7 @@ class TestStandardDeviation extends TestAggregators {
     val r2 = obj.reduce(r1, t3.get)
     r2.asInstanceOf[com.twitter.algebird.Moments].mean.compare(Double.NaN) shouldBe 0
 
-    val c = obj.present(Position1D("foo"), r2)
+    val c = obj.present(Position1D("foo"), r2).result
     c shouldBe None
   }
 
@@ -493,7 +493,7 @@ class TestStandardDeviation extends TestAggregators {
     val r2 = obj.reduce(r1, t3.get)
     r2 shouldBe com.twitter.algebird.Moments(2, 1.5, 0.5, 0.0, 0.125)
 
-    val c = obj.present(Position1D("foo"), r2)
+    val c = obj.present(Position1D("foo"), r2).result
     c shouldBe Some(Cell(Position2D("foo", "sd"), getDoubleContent(0.5)))
   }
 
@@ -516,7 +516,7 @@ class TestStandardDeviation extends TestAggregators {
     val r2 = obj.reduce(r1, t3.get)
     r2 shouldBe com.twitter.algebird.Moments(2, 1.5, 0.5, 0.0, 0.125)
 
-    val c = obj.present(Position1D("foo"), r2)
+    val c = obj.present(Position1D("foo"), r2).result
     c shouldBe Some(Cell(Position2D("foo", "sd"), getDoubleContent(0.7071067811865476)))
   }
 
@@ -549,7 +549,7 @@ class TestSkewness extends TestAggregators {
     val r = obj.reduce(t1.get, t2.get)
     r shouldBe com.twitter.algebird.Moments(2, 1.5, 0.5, 0.0, 0.125)
 
-    val c = obj.present(Position1D("foo"), r)
+    val c = obj.present(Position1D("foo"), r).result
     c shouldBe Some(Cell(Position1D("foo"), getDoubleContent(0)))
   }
 
@@ -571,9 +571,9 @@ class TestSkewness extends TestAggregators {
     val r2 = obj.reduce(r1, t3.get)
     r2.asInstanceOf[com.twitter.algebird.Moments].mean.compare(Double.NaN) shouldBe 0
 
-    val c = obj.present(Position1D("foo"), r2)
-    c.get.position shouldBe Position1D("foo")
-    c.get.content.value.asDouble.map(_.compare(Double.NaN)) shouldBe Some(0)
+    val c = obj.present(Position1D("foo"), r2).result.get
+    c.position shouldBe Position1D("foo")
+    c.content.value.asDouble.map(_.compare(Double.NaN)) shouldBe Some(0)
   }
 
   it should "prepare, reduce and present with strict and non-nan" in {
@@ -594,7 +594,7 @@ class TestSkewness extends TestAggregators {
     val r2 = obj.reduce(r1, t3.get)
     r2.asInstanceOf[com.twitter.algebird.Moments].mean.compare(Double.NaN) shouldBe 0
 
-    val c = obj.present(Position1D("foo"), r2)
+    val c = obj.present(Position1D("foo"), r2).result
     c shouldBe None
   }
 
@@ -616,7 +616,7 @@ class TestSkewness extends TestAggregators {
     val r2 = obj.reduce(r1, t3.get)
     r2 shouldBe com.twitter.algebird.Moments(2, 1.5, 0.5, 0.0, 0.125)
 
-    val c = obj.present(Position1D("foo"), r2)
+    val c = obj.present(Position1D("foo"), r2).result
     c shouldBe Some(Cell(Position1D("foo"), getDoubleContent(0)))
   }
 
@@ -638,7 +638,7 @@ class TestSkewness extends TestAggregators {
     val r2 = obj.reduce(r1, t3.get)
     r2 shouldBe com.twitter.algebird.Moments(2, 1.5, 0.5, 0.0, 0.125)
 
-    val c = obj.present(Position1D("foo"), r2)
+    val c = obj.present(Position1D("foo"), r2).result
     c shouldBe Some(Cell(Position1D("foo"), getDoubleContent(0)))
   }
 
@@ -655,7 +655,7 @@ class TestSkewness extends TestAggregators {
     val r = obj.reduce(t1.get, t2.get)
     r shouldBe com.twitter.algebird.Moments(2, 1.5, 0.5, 0.0, 0.125)
 
-    val c = obj.present(Position1D("foo"), r)
+    val c = obj.present(Position1D("foo"), r).result
     c shouldBe Some(Cell(Position2D("foo", "skewness"), getDoubleContent(0)))
   }
 
@@ -678,9 +678,9 @@ class TestSkewness extends TestAggregators {
     val r2 = obj.reduce(r1, t3.get)
     r2.asInstanceOf[com.twitter.algebird.Moments].mean.compare(Double.NaN) shouldBe 0
 
-    val c = obj.present(Position1D("foo"), r2)
-    c.get.position shouldBe Position2D("foo", "skewness")
-    c.get.content.value.asDouble.map(_.compare(Double.NaN)) shouldBe Some(0)
+    val c = obj.present(Position1D("foo"), r2).result.get
+    c.position shouldBe Position2D("foo", "skewness")
+    c.content.value.asDouble.map(_.compare(Double.NaN)) shouldBe Some(0)
   }
 
   it should "prepare, reduce and present expanded with strict and non-nan" in {
@@ -702,7 +702,7 @@ class TestSkewness extends TestAggregators {
     val r2 = obj.reduce(r1, t3.get)
     r2.asInstanceOf[com.twitter.algebird.Moments].mean.compare(Double.NaN) shouldBe 0
 
-    val c = obj.present(Position1D("foo"), r2)
+    val c = obj.present(Position1D("foo"), r2).result
     c shouldBe None
   }
 
@@ -725,7 +725,7 @@ class TestSkewness extends TestAggregators {
     val r2 = obj.reduce(r1, t3.get)
     r2 shouldBe com.twitter.algebird.Moments(2, 1.5, 0.5, 0.0, 0.125)
 
-    val c = obj.present(Position1D("foo"), r2)
+    val c = obj.present(Position1D("foo"), r2).result
     c shouldBe Some(Cell(Position2D("foo", "skewness"), getDoubleContent(0)))
   }
 
@@ -748,7 +748,7 @@ class TestSkewness extends TestAggregators {
     val r2 = obj.reduce(r1, t3.get)
     r2 shouldBe com.twitter.algebird.Moments(2, 1.5, 0.5, 0.0, 0.125)
 
-    val c = obj.present(Position1D("foo"), r2)
+    val c = obj.present(Position1D("foo"), r2).result
     c shouldBe Some(Cell(Position2D("foo", "skewness"), getDoubleContent(0)))
   }
 
@@ -779,7 +779,7 @@ class TestKurtosis extends TestAggregators {
     val r = obj.reduce(t1.get, t2.get)
     r shouldBe com.twitter.algebird.Moments(2, 1.5, 0.5, 0.0, 0.125)
 
-    val c = obj.present(Position1D("foo"), r)
+    val c = obj.present(Position1D("foo"), r).result
     c shouldBe Some(Cell(Position1D("foo"), getDoubleContent(1)))
   }
 
@@ -801,9 +801,9 @@ class TestKurtosis extends TestAggregators {
     val r2 = obj.reduce(r1, t3.get)
     r2.asInstanceOf[com.twitter.algebird.Moments].mean.compare(Double.NaN) shouldBe 0
 
-    val c = obj.present(Position1D("foo"), r2)
-    c.get.position shouldBe Position1D("foo")
-    c.get.content.value.asDouble.map(_.compare(Double.NaN)) shouldBe Some(0)
+    val c = obj.present(Position1D("foo"), r2).result.get
+    c.position shouldBe Position1D("foo")
+    c.content.value.asDouble.map(_.compare(Double.NaN)) shouldBe Some(0)
   }
 
   it should "prepare, reduce and present with strict and non-nan" in {
@@ -824,7 +824,7 @@ class TestKurtosis extends TestAggregators {
     val r2 = obj.reduce(r1, t3.get)
     r2.asInstanceOf[com.twitter.algebird.Moments].mean.compare(Double.NaN) shouldBe 0
 
-    val c = obj.present(Position1D("foo"), r2)
+    val c = obj.present(Position1D("foo"), r2).result
     c shouldBe None
   }
 
@@ -846,7 +846,7 @@ class TestKurtosis extends TestAggregators {
     val r2 = obj.reduce(r1, t3.get)
     r2 shouldBe com.twitter.algebird.Moments(2, 1.5, 0.5, 0.0, 0.125)
 
-    val c = obj.present(Position1D("foo"), r2)
+    val c = obj.present(Position1D("foo"), r2).result
     c shouldBe Some(Cell(Position1D("foo"), getDoubleContent(-2)))
   }
 
@@ -868,7 +868,7 @@ class TestKurtosis extends TestAggregators {
     val r2 = obj.reduce(r1, t3.get)
     r2 shouldBe com.twitter.algebird.Moments(2, 1.5, 0.5, 0.0, 0.125)
 
-    val c = obj.present(Position1D("foo"), r2)
+    val c = obj.present(Position1D("foo"), r2).result
     c shouldBe Some(Cell(Position1D("foo"), getDoubleContent(1)))
   }
 
@@ -885,7 +885,7 @@ class TestKurtosis extends TestAggregators {
     val r = obj.reduce(t1.get, t2.get)
     r shouldBe com.twitter.algebird.Moments(2, 1.5, 0.5, 0.0, 0.125)
 
-    val c = obj.present(Position1D("foo"), r)
+    val c = obj.present(Position1D("foo"), r).result
     c shouldBe Some(Cell(Position2D("foo", "kurtosis"), getDoubleContent(1)))
   }
 
@@ -908,9 +908,9 @@ class TestKurtosis extends TestAggregators {
     val r2 = obj.reduce(r1, t3.get)
     r2.asInstanceOf[com.twitter.algebird.Moments].mean.compare(Double.NaN) shouldBe 0
 
-    val c = obj.present(Position1D("foo"), r2)
-    c.get.position shouldBe Position2D("foo", "kurtosis")
-    c.get.content.value.asDouble.map(_.compare(Double.NaN)) shouldBe Some(0)
+    val c = obj.present(Position1D("foo"), r2).result.get
+    c.position shouldBe Position2D("foo", "kurtosis")
+    c.content.value.asDouble.map(_.compare(Double.NaN)) shouldBe Some(0)
   }
 
   it should "prepare, reduce and present expanded with strict and non-nan" in {
@@ -932,7 +932,7 @@ class TestKurtosis extends TestAggregators {
     val r2 = obj.reduce(r1, t3.get)
     r2.asInstanceOf[com.twitter.algebird.Moments].mean.compare(Double.NaN) shouldBe 0
 
-    val c = obj.present(Position1D("foo"), r2)
+    val c = obj.present(Position1D("foo"), r2).result
     c shouldBe None
   }
 
@@ -955,7 +955,7 @@ class TestKurtosis extends TestAggregators {
     val r2 = obj.reduce(r1, t3.get)
     r2 shouldBe com.twitter.algebird.Moments(2, 1.5, 0.5, 0.0, 0.125)
 
-    val c = obj.present(Position1D("foo"), r2)
+    val c = obj.present(Position1D("foo"), r2).result
     c shouldBe Some(Cell(Position2D("foo", "kurtosis"), getDoubleContent(-2)))
   }
 
@@ -978,7 +978,7 @@ class TestKurtosis extends TestAggregators {
     val r2 = obj.reduce(r1, t3.get)
     r2 shouldBe com.twitter.algebird.Moments(2, 1.5, 0.5, 0.0, 0.125)
 
-    val c = obj.present(Position1D("foo"), r2)
+    val c = obj.present(Position1D("foo"), r2).result
     c shouldBe Some(Cell(Position2D("foo", "kurtosis"), getDoubleContent(1)))
   }
 
@@ -1009,7 +1009,7 @@ class TestMin extends TestAggregators {
     val r = obj.reduce(t1.get, t2.get)
     r shouldBe 1
 
-    val c = obj.present(Position1D("foo"), r)
+    val c = obj.present(Position1D("foo"), r).result
     c shouldBe Some(Cell(Position1D("foo"), getDoubleContent(1)))
   }
 
@@ -1031,9 +1031,9 @@ class TestMin extends TestAggregators {
     val r2 = obj.reduce(r1, t3.get)
     r2.asInstanceOf[Double].compare(Double.NaN) shouldBe 0
 
-    val c = obj.present(Position1D("foo"), r2)
-    c.get.position shouldBe Position1D("foo")
-    c.get.content.value.asDouble.map(_.compare(Double.NaN)) shouldBe Some(0)
+    val c = obj.present(Position1D("foo"), r2).result.get
+    c.position shouldBe Position1D("foo")
+    c.content.value.asDouble.map(_.compare(Double.NaN)) shouldBe Some(0)
   }
 
   it should "prepare, reduce and present with strict and non-nan" in {
@@ -1054,7 +1054,7 @@ class TestMin extends TestAggregators {
     val r2 = obj.reduce(r1, t3.get)
     r2.asInstanceOf[Double].compare(Double.NaN) shouldBe 0
 
-    val c = obj.present(Position1D("foo"), r2)
+    val c = obj.present(Position1D("foo"), r2).result
     c shouldBe None
   }
 
@@ -1076,7 +1076,7 @@ class TestMin extends TestAggregators {
     val r2 = obj.reduce(r1, t3.get)
     r2 shouldBe 1
 
-    val c = obj.present(Position1D("foo"), r2)
+    val c = obj.present(Position1D("foo"), r2).result
     c shouldBe Some(Cell(Position1D("foo"), getDoubleContent(1)))
   }
 
@@ -1098,7 +1098,7 @@ class TestMin extends TestAggregators {
     val r2 = obj.reduce(r1, t3.get)
     r2 shouldBe 1
 
-    val c = obj.present(Position1D("foo"), r2)
+    val c = obj.present(Position1D("foo"), r2).result
     c shouldBe Some(Cell(Position1D("foo"), getDoubleContent(1)))
   }
 
@@ -1115,7 +1115,7 @@ class TestMin extends TestAggregators {
     val r = obj.reduce(t1.get, t2.get)
     r shouldBe 1
 
-    val c = obj.present(Position1D("foo"), r)
+    val c = obj.present(Position1D("foo"), r).result
     c shouldBe Some(Cell(Position2D("foo", "min"), getDoubleContent(1)))
   }
 
@@ -1138,9 +1138,9 @@ class TestMin extends TestAggregators {
     val r2 = obj.reduce(r1, t3.get)
     r2.asInstanceOf[Double].compare(Double.NaN) shouldBe 0
 
-    val c = obj.present(Position1D("foo"), r2)
-    c.get.position shouldBe Position2D("foo", "min")
-    c.get.content.value.asDouble.map(_.compare(Double.NaN)) shouldBe Some(0)
+    val c = obj.present(Position1D("foo"), r2).result.get
+    c.position shouldBe Position2D("foo", "min")
+    c.content.value.asDouble.map(_.compare(Double.NaN)) shouldBe Some(0)
   }
 
   it should "prepare, reduce and present expanded with strict and non-nan" in {
@@ -1162,7 +1162,7 @@ class TestMin extends TestAggregators {
     val r2 = obj.reduce(r1, t3.get)
     r2.asInstanceOf[Double].compare(Double.NaN) shouldBe 0
 
-    val c = obj.present(Position1D("foo"), r2)
+    val c = obj.present(Position1D("foo"), r2).result
     c shouldBe None
   }
 
@@ -1185,7 +1185,7 @@ class TestMin extends TestAggregators {
     val r2 = obj.reduce(r1, t3.get)
     r2 shouldBe 1
 
-    val c = obj.present(Position1D("foo"), r2)
+    val c = obj.present(Position1D("foo"), r2).result
     c shouldBe Some(Cell(Position2D("foo", "min"), getDoubleContent(1)))
   }
 
@@ -1208,7 +1208,7 @@ class TestMin extends TestAggregators {
     val r2 = obj.reduce(r1, t3.get)
     r2 shouldBe 1
 
-    val c = obj.present(Position1D("foo"), r2)
+    val c = obj.present(Position1D("foo"), r2).result
     c shouldBe Some(Cell(Position2D("foo", "min"), getDoubleContent(1)))
   }
 
@@ -1238,7 +1238,7 @@ class TestMax extends TestAggregators {
     val r = obj.reduce(t1.get, t2.get)
     r shouldBe 2
 
-    val c = obj.present(Position1D("foo"), r)
+    val c = obj.present(Position1D("foo"), r).result
     c shouldBe Some(Cell(Position1D("foo"), getDoubleContent(2)))
   }
 
@@ -1260,9 +1260,9 @@ class TestMax extends TestAggregators {
     val r2 = obj.reduce(r1, t3.get)
     r2.asInstanceOf[Double].compare(Double.NaN) shouldBe 0
 
-    val c = obj.present(Position1D("foo"), r2)
-    c.get.position shouldBe Position1D("foo")
-    c.get.content.value.asDouble.map(_.compare(Double.NaN)) shouldBe Some(0)
+    val c = obj.present(Position1D("foo"), r2).result.get
+    c.position shouldBe Position1D("foo")
+    c.content.value.asDouble.map(_.compare(Double.NaN)) shouldBe Some(0)
   }
 
   it should "prepare, reduce and present with strict and non-nan" in {
@@ -1283,7 +1283,7 @@ class TestMax extends TestAggregators {
     val r2 = obj.reduce(r1, t3.get)
     r2.asInstanceOf[Double].compare(Double.NaN) shouldBe 0
 
-    val c = obj.present(Position1D("foo"), r2)
+    val c = obj.present(Position1D("foo"), r2).result
     c shouldBe None
   }
 
@@ -1305,7 +1305,7 @@ class TestMax extends TestAggregators {
     val r2 = obj.reduce(r1, t3.get)
     r2 shouldBe 2
 
-    val c = obj.present(Position1D("foo"), r2)
+    val c = obj.present(Position1D("foo"), r2).result
     c shouldBe Some(Cell(Position1D("foo"), getDoubleContent(2)))
   }
 
@@ -1327,7 +1327,7 @@ class TestMax extends TestAggregators {
     val r2 = obj.reduce(r1, t3.get)
     r2 shouldBe 2
 
-    val c = obj.present(Position1D("foo"), r2)
+    val c = obj.present(Position1D("foo"), r2).result
     c shouldBe Some(Cell(Position1D("foo"), getDoubleContent(2)))
   }
 
@@ -1344,7 +1344,7 @@ class TestMax extends TestAggregators {
     val r = obj.reduce(t1.get, t2.get)
     r shouldBe 2
 
-    val c = obj.present(Position1D("foo"), r)
+    val c = obj.present(Position1D("foo"), r).result
     c shouldBe Some(Cell(Position2D("foo", "max"), getDoubleContent(2)))
   }
 
@@ -1367,9 +1367,9 @@ class TestMax extends TestAggregators {
     val r2 = obj.reduce(r1, t3.get)
     r2.asInstanceOf[Double].compare(Double.NaN) shouldBe 0
 
-    val c = obj.present(Position1D("foo"), r2)
-    c.get.position shouldBe Position2D("foo", "max")
-    c.get.content.value.asDouble.map(_.compare(Double.NaN)) shouldBe Some(0)
+    val c = obj.present(Position1D("foo"), r2).result.get
+    c.position shouldBe Position2D("foo", "max")
+    c.content.value.asDouble.map(_.compare(Double.NaN)) shouldBe Some(0)
   }
 
   it should "prepare, reduce and present expanded with strict and non-nan" in {
@@ -1391,7 +1391,7 @@ class TestMax extends TestAggregators {
     val r2 = obj.reduce(r1, t3.get)
     r2.asInstanceOf[Double].compare(Double.NaN) shouldBe 0
 
-    val c = obj.present(Position1D("foo"), r2)
+    val c = obj.present(Position1D("foo"), r2).result
     c shouldBe None
   }
 
@@ -1414,7 +1414,7 @@ class TestMax extends TestAggregators {
     val r2 = obj.reduce(r1, t3.get)
     r2 shouldBe 2
 
-    val c = obj.present(Position1D("foo"), r2)
+    val c = obj.present(Position1D("foo"), r2).result
     c shouldBe Some(Cell(Position2D("foo", "max"), getDoubleContent(2)))
   }
 
@@ -1437,7 +1437,7 @@ class TestMax extends TestAggregators {
     val r2 = obj.reduce(r1, t3.get)
     r2 shouldBe 2
 
-    val c = obj.present(Position1D("foo"), r2)
+    val c = obj.present(Position1D("foo"), r2).result
     c shouldBe Some(Cell(Position2D("foo", "max"), getDoubleContent(2)))
   }
 
@@ -1467,7 +1467,7 @@ class TestMaxAbs extends TestAggregators {
     val r = obj.reduce(t1.get, t2.get)
     r shouldBe 2
 
-    val c = obj.present(Position1D("foo"), r)
+    val c = obj.present(Position1D("foo"), r).result
     c shouldBe Some(Cell(Position1D("foo"), getDoubleContent(2)))
   }
 
@@ -1489,9 +1489,9 @@ class TestMaxAbs extends TestAggregators {
     val r2 = obj.reduce(r1, t3.get)
     r2.asInstanceOf[Double].compare(Double.NaN) shouldBe 0
 
-    val c = obj.present(Position1D("foo"), r2)
-    c.get.position shouldBe Position1D("foo")
-    c.get.content.value.asDouble.map(_.compare(Double.NaN)) shouldBe Some(0)
+    val c = obj.present(Position1D("foo"), r2).result.get
+    c.position shouldBe Position1D("foo")
+    c.content.value.asDouble.map(_.compare(Double.NaN)) shouldBe Some(0)
   }
 
   it should "prepare, reduce and present with strict and non-nan" in {
@@ -1512,7 +1512,7 @@ class TestMaxAbs extends TestAggregators {
     val r2 = obj.reduce(r1, t3.get)
     r2.asInstanceOf[Double].compare(Double.NaN) shouldBe 0
 
-    val c = obj.present(Position1D("foo"), r2)
+    val c = obj.present(Position1D("foo"), r2).result
     c shouldBe None
   }
 
@@ -1534,7 +1534,7 @@ class TestMaxAbs extends TestAggregators {
     val r2 = obj.reduce(r1, t3.get)
     r2 shouldBe 2
 
-    val c = obj.present(Position1D("foo"), r2)
+    val c = obj.present(Position1D("foo"), r2).result
     c shouldBe Some(Cell(Position1D("foo"), getDoubleContent(2)))
   }
 
@@ -1556,7 +1556,7 @@ class TestMaxAbs extends TestAggregators {
     val r2 = obj.reduce(r1, t3.get)
     r2 shouldBe 2
 
-    val c = obj.present(Position1D("foo"), r2)
+    val c = obj.present(Position1D("foo"), r2).result
     c shouldBe Some(Cell(Position1D("foo"), getDoubleContent(2)))
   }
 
@@ -1573,7 +1573,7 @@ class TestMaxAbs extends TestAggregators {
     val r = obj.reduce(t1.get, t2.get)
     r shouldBe 2
 
-    val c = obj.present(Position1D("foo"), r)
+    val c = obj.present(Position1D("foo"), r).result
     c shouldBe Some(Cell(Position2D("foo", "max.abs"), getDoubleContent(2)))
   }
 
@@ -1596,9 +1596,9 @@ class TestMaxAbs extends TestAggregators {
     val r2 = obj.reduce(r1, t3.get)
     r2.asInstanceOf[Double].compare(Double.NaN) shouldBe 0
 
-    val c = obj.present(Position1D("foo"), r2)
-    c.get.position shouldBe Position2D("foo", "max.abs")
-    c.get.content.value.asDouble.map(_.compare(Double.NaN)) shouldBe Some(0)
+    val c = obj.present(Position1D("foo"), r2).result.get
+    c.position shouldBe Position2D("foo", "max.abs")
+    c.content.value.asDouble.map(_.compare(Double.NaN)) shouldBe Some(0)
   }
 
   it should "prepare, reduce and present expanded with strict and non-nan" in {
@@ -1620,7 +1620,7 @@ class TestMaxAbs extends TestAggregators {
     val r2 = obj.reduce(r1, t3.get)
     r2.asInstanceOf[Double].compare(Double.NaN) shouldBe 0
 
-    val c = obj.present(Position1D("foo"), r2)
+    val c = obj.present(Position1D("foo"), r2).result
     c shouldBe None
   }
 
@@ -1643,7 +1643,7 @@ class TestMaxAbs extends TestAggregators {
     val r2 = obj.reduce(r1, t3.get)
     r2 shouldBe 2
 
-    val c = obj.present(Position1D("foo"), r2)
+    val c = obj.present(Position1D("foo"), r2).result
     c shouldBe Some(Cell(Position2D("foo", "max.abs"), getDoubleContent(2)))
   }
 
@@ -1666,7 +1666,7 @@ class TestMaxAbs extends TestAggregators {
     val r2 = obj.reduce(r1, t3.get)
     r2 shouldBe 2
 
-    val c = obj.present(Position1D("foo"), r2)
+    val c = obj.present(Position1D("foo"), r2).result
     c shouldBe Some(Cell(Position2D("foo", "max.abs"), getDoubleContent(2)))
   }
 
@@ -1696,7 +1696,7 @@ class TestSum extends TestAggregators {
     val r = obj.reduce(t1.get, t2.get)
     r shouldBe 3
 
-    val c = obj.present(Position1D("foo"), r)
+    val c = obj.present(Position1D("foo"), r).result
     c shouldBe Some(Cell(Position1D("foo"), getDoubleContent(3)))
   }
 
@@ -1718,9 +1718,9 @@ class TestSum extends TestAggregators {
     val r2 = obj.reduce(r1, t3.get)
     r2.asInstanceOf[Double].compare(Double.NaN) shouldBe 0
 
-    val c = obj.present(Position1D("foo"), r2)
-    c.get.position shouldBe Position1D("foo")
-    c.get.content.value.asDouble.map(_.compare(Double.NaN)) shouldBe Some(0)
+    val c = obj.present(Position1D("foo"), r2).result.get
+    c.position shouldBe Position1D("foo")
+    c.content.value.asDouble.map(_.compare(Double.NaN)) shouldBe Some(0)
   }
 
   it should "prepare, reduce and present with strict and non-nan" in {
@@ -1741,7 +1741,7 @@ class TestSum extends TestAggregators {
     val r2 = obj.reduce(r1, t3.get)
     r2.asInstanceOf[Double].compare(Double.NaN) shouldBe 0
 
-    val c = obj.present(Position1D("foo"), r2)
+    val c = obj.present(Position1D("foo"), r2).result
     c shouldBe None
   }
 
@@ -1763,7 +1763,7 @@ class TestSum extends TestAggregators {
     val r2 = obj.reduce(r1, t3.get)
     r2 shouldBe 3
 
-    val c = obj.present(Position1D("foo"), r2)
+    val c = obj.present(Position1D("foo"), r2).result
     c shouldBe Some(Cell(Position1D("foo"), getDoubleContent(3)))
   }
 
@@ -1785,7 +1785,7 @@ class TestSum extends TestAggregators {
     val r2 = obj.reduce(r1, t3.get)
     r2 shouldBe 3
 
-    val c = obj.present(Position1D("foo"), r2)
+    val c = obj.present(Position1D("foo"), r2).result
     c shouldBe Some(Cell(Position1D("foo"), getDoubleContent(3)))
   }
 
@@ -1802,7 +1802,7 @@ class TestSum extends TestAggregators {
     val r = obj.reduce(t1.get, t2.get)
     r shouldBe 3
 
-    val c = obj.present(Position1D("foo"), r)
+    val c = obj.present(Position1D("foo"), r).result
     c shouldBe Some(Cell(Position2D("foo", "sum"), getDoubleContent(3)))
   }
 
@@ -1825,9 +1825,9 @@ class TestSum extends TestAggregators {
     val r2 = obj.reduce(r1, t3.get)
     r2.asInstanceOf[Double].compare(Double.NaN) shouldBe 0
 
-    val c = obj.present(Position1D("foo"), r2)
-    c.get.position shouldBe Position2D("foo", "sum")
-    c.get.content.value.asDouble.map(_.compare(Double.NaN)) shouldBe Some(0)
+    val c = obj.present(Position1D("foo"), r2).result.get
+    c.position shouldBe Position2D("foo", "sum")
+    c.content.value.asDouble.map(_.compare(Double.NaN)) shouldBe Some(0)
   }
 
   it should "prepare, reduce and present expanded with strict and non-nan" in {
@@ -1849,7 +1849,7 @@ class TestSum extends TestAggregators {
     val r2 = obj.reduce(r1, t3.get)
     r2.asInstanceOf[Double].compare(Double.NaN) shouldBe 0
 
-    val c = obj.present(Position1D("foo"), r2)
+    val c = obj.present(Position1D("foo"), r2).result
     c shouldBe None
   }
 
@@ -1872,7 +1872,7 @@ class TestSum extends TestAggregators {
     val r2 = obj.reduce(r1, t3.get)
     r2 shouldBe 3
 
-    val c = obj.present(Position1D("foo"), r2)
+    val c = obj.present(Position1D("foo"), r2).result
     c shouldBe Some(Cell(Position2D("foo", "sum"), getDoubleContent(3)))
   }
 
@@ -1895,7 +1895,7 @@ class TestSum extends TestAggregators {
     val r2 = obj.reduce(r1, t3.get)
     r2 shouldBe 3
 
-    val c = obj.present(Position1D("foo"), r2)
+    val c = obj.present(Position1D("foo"), r2).result
     c shouldBe Some(Cell(Position2D("foo", "sum"), getDoubleContent(3)))
   }
 
@@ -1940,8 +1940,8 @@ class TestPredicateCount extends TestAggregators {
     val r3 = obj.reduce(r2, t4.get)
     r3 shouldBe (2)
 
-    val c = obj.present(Position1D("foo"), r3)
-    c shouldBe (Some(Cell(Position1D("foo"), getLongContent(2))))
+    val c = obj.present(Position1D("foo"), r3).result
+    c shouldBe Some(Cell(Position1D("foo"), getLongContent(2)))
   }
 }
 
@@ -1976,7 +1976,7 @@ class TestWeightedSum extends TestAggregators {
     val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe 3.14
 
-    val c = obj.presentWithValue(Position1D("foo"), r1, ext)
+    val c = obj.presentWithValue(Position1D("foo"), r1, ext).result
     c shouldBe Some(Cell(Position1D("foo"), getDoubleContent(3.14)))
   }
 
@@ -1992,7 +1992,7 @@ class TestWeightedSum extends TestAggregators {
     val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe 3.14
 
-    val c = obj.presentWithValue(Position1D("foo"), r1, ext)
+    val c = obj.presentWithValue(Position1D("foo"), r1, ext).result
     c shouldBe Some(Cell(Position1D("foo"), getDoubleContent(3.14)))
   }
 
@@ -2014,9 +2014,9 @@ class TestWeightedSum extends TestAggregators {
     val r2 = obj.reduce(r1, t3.get)
     r2.asInstanceOf[Double].compare(Double.NaN) shouldBe 0
 
-    val c = obj.presentWithValue(Position1D("foo"), r2, ext)
-    c.get.position shouldBe Position1D("foo")
-    c.get.content.value.asDouble.map(_.compare(Double.NaN)) shouldBe Some(0)
+    val c = obj.presentWithValue(Position1D("foo"), r2, ext).result.get
+    c.position shouldBe Position1D("foo")
+    c.content.value.asDouble.map(_.compare(Double.NaN)) shouldBe Some(0)
   }
 
   it should "prepare, reduce and present with strict and non-nan" in {
@@ -2037,7 +2037,7 @@ class TestWeightedSum extends TestAggregators {
     val r2 = obj.reduce(r1, t3.get)
     r2.asInstanceOf[Double].compare(Double.NaN) shouldBe 0
 
-    val c = obj.presentWithValue(Position1D("foo"), r2, ext)
+    val c = obj.presentWithValue(Position1D("foo"), r2, ext).result
     c shouldBe None
   }
 
@@ -2059,7 +2059,7 @@ class TestWeightedSum extends TestAggregators {
     val r2 = obj.reduce(r1, t3.get)
     r2 shouldBe 3.14
 
-    val c = obj.presentWithValue(Position1D("foo"), r2, ext)
+    val c = obj.presentWithValue(Position1D("foo"), r2, ext).result
     c shouldBe Some(Cell(Position1D("foo"), getDoubleContent(3.14)))
   }
 
@@ -2081,7 +2081,7 @@ class TestWeightedSum extends TestAggregators {
     val r2 = obj.reduce(r1, t3.get)
     r2 shouldBe 3.14
 
-    val c = obj.presentWithValue(Position1D("foo"), r2, ext)
+    val c = obj.presentWithValue(Position1D("foo"), r2, ext).result
     c shouldBe Some(Cell(Position1D("foo"), getDoubleContent(3.14)))
   }
 
@@ -2098,7 +2098,7 @@ class TestWeightedSum extends TestAggregators {
     val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe 3.14
 
-    val c = obj.presentWithValue(Position1D("foo"), r1, ext)
+    val c = obj.presentWithValue(Position1D("foo"), r1, ext).result
     c shouldBe Some(Cell(Position2D("foo", "result"), getDoubleContent(3.14)))
   }
 
@@ -2115,7 +2115,7 @@ class TestWeightedSum extends TestAggregators {
     val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe 3.14
 
-    val c = obj.presentWithValue(Position1D("foo"), r1, ext)
+    val c = obj.presentWithValue(Position1D("foo"), r1, ext).result
     c shouldBe Some(Cell(Position2D("foo", "result"), getDoubleContent(3.14)))
   }
 
@@ -2138,9 +2138,9 @@ class TestWeightedSum extends TestAggregators {
     val r2 = obj.reduce(r1, t3.get)
     r2.asInstanceOf[Double].compare(Double.NaN) shouldBe 0
 
-    val c = obj.presentWithValue(Position1D("foo"), r2, ext)
-    c.get.position shouldBe Position2D("foo", "result")
-    c.get.content.value.asDouble.map(_.compare(Double.NaN)) shouldBe Some(0)
+    val c = obj.presentWithValue(Position1D("foo"), r2, ext).result.get
+    c.position shouldBe Position2D("foo", "result")
+    c.content.value.asDouble.map(_.compare(Double.NaN)) shouldBe Some(0)
   }
 
   it should "prepare, reduce and present expanded with strict and non-nan" in {
@@ -2162,7 +2162,7 @@ class TestWeightedSum extends TestAggregators {
     val r2 = obj.reduce(r1, t3.get)
     r2.asInstanceOf[Double].compare(Double.NaN) shouldBe 0
 
-    val c = obj.presentWithValue(Position1D("foo"), r2, ext)
+    val c = obj.presentWithValue(Position1D("foo"), r2, ext).result
     c shouldBe None
   }
 
@@ -2185,7 +2185,7 @@ class TestWeightedSum extends TestAggregators {
     val r2 = obj.reduce(r1, t3.get)
     r2 shouldBe 3.14
 
-    val c = obj.presentWithValue(Position1D("foo"), r2, ext)
+    val c = obj.presentWithValue(Position1D("foo"), r2, ext).result
     c shouldBe Some(Cell(Position2D("foo", "result"), getDoubleContent(3.14)))
   }
 
@@ -2208,7 +2208,7 @@ class TestWeightedSum extends TestAggregators {
     val r2 = obj.reduce(r1, t3.get)
     r2 shouldBe 3.14
 
-    val c = obj.presentWithValue(Position1D("foo"), r2, ext)
+    val c = obj.presentWithValue(Position1D("foo"), r2, ext).result
     c shouldBe Some(Cell(Position2D("foo", "result"), getDoubleContent(3.14)))
   }
 
@@ -2225,7 +2225,7 @@ class TestWeightedSum extends TestAggregators {
     val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe 3.14
 
-    val c = obj.presentWithValue(Position1D("foo"), r1, ext)
+    val c = obj.presentWithValue(Position1D("foo"), r1, ext).result
     c shouldBe Some(Cell(Position2D("foo", "result"), getDoubleContent(3.14)))
   }
 
@@ -2242,7 +2242,7 @@ class TestWeightedSum extends TestAggregators {
     val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe -3.14
 
-    val c = obj.presentWithValue(Position1D("foo"), r1, ext)
+    val c = obj.presentWithValue(Position1D("foo"), r1, ext).result
     c shouldBe Some(Cell(Position2D("foo", "result"), getDoubleContent(-3.14)))
   }
 
@@ -2265,9 +2265,9 @@ class TestWeightedSum extends TestAggregators {
     val r2 = obj.reduce(r1, t3.get)
     r2.asInstanceOf[Double].compare(Double.NaN) shouldBe 0
 
-    val c = obj.presentWithValue(Position1D("foo"), r2, ext)
-    c.get.position shouldBe Position2D("foo", "result")
-    c.get.content.value.asDouble.map(_.compare(Double.NaN)) shouldBe Some(0)
+    val c = obj.presentWithValue(Position1D("foo"), r2, ext).result.get
+    c.position shouldBe Position2D("foo", "result")
+    c.content.value.asDouble.map(_.compare(Double.NaN)) shouldBe Some(0)
   }
 
   it should "prepare, reduce and present multiple with strict and non-nan with format" in {
@@ -2289,7 +2289,7 @@ class TestWeightedSum extends TestAggregators {
     val r2 = obj.reduce(r1, t3.get)
     r2.asInstanceOf[Double].compare(Double.NaN) shouldBe 0
 
-    val c = obj.presentWithValue(Position1D("foo"), r2, ext)
+    val c = obj.presentWithValue(Position1D("foo"), r2, ext).result
     c shouldBe None
   }
 
@@ -2312,7 +2312,7 @@ class TestWeightedSum extends TestAggregators {
     val r2 = obj.reduce(r1, t3.get)
     r2 shouldBe 3.14
 
-    val c = obj.presentWithValue(Position1D("foo"), r2, ext)
+    val c = obj.presentWithValue(Position1D("foo"), r2, ext).result
     c shouldBe Some(Cell(Position2D("foo", "result"), getDoubleContent(3.14)))
   }
 
@@ -2335,7 +2335,7 @@ class TestWeightedSum extends TestAggregators {
     val r2 = obj.reduce(r1, t3.get)
     r2 shouldBe 3.14
 
-    val c = obj.presentWithValue(Position1D("foo"), r2, ext)
+    val c = obj.presentWithValue(Position1D("foo"), r2, ext).result
     c shouldBe Some(Cell(Position2D("foo", "result"), getDoubleContent(3.14)))
   }
 
@@ -2393,7 +2393,7 @@ class TestDistinctCount extends TestAggregators {
     val r5 = obj.reduce(r4, t6.get)
     r5 shouldBe Set(DoubleValue(1), StringValue("abc"), LongValue(123))
 
-    val c = obj.present(Position1D("foo"), r5)
+    val c = obj.present(Position1D("foo"), r5).result
     c shouldBe Some(Cell(Position1D("foo"), getLongContent(3)))
   }
 
@@ -2434,7 +2434,7 @@ class TestDistinctCount extends TestAggregators {
     val r5 = obj.reduce(r4, t6.get)
     r5 shouldBe Set(DoubleValue(1), StringValue("abc"), LongValue(123))
 
-    val c = obj.present(Position1D("foo"), r5)
+    val c = obj.present(Position1D("foo"), r5).result
     c shouldBe Some(Cell(Position2D("foo", "count"), getLongContent(3)))
   }
 }
@@ -2474,7 +2474,7 @@ class TestEntropy extends TestAggregators {
     r2._1 shouldBe 3
     r2._2.compare(Double.NaN) shouldBe 0
 
-    val c = obj.presentWithValue(Position1D("foo"), r2, count)
+    val c = obj.presentWithValue(Position1D("foo"), r2, count).result
     c shouldBe None
   }
 
@@ -2498,9 +2498,9 @@ class TestEntropy extends TestAggregators {
     r2._1 shouldBe 3
     r2._2.compare(Double.NaN) shouldBe 0
 
-    val c = obj.presentWithValue(Position1D("foo"), r2, count)
-    c.get.position shouldBe Position1D("foo")
-    c.get.content.value.asDouble.map(_.compare(Double.NaN)) shouldBe Some(0)
+    val c = obj.presentWithValue(Position1D("foo"), r2, count).result.get
+    c.position shouldBe Position1D("foo")
+    c.content.value.asDouble.map(_.compare(Double.NaN)) shouldBe Some(0)
   }
 
   it should "prepare, reduce and present strict, nan and non-negate" in {
@@ -2523,9 +2523,9 @@ class TestEntropy extends TestAggregators {
     r2._1 shouldBe 3
     r2._2.compare(Double.NaN) shouldBe 0
 
-    val c = obj.presentWithValue(Position1D("foo"), r2, count)
-    c.get.position shouldBe Position1D("foo")
-    c.get.content.value.asDouble.map(_.compare(Double.NaN)) shouldBe Some(0)
+    val c = obj.presentWithValue(Position1D("foo"), r2, count).result.get
+    c.position shouldBe Position1D("foo")
+    c.content.value.asDouble.map(_.compare(Double.NaN)) shouldBe Some(0)
   }
 
   it should "prepare, reduce and present single with strict, non-nan and negate" in {
@@ -2548,7 +2548,7 @@ class TestEntropy extends TestAggregators {
     r2._1 shouldBe 3
     r2._2.compare(Double.NaN) shouldBe 0
 
-    val c = obj.presentWithValue(Position1D("foo"), r2, count)
+    val c = obj.presentWithValue(Position1D("foo"), r2, count).result
     c shouldBe None
   }
 
@@ -2572,7 +2572,7 @@ class TestEntropy extends TestAggregators {
     r2._1 shouldBe 3
     r2._2.compare(Double.NaN) shouldBe 0
 
-    val c = obj.presentWithValue(Position1D("foo"), r2, count)
+    val c = obj.presentWithValue(Position1D("foo"), r2, count).result
     c shouldBe None
   }
 
@@ -2595,7 +2595,7 @@ class TestEntropy extends TestAggregators {
     val r2 = obj.reduce(r1, t3.get)
     r2 shouldBe ((3, (2.0/3 * log2(2.0/3) + 1.0/3 * log2(1.0/3))))
 
-    val c = obj.presentWithValue(Position1D("foo"), r2, count)
+    val c = obj.presentWithValue(Position1D("foo"), r2, count).result
     c shouldBe Some(Cell(Position1D("foo"), getDoubleContent(2.0/3 * log2(2.0/3) + 1.0/3 * log2(1.0/3))))
   }
 
@@ -2618,7 +2618,7 @@ class TestEntropy extends TestAggregators {
     val r2 = obj.reduce(r1, t3.get)
     r2 shouldBe ((3, (2.0/3 * log2(2.0/3) + 1.0/3 * log2(1.0/3))))
 
-    val c = obj.presentWithValue(Position1D("foo"), r2, count)
+    val c = obj.presentWithValue(Position1D("foo"), r2, count).result
     c shouldBe Some(Cell(Position1D("foo"), getDoubleContent(- (2.0/3 * log2(2.0/3) + 1.0/3 * log2(1.0/3)))))
   }
 
@@ -2641,7 +2641,7 @@ class TestEntropy extends TestAggregators {
     val r2 = obj.reduce(r1, t3.get)
     r2 shouldBe ((3, (2.0/3 * log2(2.0/3) + 1.0/3 * log2(1.0/3))))
 
-    val c = obj.presentWithValue(Position1D("foo"), r2, count)
+    val c = obj.presentWithValue(Position1D("foo"), r2, count).result
     c shouldBe Some(Cell(Position1D("foo"), getDoubleContent(2.0/3 * log2(2.0/3) + 1.0/3 * log2(1.0/3))))
   }
 
@@ -2664,7 +2664,7 @@ class TestEntropy extends TestAggregators {
     val r2 = obj.reduce(r1, t3.get)
     r2 shouldBe ((3, (2.0/3 * log2(2.0/3) + 1.0/3 * log2(1.0/3))))
 
-    val c = obj.presentWithValue(Position1D("foo"), r2, count)
+    val c = obj.presentWithValue(Position1D("foo"), r2, count).result
     c shouldBe Some(Cell(Position1D("foo"), getDoubleContent(- (2.0/3 * log2(2.0/3) + 1.0/3 * log2(1.0/3)))))
   }
 
@@ -2688,7 +2688,7 @@ class TestEntropy extends TestAggregators {
     r2._1 shouldBe 3
     r2._2.compare(Double.NaN) shouldBe 0
 
-    val c = obj.presentWithValue(Position1D("foo"), r2, count)
+    val c = obj.presentWithValue(Position1D("foo"), r2, count).result
     c shouldBe None
   }
 
@@ -2712,9 +2712,9 @@ class TestEntropy extends TestAggregators {
     r2._1 shouldBe 3
     r2._2.compare(Double.NaN) shouldBe 0
 
-    val c = obj.presentWithValue(Position1D("foo"), r2, count)
-    c.get.position shouldBe Position1D("foo")
-    c.get.content.value.asDouble.map(_.compare(Double.NaN)) shouldBe Some(0)
+    val c = obj.presentWithValue(Position1D("foo"), r2, count).result.get
+    c.position shouldBe Position1D("foo")
+    c.content.value.asDouble.map(_.compare(Double.NaN)) shouldBe Some(0)
   }
 
   it should "prepare, reduce and present with strict, nan and non-negate with log" in {
@@ -2737,9 +2737,9 @@ class TestEntropy extends TestAggregators {
     r2._1 shouldBe 3
     r2._2.compare(Double.NaN) shouldBe 0
 
-    val c = obj.presentWithValue(Position1D("foo"), r2, count)
-    c.get.position shouldBe Position1D("foo")
-    c.get.content.value.asDouble.map(_.compare(Double.NaN)) shouldBe Some(0)
+    val c = obj.presentWithValue(Position1D("foo"), r2, count).result.get
+    c.position shouldBe Position1D("foo")
+    c.content.value.asDouble.map(_.compare(Double.NaN)) shouldBe Some(0)
   }
 
   it should "prepare, reduce and present with strict, non-nan and negate with log" in {
@@ -2762,7 +2762,7 @@ class TestEntropy extends TestAggregators {
     r2._1 shouldBe 3
     r2._2.compare(Double.NaN) shouldBe 0
 
-    val c = obj.presentWithValue(Position1D("foo"), r2, count)
+    val c = obj.presentWithValue(Position1D("foo"), r2, count).result
     c shouldBe None
   }
 
@@ -2786,7 +2786,7 @@ class TestEntropy extends TestAggregators {
     r2._1 shouldBe 3
     r2._2.compare(Double.NaN) shouldBe 0
 
-    val c = obj.presentWithValue(Position1D("foo"), r2, count)
+    val c = obj.presentWithValue(Position1D("foo"), r2, count).result
     c shouldBe None
   }
 
@@ -2809,7 +2809,7 @@ class TestEntropy extends TestAggregators {
     val r2 = obj.reduce(r1, t3.get)
     r2 shouldBe ((3, (2.0/3 * log4(2.0/3) + 1.0/3 * log4(1.0/3))))
 
-    val c = obj.presentWithValue(Position1D("foo"), r2, count)
+    val c = obj.presentWithValue(Position1D("foo"), r2, count).result
     c shouldBe Some(Cell(Position1D("foo"), getDoubleContent(2.0/3 * log4(2.0/3) + 1.0/3 * log4(1.0/3))))
   }
 
@@ -2832,7 +2832,7 @@ class TestEntropy extends TestAggregators {
     val r2 = obj.reduce(r1, t3.get)
     r2 shouldBe ((3, (2.0/3 * log4(2.0/3) + 1.0/3 * log4(1.0/3))))
 
-    val c = obj.presentWithValue(Position1D("foo"), r2, count)
+    val c = obj.presentWithValue(Position1D("foo"), r2, count).result
     c shouldBe Some(Cell(Position1D("foo"), getDoubleContent(- (2.0/3 * log4(2.0/3) + 1.0/3 * log4(1.0/3)))))
   }
 
@@ -2855,7 +2855,7 @@ class TestEntropy extends TestAggregators {
     val r2 = obj.reduce(r1, t3.get)
     r2 shouldBe ((3, (2.0/3 * log4(2.0/3) + 1.0/3 * log4(1.0/3))))
 
-    val c = obj.presentWithValue(Position1D("foo"), r2, count)
+    val c = obj.presentWithValue(Position1D("foo"), r2, count).result
     c shouldBe Some(Cell(Position1D("foo"), getDoubleContent(2.0/3 * log4(2.0/3) + 1.0/3 * log4(1.0/3))))
   }
 
@@ -2878,7 +2878,7 @@ class TestEntropy extends TestAggregators {
     val r2 = obj.reduce(r1, t3.get)
     r2 shouldBe ((3, (2.0/3 * log4(2.0/3) + 1.0/3 * log4(1.0/3))))
 
-    val c = obj.presentWithValue(Position1D("foo"), r2, count)
+    val c = obj.presentWithValue(Position1D("foo"), r2, count).result
     c shouldBe Some(Cell(Position1D("foo"), getDoubleContent(- (2.0/3 * log4(2.0/3) + 1.0/3 * log4(1.0/3)))))
   }
 
@@ -2903,7 +2903,7 @@ class TestEntropy extends TestAggregators {
     r2._1 shouldBe 3
     r2._2.compare(Double.NaN) shouldBe 0
 
-    val c = obj.presentWithValue(Position1D("foo"), r2, count)
+    val c = obj.presentWithValue(Position1D("foo"), r2, count).result
     c shouldBe None
   }
 
@@ -2928,9 +2928,9 @@ class TestEntropy extends TestAggregators {
     r2._1 shouldBe 3
     r2._2.compare(Double.NaN) shouldBe 0
 
-    val c = obj.presentWithValue(Position1D("foo"), r2, count)
-    c.get.position shouldBe Position2D("foo", "entropy")
-    c.get.content.value.asDouble.map(_.compare(Double.NaN)) shouldBe Some(0)
+    val c = obj.presentWithValue(Position1D("foo"), r2, count).result.get
+    c.position shouldBe Position2D("foo", "entropy")
+    c.content.value.asDouble.map(_.compare(Double.NaN)) shouldBe Some(0)
   }
 
   it should "prepare, reduce and present multiple with strict, nan and non-negate" in {
@@ -2954,9 +2954,9 @@ class TestEntropy extends TestAggregators {
     r2._1 shouldBe 3
     r2._2.compare(Double.NaN) shouldBe 0
 
-    val c = obj.presentWithValue(Position1D("foo"), r2, count)
-    c.get.position shouldBe Position2D("foo", "entropy")
-    c.get.content.value.asDouble.map(_.compare(Double.NaN)) shouldBe Some(0)
+    val c = obj.presentWithValue(Position1D("foo"), r2, count).result.get
+    c.position shouldBe Position2D("foo", "entropy")
+    c.content.value.asDouble.map(_.compare(Double.NaN)) shouldBe Some(0)
   }
 
   it should "prepare, reduce and present expanded with strict, non-nan and negate" in {
@@ -2980,7 +2980,7 @@ class TestEntropy extends TestAggregators {
     r2._1 shouldBe 3
     r2._2.compare(Double.NaN) shouldBe 0
 
-    val c = obj.presentWithValue(Position1D("foo"), r2, count)
+    val c = obj.presentWithValue(Position1D("foo"), r2, count).result
     c shouldBe None
   }
 
@@ -3005,7 +3005,7 @@ class TestEntropy extends TestAggregators {
     r2._1 shouldBe 3
     r2._2.compare(Double.NaN) shouldBe 0
 
-    val c = obj.presentWithValue(Position1D("foo"), r2, count)
+    val c = obj.presentWithValue(Position1D("foo"), r2, count).result
     c shouldBe None
   }
 
@@ -3029,7 +3029,7 @@ class TestEntropy extends TestAggregators {
     val r2 = obj.reduce(r1, t3.get)
     r2 shouldBe ((3, (2.0/3 * log2(2.0/3) + 1.0/3 * log2(1.0/3))))
 
-    val c = obj.presentWithValue(Position1D("foo"), r2, count)
+    val c = obj.presentWithValue(Position1D("foo"), r2, count).result
     c shouldBe Some(Cell(Position2D("foo", "entropy"), getDoubleContent(2.0/3 * log2(2.0/3) + 1.0/3 * log2(1.0/3))))
   }
 
@@ -3053,7 +3053,7 @@ class TestEntropy extends TestAggregators {
     val r2 = obj.reduce(r1, t3.get)
     r2 shouldBe ((3, (2.0/3 * log2(2.0/3) + 1.0/3 * log2(1.0/3))))
 
-    val c = obj.presentWithValue(Position1D("foo"), r2, count)
+    val c = obj.presentWithValue(Position1D("foo"), r2, count).result
     c shouldBe Some(Cell(Position2D("foo", "entropy"), getDoubleContent(- (2.0/3 * log2(2.0/3) + 1.0/3 * log2(1.0/3)))))
   }
 
@@ -3077,7 +3077,7 @@ class TestEntropy extends TestAggregators {
     val r2 = obj.reduce(r1, t3.get)
     r2 shouldBe ((3, (2.0/3 * log2(2.0/3) + 1.0/3 * log2(1.0/3))))
 
-    val c = obj.presentWithValue(Position1D("foo"), r2, count)
+    val c = obj.presentWithValue(Position1D("foo"), r2, count).result
     c shouldBe Some(Cell(Position2D("foo", "entropy"), getDoubleContent(2.0/3 * log2(2.0/3) + 1.0/3 * log2(1.0/3))))
   }
 
@@ -3101,7 +3101,7 @@ class TestEntropy extends TestAggregators {
     val r2 = obj.reduce(r1, t3.get)
     r2 shouldBe ((3, (2.0/3 * log2(2.0/3) + 1.0/3 * log2(1.0/3))))
 
-    val c = obj.presentWithValue(Position1D("foo"), r2, count)
+    val c = obj.presentWithValue(Position1D("foo"), r2, count).result
     c shouldBe Some(Cell(Position2D("foo", "entropy"), getDoubleContent(- (2.0/3 * log2(2.0/3) + 1.0/3 * log2(1.0/3)))))
   }
 
@@ -3126,7 +3126,7 @@ class TestEntropy extends TestAggregators {
     r2._1 shouldBe 3
     r2._2.compare(Double.NaN) shouldBe 0
 
-    val c = obj.presentWithValue(Position1D("foo"), r2, count)
+    val c = obj.presentWithValue(Position1D("foo"), r2, count).result
     c shouldBe None
   }
 
@@ -3151,9 +3151,9 @@ class TestEntropy extends TestAggregators {
     r2._1 shouldBe 3
     r2._2.compare(Double.NaN) shouldBe 0
 
-    val c = obj.presentWithValue(Position1D("foo"), r2, count)
-    c.get.position shouldBe Position2D("foo", "entropy")
-    c.get.content.value.asDouble.map(_.compare(Double.NaN)) shouldBe Some(0)
+    val c = obj.presentWithValue(Position1D("foo"), r2, count).result.get
+    c.position shouldBe Position2D("foo", "entropy")
+    c.content.value.asDouble.map(_.compare(Double.NaN)) shouldBe Some(0)
   }
 
   it should "prepare, reduce and present expanded with strict, nan and non-negate with log" in {
@@ -3177,9 +3177,9 @@ class TestEntropy extends TestAggregators {
     r2._1 shouldBe 3
     r2._2.compare(Double.NaN) shouldBe 0
 
-    val c = obj.presentWithValue(Position1D("foo"), r2, count)
-    c.get.position shouldBe Position2D("foo", "entropy")
-    c.get.content.value.asDouble.map(_.compare(Double.NaN)) shouldBe Some(0)
+    val c = obj.presentWithValue(Position1D("foo"), r2, count).result.get
+    c.position shouldBe Position2D("foo", "entropy")
+    c.content.value.asDouble.map(_.compare(Double.NaN)) shouldBe Some(0)
   }
 
   it should "prepare, reduce and present expanded with strict, non-nan and negate with log" in {
@@ -3203,7 +3203,7 @@ class TestEntropy extends TestAggregators {
     r2._1 shouldBe 3
     r2._2.compare(Double.NaN) shouldBe 0
 
-    val c = obj.presentWithValue(Position1D("foo"), r2, count)
+    val c = obj.presentWithValue(Position1D("foo"), r2, count).result
     c shouldBe None
   }
 
@@ -3228,7 +3228,7 @@ class TestEntropy extends TestAggregators {
     r2._1 shouldBe 3
     r2._2.compare(Double.NaN) shouldBe 0
 
-    val c = obj.presentWithValue(Position1D("foo"), r2, count)
+    val c = obj.presentWithValue(Position1D("foo"), r2, count).result
     c shouldBe None
   }
 
@@ -3252,7 +3252,7 @@ class TestEntropy extends TestAggregators {
     val r2 = obj.reduce(r1, t3.get)
     r2 shouldBe ((3, (2.0/3 * log4(2.0/3) + 1.0/3 * log4(1.0/3))))
 
-    val c = obj.presentWithValue(Position1D("foo"), r2, count)
+    val c = obj.presentWithValue(Position1D("foo"), r2, count).result
     c shouldBe Some(Cell(Position2D("foo", "entropy"), getDoubleContent(2.0/3 * log4(2.0/3) + 1.0/3 * log4(1.0/3))))
   }
 
@@ -3276,7 +3276,7 @@ class TestEntropy extends TestAggregators {
     val r2 = obj.reduce(r1, t3.get)
     r2 shouldBe ((3, (2.0/3 * log4(2.0/3) + 1.0/3 * log4(1.0/3))))
 
-    val c = obj.presentWithValue(Position1D("foo"), r2, count)
+    val c = obj.presentWithValue(Position1D("foo"), r2, count).result
     c shouldBe Some(Cell(Position2D("foo", "entropy"), getDoubleContent(- (2.0/3 * log4(2.0/3) + 1.0/3 * log4(1.0/3)))))
   }
 
@@ -3300,7 +3300,7 @@ class TestEntropy extends TestAggregators {
     val r2 = obj.reduce(r1, t3.get)
     r2 shouldBe ((3, (2.0/3 * log4(2.0/3) + 1.0/3 * log4(1.0/3))))
 
-    val c = obj.presentWithValue(Position1D("foo"), r2, count)
+    val c = obj.presentWithValue(Position1D("foo"), r2, count).result
     c shouldBe Some(Cell(Position2D("foo", "entropy"), getDoubleContent(2.0/3 * log4(2.0/3) + 1.0/3 * log4(1.0/3))))
   }
 
@@ -3324,7 +3324,7 @@ class TestEntropy extends TestAggregators {
     val r2 = obj.reduce(r1, t3.get)
     r2 shouldBe ((3, (2.0/3 * log4(2.0/3) + 1.0/3 * log4(1.0/3))))
 
-    val c = obj.presentWithValue(Position1D("foo"), r2, count)
+    val c = obj.presentWithValue(Position1D("foo"), r2, count).result
     c shouldBe Some(Cell(Position2D("foo", "entropy"), getDoubleContent(- (2.0/3 * log4(2.0/3) + 1.0/3 * log4(1.0/3)))))
   }
 
@@ -3419,27 +3419,27 @@ class TestAndThenMutateAggregator extends TestAggregators {
   "An Aggregator" should "andThenMutate correctly" in {
     val obj = Max[Position1D, Position1D]().andThenMutate(mutate)
 
-    obj.present(x, -1) shouldBe (Some(Cell(x, getDoubleContent(-1))))
-    obj.present(y, 3.14) shouldBe (Some(Cell(y, getStringContent("not.supported"))))
-    obj.present(z, 42) shouldBe (Some(Cell(z, getLongContent(123))))
+    obj.present(x, -1).result shouldBe Some(Cell(x, getDoubleContent(-1)))
+    obj.present(y, 3.14).result shouldBe Some(Cell(y, getStringContent("not.supported")))
+    obj.present(z, 42).result shouldBe Some(Cell(z, getLongContent(123)))
   }
 
   it should "andThenMutateWithValue correctly (without value)" in {
     val obj = WeightedSum[Position1D, Position1D, Map[Position1D, Content]](
       ExtractWithPosition().andThenPresent(_.value.asDouble)).andThenMutate(mutate)
 
-    obj.presentWithValue(x, -1, ext) shouldBe (Some(Cell(x, getDoubleContent(-1))))
-    obj.presentWithValue(y, 3.14, ext) shouldBe (Some(Cell(y, getStringContent("not.supported"))))
-    obj.presentWithValue(z, 42, ext) shouldBe (Some(Cell(z, getLongContent(123))))
+    obj.presentWithValue(x, -1, ext).result shouldBe Some(Cell(x, getDoubleContent(-1)))
+    obj.presentWithValue(y, 3.14, ext).result shouldBe Some(Cell(y, getStringContent("not.supported")))
+    obj.presentWithValue(z, 42, ext).result shouldBe Some(Cell(z, getLongContent(123)))
   }
 
   it should "andThenMutateWithValue correctly" in {
     val obj = WeightedSum[Position1D, Position1D, Map[Position1D, Content]](
       ExtractWithPosition().andThenPresent(_.value.asDouble)).andThenMutateWithValue(mutateWithValue)
 
-    obj.presentWithValue(x, -1, ext) shouldBe (Some(Cell(x, getStringContent("xxx"))))
-    obj.presentWithValue(y, 3.14, ext) shouldBe (Some(Cell(y, getStringContent("not.supported"))))
-    obj.presentWithValue(z, 42, ext) shouldBe (Some(Cell(z, getLongContent(1))))
+    obj.presentWithValue(x, -1, ext).result shouldBe Some(Cell(x, getStringContent("xxx")))
+    obj.presentWithValue(y, 3.14, ext).result shouldBe Some(Cell(y, getStringContent("not.supported")))
+    obj.presentWithValue(z, 42, ext).result shouldBe Some(Cell(z, getLongContent(1)))
   }
 }
 

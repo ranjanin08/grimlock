@@ -36,7 +36,7 @@ import shapeless.=:!=
  *
  * @param data The `TypedPipe[Position]`.
  */
-case class Positions[P <: Position](data: TypedPipe[P]) extends FwPositions[P] with Persist[P] {
+case class Positions[P <: Position with ReduceablePosition](data: TypedPipe[P]) extends FwPositions[P] with Persist[P] {
   type NamesTuners[T] = T Is Default[NoParameters]
   def names[T <: Tuner : NamesTuners](slice: Slice[P], tuner: T = Default())(implicit ev1: slice.S =:!= Position0D,
     ev2: ClassTag[slice.S]): U[slice.S] = {
@@ -53,7 +53,7 @@ case class Positions[P <: Position](data: TypedPipe[P]) extends FwPositions[P] w
 /** Companion object for the Scalding `Positions` class. */
 object Positions {
   /** Converts a `TypedPipe[Position]` to a `Positions`. */
-  implicit def TPP2TPP[P <: Position](data: TypedPipe[P]): Positions[P] = Positions(data)
+  implicit def TPP2TPP[P <: Position with ReduceablePosition](data: TypedPipe[P]): Positions[P] = Positions(data)
 }
 
 /** Scalding companion object for the `PositionDistributable` type class. */
