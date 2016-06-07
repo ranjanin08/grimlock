@@ -134,6 +134,59 @@
       </a>
     </span>
       <p class="shortcomment cmt">Base trait for aggregations with a user supplied value.</p>
+    </li><li name="au.com.cba.omnia.grimlock.framework.aggregate.Multiple" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="Multiple[A]extendsResult[A,au.com.cba.omnia.grimlock.framework.aggregate.Multiple]withProductwithSerializable"></a>
+      <a id="Multiple[A]:Multiple[A]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="Multiple.html"><span class="name">Multiple</span></a><span class="tparams">[<span name="A">A</span>]</span><span class="params">(<span name="result">result: <span class="extype" name="scala.TraversableOnce">TraversableOnce</span>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Multiple.A">A</span>]</span>)</span><span class="result"> extends <a href="Result.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Result">Result</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Multiple.A">A</span>, <a href="Multiple.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Multiple">Multiple</a>] with <a href="http://www.scala-lang.org/api/2.11.7/index.html#scala.Product" class="extype" target="_top">Product</a> with <a href="http://www.scala-lang.org/api/2.11.7/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.aggregate.package@Multiple[A]extendsResult[A,au.com.cba.omnia.grimlock.framework.aggregate.Multiple]withProductwithSerializable" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Aggregation result that consists of arbitrary many values.</p><div class="fullcomment"><div class="comment cmt"><p>Aggregation result that consists of arbitrary many values.
+</p></div><dl class="paramcmts block"><dt class="param">result</dt><dd class="cmt"><p>The results of the aggregation.</p></dd></dl></div>
+    </li><li name="au.com.cba.omnia.grimlock.framework.aggregate.Result" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="Result[A,T[X]&lt;:au.com.cba.omnia.grimlock.framework.aggregate.Result[X,T]]extendsAnyRef"></a>
+      <a id="Result[A,T[X]&lt;:Result[X,T]]:Result[A,T]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="Result.html"><span class="name">Result</span></a><span class="tparams">[<span name="A">A</span>, <span name="T">T<span class="tparams">[<span name="X">X</span>]</span> &lt;: <a href="Result.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Result">Result</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Result.T.X">X</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Result.T">T</span>]</span>]</span><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.aggregate.package@Result[A,T[X]&lt;:au.com.cba.omnia.grimlock.framework.aggregate.Result[X,T]]extendsAnyRef" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Base trait that encapsulates the result of an aggregation.</p>
+    </li><li name="au.com.cba.omnia.grimlock.framework.aggregate.Single" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="Single[A]extendsResult[A,au.com.cba.omnia.grimlock.framework.aggregate.Single]withProductwithSerializable"></a>
+      <a id="Single[A]:Single[A]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="Single.html"><span class="name">Single</span></a><span class="tparams">[<span name="A">A</span>]</span><span class="params">(<span name="result">result: <a href="http://www.scala-lang.org/api/2.11.7/index.html#scala.Option" class="extype" target="_top">Option</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Single.A">A</span>]</span>)</span><span class="result"> extends <a href="Result.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Result">Result</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Single.A">A</span>, <a href="Single.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Single">Single</a>] with <a href="http://www.scala-lang.org/api/2.11.7/index.html#scala.Product" class="extype" target="_top">Product</a> with <a href="http://www.scala-lang.org/api/2.11.7/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.aggregate.package@Single[A]extendsResult[A,au.com.cba.omnia.grimlock.framework.aggregate.Single]withProductwithSerializable" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Aggregation result that consists of at most 1 value.</p><div class="fullcomment"><div class="comment cmt"><p>Aggregation result that consists of at most 1 value.
+</p></div><dl class="paramcmts block"><dt class="param">result</dt><dd class="cmt"><p>The result of the aggregation.</p></dd></dl></div>
     </li></ol>
             </div>
 
@@ -175,6 +228,57 @@
       </a>
     </span>
       <p class="shortcomment cmt">Companion object for the <code>AggregatableWithValue</code> trait.</p>
+    </li><li name="au.com.cba.omnia.grimlock.framework.aggregate.Multiple" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="Multiple"></a>
+      <a id="Multiple:Multiple"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="Multiple$.html"><span class="name">Multiple</span></a><span class="result"> extends <a href="http://www.scala-lang.org/api/2.11.7/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.aggregate.package@Multiple" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Companion object to <code>Multiple</code>.</p>
+    </li><li name="au.com.cba.omnia.grimlock.framework.aggregate.Result" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="Result"></a>
+      <a id="Result:Result"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="Result$.html"><span class="name">Result</span></a>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.aggregate.package@Result" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Companion object to <code>Result</code>.</p>
+    </li><li name="au.com.cba.omnia.grimlock.framework.aggregate.Single" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="Single"></a>
+      <a id="Single:Single"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="Single$.html"><span class="name">Single</span></a><span class="result"> extends <a href="http://www.scala-lang.org/api/2.11.7/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.aggregate.package@Single" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Companion object to <code>Single</code>.</p>
     </li></ol>
             </div>
 

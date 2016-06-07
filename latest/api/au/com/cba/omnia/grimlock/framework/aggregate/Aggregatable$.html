@@ -51,9 +51,9 @@
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Companion object for the <code>Aggregatable</code> trait.</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/8ccf2c0f1c8778e2348c4ad69e31b32683fa3390//src/main/scala/au/com/cba/omnia/grimlock/framework/Aggregator.scala" target="_blank">Aggregator.scala</a></dd></dl><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Companion object for the <code>Aggregatable</code> trait.</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/10e7f23046477dfd32209e8760c5c4e5bbe2dd16//src/main/scala/au/com/cba/omnia/grimlock/framework/Aggregator.scala" target="_blank">Aggregator.scala</a></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
-          <div class="superTypes hiddenContent"><a href="http://www.scala-lang.org/api/2.11.7/index.html#scala.Serializable" class="extype" target="_top">Serializable</a>, <span class="extype" name="java.io.Serializable">Serializable</span>, <a href="http://www.scala-lang.org/api/2.11.7/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a>, <a href="http://www.scala-lang.org/api/2.11.7/index.html#scala.Any" class="extype" target="_top">Any</a></div>
+          <div class="superTypes hiddenContent"><a href="http://www.scala-lang.org/api/2.11.7/index.html#scala.Serializable" class="extype" target="_top">Serializable</a>, <span class="extype" name="java.io.Serializable">Serializable</span>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
         
 
@@ -105,7 +105,7 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span title="gt4s: $bang$eq" class="name">!=</span><span class="params">(<span name="arg0">arg0: <a href="http://www.scala-lang.org/api/2.11.7/index.html#scala.Any" class="extype" target="_top">Any</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.7/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
+        <span title="gt4s: $bang$eq" class="name">!=</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Any">Any</span></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.7/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
       </h4><span class="permalink">
       <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.aggregate.Aggregatable$@!=(x$1:Any):Boolean" title="Permalink" target="_top">
@@ -139,7 +139,7 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span title="gt4s: $eq$eq" class="name">==</span><span class="params">(<span name="arg0">arg0: <a href="http://www.scala-lang.org/api/2.11.7/index.html#scala.Any" class="extype" target="_top">Any</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.7/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
+        <span title="gt4s: $eq$eq" class="name">==</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Any">Any</span></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.7/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
       </h4><span class="permalink">
       <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.aggregate.Aggregatable$@==(x$1:Any):Boolean" title="Permalink" target="_top">
@@ -147,36 +147,53 @@
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregatable#A2A" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="A2A[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,S&lt;:au.com.cba.omnia.grimlock.framework.position.Positionwithau.com.cba.omnia.grimlock.framework.position.ExpandablePosition,Q&lt;:au.com.cba.omnia.grimlock.framework.position.Position](t:au.com.cba.omnia.grimlock.framework.aggregate.Aggregator[P,S,Q]):au.com.cba.omnia.grimlock.framework.aggregate.Aggregatable[P,S,Q]"></a>
-      <a id="A2A[P&lt;:Position,S&lt;:PositionwithExpandablePosition,Q&lt;:Position](Aggregator[P,S,Q]):Aggregatable[P,S,Q]"></a>
+    </li><li name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregatable#AQ2A" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="AQ2A[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,S&lt;:au.com.cba.omnia.grimlock.framework.position.Positionwithau.com.cba.omnia.grimlock.framework.position.ExpandablePosition,Q&lt;:au.com.cba.omnia.grimlock.framework.position.Position](t:au.com.cba.omnia.grimlock.framework.aggregate.Aggregator[P,S,Q])(implicitev:au.com.cba.omnia.grimlock.framework.position.PosExpDep[S,Q]):au.com.cba.omnia.grimlock.framework.aggregate.Aggregatable[P,S,Q]"></a>
+      <a id="AQ2A[P&lt;:Position,S&lt;:PositionwithExpandablePosition,Q&lt;:Position](Aggregator[P,S,Q])(PosExpDep[S,Q]):Aggregatable[P,S,Q]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier">implicit </span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">A2A</span><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="S">S &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a> with <a href="../position/ExpandablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.ExpandablePosition">ExpandablePosition</a></span>, <span name="Q">Q &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="params">(<span name="t">t: <a href="Aggregator.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregator">Aggregator</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregatable.A2A.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregatable.A2A.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregatable.A2A.Q">Q</span>]</span>)</span><span class="result">: <a href="Aggregatable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregatable">Aggregatable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregatable.A2A.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregatable.A2A.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregatable.A2A.Q">Q</span>]</span>
+        <span class="name">AQ2A</span><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="S">S &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a> with <a href="../position/ExpandablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.ExpandablePosition">ExpandablePosition</a></span>, <span name="Q">Q &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="params">(<span name="t">t: <a href="Aggregator.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregator">Aggregator</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregatable.AQ2A.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregatable.AQ2A.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregatable.AQ2A.Q">Q</span>]</span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: <a href="../position/PosExpDep.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.PosExpDep">PosExpDep</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregatable.AQ2A.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregatable.AQ2A.Q">Q</span>]</span>)</span><span class="result">: <a href="Aggregatable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregatable">Aggregatable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregatable.AQ2A.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregatable.AQ2A.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregatable.AQ2A.Q">Q</span>]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.aggregate.Aggregatable$@A2A[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,S&lt;:au.com.cba.omnia.grimlock.framework.position.Positionwithau.com.cba.omnia.grimlock.framework.position.ExpandablePosition,Q&lt;:au.com.cba.omnia.grimlock.framework.position.Position](t:au.com.cba.omnia.grimlock.framework.aggregate.Aggregator[P,S,Q]):au.com.cba.omnia.grimlock.framework.aggregate.Aggregatable[P,S,Q]" title="Permalink" target="_top">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.aggregate.Aggregatable$@AQ2A[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,S&lt;:au.com.cba.omnia.grimlock.framework.position.Positionwithau.com.cba.omnia.grimlock.framework.position.ExpandablePosition,Q&lt;:au.com.cba.omnia.grimlock.framework.position.Position](t:au.com.cba.omnia.grimlock.framework.aggregate.Aggregator[P,S,Q])(implicitev:au.com.cba.omnia.grimlock.framework.position.PosExpDep[S,Q]):au.com.cba.omnia.grimlock.framework.aggregate.Aggregatable[P,S,Q]" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <p class="shortcomment cmt">Converts an <code>Aggregator[P, S, Q]</code> to a <code>List[Aggregator[P, S, Q]]</code>.</p>
-    </li><li name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregatable#LA2A" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="LA2A[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,S&lt;:au.com.cba.omnia.grimlock.framework.position.Positionwithau.com.cba.omnia.grimlock.framework.position.ExpandablePosition,Q&lt;:au.com.cba.omnia.grimlock.framework.position.Position](t:List[au.com.cba.omnia.grimlock.framework.aggregate.Aggregator[P,S,Q]])(implicitev:au.com.cba.omnia.grimlock.framework.position.PosExpDep[S,Q]):au.com.cba.omnia.grimlock.framework.aggregate.Aggregatable[P,S,Q]"></a>
-      <a id="LA2A[P&lt;:Position,S&lt;:PositionwithExpandablePosition,Q&lt;:Position](List[Aggregator[P,S,Q]])(PosExpDep[S,Q]):Aggregatable[P,S,Q]"></a>
+    </li><li name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregatable#AS2A" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="AS2A[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,S&lt;:au.com.cba.omnia.grimlock.framework.position.Positionwithau.com.cba.omnia.grimlock.framework.position.ExpandablePosition](t:au.com.cba.omnia.grimlock.framework.aggregate.Aggregator[P,S,S]{typeO[A]=au.com.cba.omnia.grimlock.framework.aggregate.Single[A]}):au.com.cba.omnia.grimlock.framework.aggregate.Aggregatable[P,S,S]"></a>
+      <a id="AS2A[P&lt;:Position,S&lt;:PositionwithExpandablePosition](Aggregator[P,S,S]{typeO[A]=au.com.cba.omnia.grimlock.framework.aggregate.Single[A]}):Aggregatable[P,S,S]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier">implicit </span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">LA2A</span><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="S">S &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a> with <a href="../position/ExpandablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.ExpandablePosition">ExpandablePosition</a></span>, <span name="Q">Q &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="params">(<span name="t">t: <span class="extype" name="scala.List">List</span>[<a href="Aggregator.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregator">Aggregator</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregatable.LA2A.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregatable.LA2A.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregatable.LA2A.Q">Q</span>]]</span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: <a href="../position/PosExpDep.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.PosExpDep">PosExpDep</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregatable.LA2A.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregatable.LA2A.Q">Q</span>]</span>)</span><span class="result">: <a href="Aggregatable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregatable">Aggregatable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregatable.LA2A.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregatable.LA2A.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregatable.LA2A.Q">Q</span>]</span>
+        <span class="name">AS2A</span><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="S">S &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a> with <a href="../position/ExpandablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.ExpandablePosition">ExpandablePosition</a></span>]</span><span class="params">(<span name="t">t: <a href="Aggregator.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregator">Aggregator</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregatable.AS2A.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregatable.AS2A.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregatable.AS2A.S">S</span>] { type O[A] = au.com.cba.omnia.grimlock.framework.aggregate.Single[A] }</span>)</span><span class="result">: <a href="Aggregatable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregatable">Aggregatable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregatable.AS2A.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregatable.AS2A.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregatable.AS2A.S">S</span>]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.aggregate.Aggregatable$@LA2A[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,S&lt;:au.com.cba.omnia.grimlock.framework.position.Positionwithau.com.cba.omnia.grimlock.framework.position.ExpandablePosition,Q&lt;:au.com.cba.omnia.grimlock.framework.position.Position](t:List[au.com.cba.omnia.grimlock.framework.aggregate.Aggregator[P,S,Q]])(implicitev:au.com.cba.omnia.grimlock.framework.position.PosExpDep[S,Q]):au.com.cba.omnia.grimlock.framework.aggregate.Aggregatable[P,S,Q]" title="Permalink" target="_top">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.aggregate.Aggregatable$@AS2A[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,S&lt;:au.com.cba.omnia.grimlock.framework.position.Positionwithau.com.cba.omnia.grimlock.framework.position.ExpandablePosition](t:au.com.cba.omnia.grimlock.framework.aggregate.Aggregator[P,S,S]{typeO[A]=au.com.cba.omnia.grimlock.framework.aggregate.Single[A]}):au.com.cba.omnia.grimlock.framework.aggregate.Aggregatable[P,S,S]" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Converts an <code>Aggregator[P, S, S]</code> to a <code>List[Aggregator[P, S, S]]</code>.</p>
+    </li><li name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregatable#LAQ2A" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="LAQ2A[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,S&lt;:au.com.cba.omnia.grimlock.framework.position.Positionwithau.com.cba.omnia.grimlock.framework.position.ExpandablePosition,Q&lt;:au.com.cba.omnia.grimlock.framework.position.Position](t:List[au.com.cba.omnia.grimlock.framework.aggregate.Aggregator[P,S,Q]])(implicitev:au.com.cba.omnia.grimlock.framework.position.PosExpDep[S,Q]):au.com.cba.omnia.grimlock.framework.aggregate.Aggregatable[P,S,Q]"></a>
+      <a id="LAQ2A[P&lt;:Position,S&lt;:PositionwithExpandablePosition,Q&lt;:Position](List[Aggregator[P,S,Q]])(PosExpDep[S,Q]):Aggregatable[P,S,Q]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">implicit </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">LAQ2A</span><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="S">S &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a> with <a href="../position/ExpandablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.ExpandablePosition">ExpandablePosition</a></span>, <span name="Q">Q &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="params">(<span name="t">t: <span class="extype" name="scala.List">List</span>[<a href="Aggregator.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregator">Aggregator</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregatable.LAQ2A.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregatable.LAQ2A.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregatable.LAQ2A.Q">Q</span>]]</span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: <a href="../position/PosExpDep.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.PosExpDep">PosExpDep</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregatable.LAQ2A.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregatable.LAQ2A.Q">Q</span>]</span>)</span><span class="result">: <a href="Aggregatable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregatable">Aggregatable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregatable.LAQ2A.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregatable.LAQ2A.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregatable.LAQ2A.Q">Q</span>]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.aggregate.Aggregatable$@LAQ2A[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,S&lt;:au.com.cba.omnia.grimlock.framework.position.Positionwithau.com.cba.omnia.grimlock.framework.position.ExpandablePosition,Q&lt;:au.com.cba.omnia.grimlock.framework.position.Position](t:List[au.com.cba.omnia.grimlock.framework.aggregate.Aggregator[P,S,Q]])(implicitev:au.com.cba.omnia.grimlock.framework.position.PosExpDep[S,Q]):au.com.cba.omnia.grimlock.framework.aggregate.Aggregatable[P,S,Q]" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -207,7 +224,7 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">clone</span><span class="params">()</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.7/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a></span>
+        <span class="name">clone</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.AnyRef">AnyRef</span></span>
       </span>
       </h4><span class="permalink">
       <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.aggregate.Aggregatable$@clone():Object" title="Permalink" target="_top">
@@ -230,7 +247,7 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">eq</span><span class="params">(<span name="arg0">arg0: <a href="http://www.scala-lang.org/api/2.11.7/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.7/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
+        <span class="name">eq</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.AnyRef">AnyRef</span></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.7/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
       </h4><span class="permalink">
       <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.aggregate.Aggregatable$@eq(x$1:AnyRef):Boolean" title="Permalink" target="_top">
@@ -247,7 +264,7 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">equals</span><span class="params">(<span name="arg0">arg0: <a href="http://www.scala-lang.org/api/2.11.7/index.html#scala.Any" class="extype" target="_top">Any</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.7/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
+        <span class="name">equals</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Any">Any</span></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.7/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
       </h4><span class="permalink">
       <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.aggregate.Aggregatable$@equals(x$1:Any):Boolean" title="Permalink" target="_top">
@@ -338,7 +355,7 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">ne</span><span class="params">(<span name="arg0">arg0: <a href="http://www.scala-lang.org/api/2.11.7/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.7/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
+        <span class="name">ne</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.AnyRef">AnyRef</span></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.7/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
       </h4><span class="permalink">
       <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.aggregate.Aggregatable$@ne(x$1:AnyRef):Boolean" title="Permalink" target="_top">
@@ -497,9 +514,9 @@
             </div><div class="parent" name="java.io.Serializable">
               <h3>Inherited from <span class="extype" name="java.io.Serializable">Serializable</span></h3>
             </div><div class="parent" name="scala.AnyRef">
-              <h3>Inherited from <a href="http://www.scala-lang.org/api/2.11.7/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a></h3>
+              <h3>Inherited from <span class="extype" name="scala.AnyRef">AnyRef</span></h3>
             </div><div class="parent" name="scala.Any">
-              <h3>Inherited from <a href="http://www.scala-lang.org/api/2.11.7/index.html#scala.Any" class="extype" target="_top">Any</a></h3>
+              <h3>Inherited from <span class="extype" name="scala.Any">Any</span></h3>
             </div>
         
         </div>

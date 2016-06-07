@@ -45,7 +45,7 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <span class="name">Mean</span><span class="tparams">[<span name="P">P &lt;: <a href="../../framework/position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="S">S &lt;: <a href="../../framework/position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a> with <a href="../../framework/position/ExpandablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.ExpandablePosition">ExpandablePosition</a></span>]</span><span class="params">(<span name="filter">filter: <a href="http://www.scala-lang.org/api/2.11.7/index.html#scala.Boolean" class="extype" target="_top">Boolean</a> = <span class="symbol">true</span></span>, <span name="strict">strict: <a href="http://www.scala-lang.org/api/2.11.7/index.html#scala.Boolean" class="extype" target="_top">Boolean</a> = <span class="symbol">true</span></span>, <span name="nan">nan: <a href="http://www.scala-lang.org/api/2.11.7/index.html#scala.Boolean" class="extype" target="_top">Boolean</a> = <span class="symbol">false</span></span>)</span><span class="result"> extends <a href="../../framework/aggregate/Aggregator.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregator">Aggregator</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.S">S</span>] with <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.MomentsAggregator">MomentsAggregator</span>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.S">S</span>] with <a href="http://www.scala-lang.org/api/2.11.7/index.html#scala.Product" class="extype" target="_top">Product</a> with <a href="http://www.scala-lang.org/api/2.11.7/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
+        <span class="name">Mean</span><span class="tparams">[<span name="P">P &lt;: <a href="../../framework/position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="S">S &lt;: <a href="../../framework/position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a> with <a href="../../framework/position/ExpandablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.ExpandablePosition">ExpandablePosition</a></span>]</span><span class="params">(<span name="filter">filter: <a href="http://www.scala-lang.org/api/2.11.7/index.html#scala.Boolean" class="extype" target="_top">Boolean</a> = <span class="symbol">true</span></span>, <span name="strict">strict: <a href="http://www.scala-lang.org/api/2.11.7/index.html#scala.Boolean" class="extype" target="_top">Boolean</a> = <span class="symbol">true</span></span>, <span name="nan">nan: <a href="http://www.scala-lang.org/api/2.11.7/index.html#scala.Boolean" class="extype" target="_top">Boolean</a> = <span class="symbol">false</span></span>)</span><span class="result"> extends <a href="../../framework/aggregate/Aggregator.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregator">Aggregator</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.S">S</span>] with <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.MomentsPrepareReduce">MomentsPrepareReduce</span>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.S">S</span>] with <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.MomentsPresent">MomentsPresent</span>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.S">S</span>] with <a href="http://www.scala-lang.org/api/2.11.7/index.html#scala.Product" class="extype" target="_top">Product</a> with <a href="http://www.scala-lang.org/api/2.11.7/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
       </span>
       </h4>
       
@@ -53,9 +53,9 @@
 </p></div><dl class="paramcmts block"><dt class="param">filter</dt><dd class="cmt"><p>Indicates if only numerical types should be aggregated. Is set then all categorical values are
               filtered prior to aggregation.</p></dd><dt class="param">strict</dt><dd class="cmt"><p>Indicates if strict data handling is required. If so then any non-numeric value fails the reduction.
               If not then non-numeric values are silently ignored.</p></dd><dt class="param">nan</dt><dd class="cmt"><p>Indicator if 'NaN' string should be output if the reduction failed (for example due to non-numeric
-              data).</p></dd></dl><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/8ccf2c0f1c8778e2348c4ad69e31b32683fa3390//src/main/scala/au/com/cba/omnia/grimlock/library/Aggregators.scala" target="_blank">Aggregators.scala</a></dd></dl><div class="toggleContainer block">
+              data).</p></dd></dl><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/10e7f23046477dfd32209e8760c5c4e5bbe2dd16//src/main/scala/au/com/cba/omnia/grimlock/library/Aggregators.scala" target="_blank">Aggregators.scala</a></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
-          <div class="superTypes hiddenContent"><a href="http://www.scala-lang.org/api/2.11.7/index.html#scala.Serializable" class="extype" target="_top">Serializable</a>, <a href="http://www.scala-lang.org/api/2.11.7/index.html#scala.Product" class="extype" target="_top">Product</a>, <a href="http://www.scala-lang.org/api/2.11.7/index.html#scala.Equals" class="extype" target="_top">Equals</a>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.MomentsAggregator">MomentsAggregator</span>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.S">S</span>], <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.StrictAggregator">StrictAggregator</span>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.S">S</span>], <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.FilterAggregator">FilterAggregator</span>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.P">P</span>], <a href="../../framework/aggregate/Aggregator.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregator">Aggregator</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.S">S</span>], <a href="../../framework/aggregate/AggregatorWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue">AggregatorWithValue</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.S">S</span>], <span class="extype" name="java.io.Serializable">Serializable</span>, <a href="http://www.scala-lang.org/api/2.11.7/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a>, <a href="http://www.scala-lang.org/api/2.11.7/index.html#scala.Any" class="extype" target="_top">Any</a></div>
+          <div class="superTypes hiddenContent"><a href="http://www.scala-lang.org/api/2.11.7/index.html#scala.Serializable" class="extype" target="_top">Serializable</a>, <a href="http://www.scala-lang.org/api/2.11.7/index.html#scala.Product" class="extype" target="_top">Product</a>, <a href="http://www.scala-lang.org/api/2.11.7/index.html#scala.Equals" class="extype" target="_top">Equals</a>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.MomentsPresent">MomentsPresent</span>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.S">S</span>], <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.PresentDouble">PresentDouble</span>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.S">S</span>], <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.MomentsPrepareReduce">MomentsPrepareReduce</span>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.S">S</span>], <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.StrictReduce">StrictReduce</span>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.S">S</span>], <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.PrepareDouble">PrepareDouble</span>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.P">P</span>], <a href="../../framework/aggregate/Aggregator.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregator">Aggregator</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.S">S</span>], <a href="../../framework/aggregate/AggregatorWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue">AggregatorWithValue</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.S">S</span>], <span class="extype" name="java.io.Serializable">Serializable</span>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
         
 
@@ -73,7 +73,7 @@
                 <span class="filtertype">Inherited<br />
                 </span>
                 <ol id="linearization">
-                  <li class="in" name="au.com.cba.omnia.grimlock.library.aggregate.Mean"><span>Mean</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="scala.Product"><span>Product</span></li><li class="in" name="scala.Equals"><span>Equals</span></li><li class="in" name="au.com.cba.omnia.grimlock.library.aggregate.MomentsAggregator"><span>MomentsAggregator</span></li><li class="in" name="au.com.cba.omnia.grimlock.library.aggregate.StrictAggregator"><span>StrictAggregator</span></li><li class="in" name="au.com.cba.omnia.grimlock.library.aggregate.FilterAggregator"><span>FilterAggregator</span></li><li class="in" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregator"><span>Aggregator</span></li><li class="in" name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue"><span>AggregatorWithValue</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                  <li class="in" name="au.com.cba.omnia.grimlock.library.aggregate.Mean"><span>Mean</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="scala.Product"><span>Product</span></li><li class="in" name="scala.Equals"><span>Equals</span></li><li class="in" name="au.com.cba.omnia.grimlock.library.aggregate.MomentsPresent"><span>MomentsPresent</span></li><li class="in" name="au.com.cba.omnia.grimlock.library.aggregate.PresentDouble"><span>PresentDouble</span></li><li class="in" name="au.com.cba.omnia.grimlock.library.aggregate.MomentsPrepareReduce"><span>MomentsPrepareReduce</span></li><li class="in" name="au.com.cba.omnia.grimlock.library.aggregate.StrictReduce"><span>StrictReduce</span></li><li class="in" name="au.com.cba.omnia.grimlock.library.aggregate.PrepareDouble"><span>PrepareDouble</span></li><li class="in" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregator"><span>Aggregator</span></li><li class="in" name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue"><span>AggregatorWithValue</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
                 </ol>
               </div><div id="ancestors">
             <span class="filtertype"></span>
@@ -117,7 +117,24 @@
 
         <div id="types" class="types members">
               <h3>Type Members</h3>
-              <ol><li name="au.com.cba.omnia.grimlock.library.aggregate.MomentsAggregator.T" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+              <ol><li name="au.com.cba.omnia.grimlock.library.aggregate.PresentDouble.O" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="O[A]=au.com.cba.omnia.grimlock.framework.aggregate.Single[A]"></a>
+      <a id="O[A]:O[A]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">type</span>
+      </span>
+      <span class="symbol">
+        <span class="name">O</span><span class="tparams">[<span name="A">A</span>]</span><span class="result"> = <a href="../../framework/aggregate/Single.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Single">Single</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.PresentDouble.O.A">A</span>]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.aggregate.Mean@O[A]=au.com.cba.omnia.grimlock.framework.aggregate.Single[A]" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>PresentDouble</dd></dl></div>
+    </li><li name="au.com.cba.omnia.grimlock.library.aggregate.MomentsPrepareReduce.T" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="T=com.twitter.algebird.Moments"></a>
       <a id="T:T"></a>
       <h4 class="signature">
@@ -126,14 +143,14 @@
         <span class="kind">type</span>
       </span>
       <span class="symbol">
-        <span class="name">T</span><span class="result"> = <span class="extype" name="com.twitter.algebird.Moments">Moments</span></span>
+        <span class="name">T</span><span class="result"> = <span class="extype" name="com.twitter.algebird.Moments">com.twitter.algebird.Moments</span></span>
       </span>
       </h4><span class="permalink">
       <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.aggregate.Mean@T=com.twitter.algebird.Moments" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <p class="shortcomment cmt">Type of the state being aggregated.</p><div class="fullcomment"><div class="comment cmt"><p>Type of the state being aggregated.</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd>MomentsAggregator</dd></dl></div>
+      <p class="shortcomment cmt">Type of the state being aggregated.</p><div class="fullcomment"><div class="comment cmt"><p>Type of the state being aggregated.</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd>MomentsPrepareReduce</dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregator.V" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="V=Any"></a>
       <a id="V:V"></a>
@@ -143,7 +160,7 @@
         <span class="kind">type</span>
       </span>
       <span class="symbol">
-        <span class="name">V</span><span class="result"> = <a href="http://www.scala-lang.org/api/2.11.7/index.html#scala.Any" class="extype" target="_top">Any</a></span>
+        <span class="name">V</span><span class="result"> = <span class="extype" name="scala.Any">Any</span></span>
       </span>
       </h4><span class="permalink">
       <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.aggregate.Mean@V=Any" title="Permalink" target="_top">
@@ -167,7 +184,7 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span title="gt4s: $bang$eq" class="name">!=</span><span class="params">(<span name="arg0">arg0: <a href="http://www.scala-lang.org/api/2.11.7/index.html#scala.Any" class="extype" target="_top">Any</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.7/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
+        <span title="gt4s: $bang$eq" class="name">!=</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Any">Any</span></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.7/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
       </h4><span class="permalink">
       <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.aggregate.Mean@!=(x$1:Any):Boolean" title="Permalink" target="_top">
@@ -201,7 +218,7 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span title="gt4s: $eq$eq" class="name">==</span><span class="params">(<span name="arg0">arg0: <a href="http://www.scala-lang.org/api/2.11.7/index.html#scala.Any" class="extype" target="_top">Any</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.7/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
+        <span title="gt4s: $eq$eq" class="name">==</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Any">Any</span></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.7/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
       </h4><span class="permalink">
       <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.aggregate.Mean@==(x$1:Any):Boolean" title="Permalink" target="_top">
@@ -210,72 +227,72 @@
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregator#andThenMutate" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="andThenMutate(mutate:au.com.cba.omnia.grimlock.framework.Cell[Q]=&gt;au.com.cba.omnia.grimlock.framework.content.Content):au.com.cba.omnia.grimlock.framework.aggregate.Aggregator[P,S,Q]{typeT=Aggregator.this.T}"></a>
-      <a id="andThenMutate((Cell[S])⇒Content):Aggregator[P,S,S]{typeT=Mean.this.T}"></a>
+      <a id="andThenMutate(mutate:au.com.cba.omnia.grimlock.framework.Cell[Q]=&gt;au.com.cba.omnia.grimlock.framework.content.Content):au.com.cba.omnia.grimlock.framework.aggregate.Aggregator[P,S,Q]{typeT=Aggregator.this.T;typeO[A]=Aggregator.this.O[A]}"></a>
+      <a id="andThenMutate((Cell[S])⇒Content):Aggregator[P,S,S]{.../*2definitionsintyperefinement*/}"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">andThenMutate</span><span class="params">(<span name="mutate">mutate: (<a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.S">S</span>]) ⇒ <a href="../../framework/content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.framework.content.Content">Content</a></span>)</span><span class="result">: <a href="../../framework/aggregate/Aggregator.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregator">Aggregator</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.S">S</span>] { type T = Mean.this.T }</span>
+        <span class="name">andThenMutate</span><span class="params">(<span name="mutate">mutate: (<a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.S">S</span>]) ⇒ <a href="../../framework/content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.framework.content.Content">Content</a></span>)</span><span class="result">: <a href="../../framework/aggregate/Aggregator.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregator">Aggregator</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.S">S</span>] { ... /* 2 definitions in type refinement */ }</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.aggregate.Mean@andThenMutate(mutate:au.com.cba.omnia.grimlock.framework.Cell[Q]=&gt;au.com.cba.omnia.grimlock.framework.content.Content):au.com.cba.omnia.grimlock.framework.aggregate.Aggregator[P,S,Q]{typeT=Aggregator.this.T}" title="Permalink" target="_top">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.aggregate.Mean@andThenMutate(mutate:au.com.cba.omnia.grimlock.framework.Cell[Q]=&gt;au.com.cba.omnia.grimlock.framework.content.Content):au.com.cba.omnia.grimlock.framework.aggregate.Aggregator[P,S,Q]{typeT=Aggregator.this.T;typeO[A]=Aggregator.this.O[A]}" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <p class="shortcomment cmt">Operator for aggregating and then updating the contents.</p><div class="fullcomment"><div class="comment cmt"><p>Operator for aggregating and then updating the contents.
 </p></div><dl class="paramcmts block"><dt class="param">mutate</dt><dd class="cmt"><p>The mutation to apply after the aggregation.</p></dd><dt>returns</dt><dd class="cmt"><p>An aggregator that runs <code>this</code> and then updates the resulting contents.</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../../framework/aggregate/Aggregator.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregator">Aggregator</a> → <a href="../../framework/aggregate/AggregatorWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue">AggregatorWithValue</a></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue#andThenMutateWithValue" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="andThenMutateWithValue(mutate:(au.com.cba.omnia.grimlock.framework.Cell[Q],AggregatorWithValue.this.V)=&gt;au.com.cba.omnia.grimlock.framework.content.Content):au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue[P,S,Q]{typeT=AggregatorWithValue.this.T;typeV=AggregatorWithValue.this.V}"></a>
-      <a id="andThenMutateWithValue((Cell[S],V)⇒Content):AggregatorWithValue[P,S,S]{.../*2definitionsintyperefinement*/}"></a>
+      <a id="andThenMutateWithValue(mutate:(au.com.cba.omnia.grimlock.framework.Cell[Q],AggregatorWithValue.this.V)=&gt;au.com.cba.omnia.grimlock.framework.content.Content):au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue[P,S,Q]{typeT=AggregatorWithValue.this.T;typeV=AggregatorWithValue.this.V;typeO[A]=AggregatorWithValue.this.O[A]}"></a>
+      <a id="andThenMutateWithValue((Cell[S],V)⇒Content):AggregatorWithValue[P,S,S]{.../*3definitionsintyperefinement*/}"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">andThenMutateWithValue</span><span class="params">(<span name="mutate">mutate: (<a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.S">S</span>], <a href="#V=Any" class="extmbr" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.V">V</a>) ⇒ <a href="../../framework/content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.framework.content.Content">Content</a></span>)</span><span class="result">: <a href="../../framework/aggregate/AggregatorWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue">AggregatorWithValue</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.S">S</span>] { ... /* 2 definitions in type refinement */ }</span>
+        <span class="name">andThenMutateWithValue</span><span class="params">(<span name="mutate">mutate: (<a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.S">S</span>], <a href="#V=Any" class="extmbr" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.V">V</a>) ⇒ <a href="../../framework/content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.framework.content.Content">Content</a></span>)</span><span class="result">: <a href="../../framework/aggregate/AggregatorWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue">AggregatorWithValue</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.S">S</span>] { ... /* 3 definitions in type refinement */ }</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.aggregate.Mean@andThenMutateWithValue(mutate:(au.com.cba.omnia.grimlock.framework.Cell[Q],AggregatorWithValue.this.V)=&gt;au.com.cba.omnia.grimlock.framework.content.Content):au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue[P,S,Q]{typeT=AggregatorWithValue.this.T;typeV=AggregatorWithValue.this.V}" title="Permalink" target="_top">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.aggregate.Mean@andThenMutateWithValue(mutate:(au.com.cba.omnia.grimlock.framework.Cell[Q],AggregatorWithValue.this.V)=&gt;au.com.cba.omnia.grimlock.framework.content.Content):au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue[P,S,Q]{typeT=AggregatorWithValue.this.T;typeV=AggregatorWithValue.this.V;typeO[A]=AggregatorWithValue.this.O[A]}" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <p class="shortcomment cmt">Operator for aggregating and then updating the contents.</p><div class="fullcomment"><div class="comment cmt"><p>Operator for aggregating and then updating the contents.
 </p></div><dl class="paramcmts block"><dt class="param">mutate</dt><dd class="cmt"><p>The mutation to apply after the aggregation.</p></dd><dt>returns</dt><dd class="cmt"><p>An aggregator that runs <code>this</code> and then updates the resulting contents.</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../../framework/aggregate/AggregatorWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue">AggregatorWithValue</a></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregator#andThenRelocate" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="andThenRelocate[R&lt;:au.com.cba.omnia.grimlock.framework.position.Position](locate:au.com.cba.omnia.grimlock.framework.Locate.FromCell[Q,R])(implicitev:au.com.cba.omnia.grimlock.framework.position.PosIncDep[Q,R]):au.com.cba.omnia.grimlock.framework.aggregate.Aggregator[P,S,R]{typeT=Aggregator.this.T}"></a>
-      <a id="andThenRelocate[R&lt;:Position](FromCell[S,R])(PosIncDep[S,R]):Aggregator[P,S,R]{typeT=Mean.this.T}"></a>
+      <a id="andThenRelocate[R&lt;:au.com.cba.omnia.grimlock.framework.position.Position](locate:au.com.cba.omnia.grimlock.framework.Locate.FromCell[Q,R])(implicitev:au.com.cba.omnia.grimlock.framework.position.PosIncDep[Q,R]):au.com.cba.omnia.grimlock.framework.aggregate.Aggregator[P,S,R]{typeT=Aggregator.this.T;typeO[A]=Aggregator.this.O[A]}"></a>
+      <a id="andThenRelocate[R&lt;:Position](FromCell[S,R])(PosIncDep[S,R]):Aggregator[P,S,R]{.../*2definitionsintyperefinement*/}"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">andThenRelocate</span><span class="tparams">[<span name="R">R &lt;: <a href="../../framework/position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="params">(<span name="locate">locate: <a href="../../framework/Locate$.html#FromCell[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,Q&lt;:au.com.cba.omnia.grimlock.framework.position.Position]=au.com.cba.omnia.grimlock.framework.Cell[P]=&gt;Option[Q]" class="extmbr" name="au.com.cba.omnia.grimlock.framework.Locate.FromCell">FromCell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregator.andThenRelocate.R">R</span>]</span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: <a href="../../framework/position/PosIncDep.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.PosIncDep">PosIncDep</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregator.andThenRelocate.R">R</span>]</span>)</span><span class="result">: <a href="../../framework/aggregate/Aggregator.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregator">Aggregator</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregator.andThenRelocate.R">R</span>] { type T = Mean.this.T }</span>
+        <span class="name">andThenRelocate</span><span class="tparams">[<span name="R">R &lt;: <a href="../../framework/position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="params">(<span name="locate">locate: <a href="../../framework/Locate$.html#FromCell[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,Q&lt;:au.com.cba.omnia.grimlock.framework.position.Position]=au.com.cba.omnia.grimlock.framework.Cell[P]=&gt;Option[Q]" class="extmbr" name="au.com.cba.omnia.grimlock.framework.Locate.FromCell">FromCell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregator.andThenRelocate.R">R</span>]</span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: <a href="../../framework/position/PosIncDep.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.PosIncDep">PosIncDep</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregator.andThenRelocate.R">R</span>]</span>)</span><span class="result">: <a href="../../framework/aggregate/Aggregator.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregator">Aggregator</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregator.andThenRelocate.R">R</span>] { ... /* 2 definitions in type refinement */ }</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.aggregate.Mean@andThenRelocate[R&lt;:au.com.cba.omnia.grimlock.framework.position.Position](locate:au.com.cba.omnia.grimlock.framework.Locate.FromCell[Q,R])(implicitev:au.com.cba.omnia.grimlock.framework.position.PosIncDep[Q,R]):au.com.cba.omnia.grimlock.framework.aggregate.Aggregator[P,S,R]{typeT=Aggregator.this.T}" title="Permalink" target="_top">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.aggregate.Mean@andThenRelocate[R&lt;:au.com.cba.omnia.grimlock.framework.position.Position](locate:au.com.cba.omnia.grimlock.framework.Locate.FromCell[Q,R])(implicitev:au.com.cba.omnia.grimlock.framework.position.PosIncDep[Q,R]):au.com.cba.omnia.grimlock.framework.aggregate.Aggregator[P,S,R]{typeT=Aggregator.this.T;typeO[A]=Aggregator.this.O[A]}" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <p class="shortcomment cmt">Operator for aggregating and then relocating the contents.</p><div class="fullcomment"><div class="comment cmt"><p>Operator for aggregating and then relocating the contents.
 </p></div><dl class="paramcmts block"><dt class="param">locate</dt><dd class="cmt"><p>The relocation to apply after the aggregation.</p></dd><dt>returns</dt><dd class="cmt"><p>An aggregator that runs <code>this</code> and then relocates the resulting contents.</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../../framework/aggregate/Aggregator.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregator">Aggregator</a> → <a href="../../framework/aggregate/AggregatorWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue">AggregatorWithValue</a></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue#andThenRelocateWithValue" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="andThenRelocateWithValue[R&lt;:au.com.cba.omnia.grimlock.framework.position.Position](locate:au.com.cba.omnia.grimlock.framework.Locate.FromCellWithValue[Q,R,AggregatorWithValue.this.V])(implicitev:au.com.cba.omnia.grimlock.framework.position.PosIncDep[Q,R]):au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue[P,S,R]{typeT=AggregatorWithValue.this.T;typeV=AggregatorWithValue.this.V}"></a>
-      <a id="andThenRelocateWithValue[R&lt;:Position](FromCellWithValue[S,R,V])(PosIncDep[S,R]):AggregatorWithValue[P,S,R]{.../*2definitionsintyperefinement*/}"></a>
+      <a id="andThenRelocateWithValue[R&lt;:au.com.cba.omnia.grimlock.framework.position.Position](locate:au.com.cba.omnia.grimlock.framework.Locate.FromCellWithValue[Q,R,AggregatorWithValue.this.V])(implicitev:au.com.cba.omnia.grimlock.framework.position.PosIncDep[Q,R]):au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue[P,S,R]{typeT=AggregatorWithValue.this.T;typeV=AggregatorWithValue.this.V;typeO[A]=AggregatorWithValue.this.O[A]}"></a>
+      <a id="andThenRelocateWithValue[R&lt;:Position](FromCellWithValue[S,R,V])(PosIncDep[S,R]):AggregatorWithValue[P,S,R]{.../*3definitionsintyperefinement*/}"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">andThenRelocateWithValue</span><span class="tparams">[<span name="R">R &lt;: <a href="../../framework/position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="params">(<span name="locate">locate: <a href="../../framework/Locate$.html#FromCellWithValue[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,Q&lt;:au.com.cba.omnia.grimlock.framework.position.Position,V]=(au.com.cba.omnia.grimlock.framework.Cell[P],V)=&gt;Option[Q]" class="extmbr" name="au.com.cba.omnia.grimlock.framework.Locate.FromCellWithValue">FromCellWithValue</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue.andThenRelocateWithValue.R">R</span>, <a href="#V=Any" class="extmbr" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.V">V</a>]</span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: <a href="../../framework/position/PosIncDep.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.PosIncDep">PosIncDep</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue.andThenRelocateWithValue.R">R</span>]</span>)</span><span class="result">: <a href="../../framework/aggregate/AggregatorWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue">AggregatorWithValue</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue.andThenRelocateWithValue.R">R</span>] { ... /* 2 definitions in type refinement */ }</span>
+        <span class="name">andThenRelocateWithValue</span><span class="tparams">[<span name="R">R &lt;: <a href="../../framework/position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="params">(<span name="locate">locate: <a href="../../framework/Locate$.html#FromCellWithValue[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,Q&lt;:au.com.cba.omnia.grimlock.framework.position.Position,V]=(au.com.cba.omnia.grimlock.framework.Cell[P],V)=&gt;Option[Q]" class="extmbr" name="au.com.cba.omnia.grimlock.framework.Locate.FromCellWithValue">FromCellWithValue</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue.andThenRelocateWithValue.R">R</span>, <a href="#V=Any" class="extmbr" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.V">V</a>]</span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: <a href="../../framework/position/PosIncDep.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.PosIncDep">PosIncDep</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue.andThenRelocateWithValue.R">R</span>]</span>)</span><span class="result">: <a href="../../framework/aggregate/AggregatorWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue">AggregatorWithValue</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue.andThenRelocateWithValue.R">R</span>] { ... /* 3 definitions in type refinement */ }</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.aggregate.Mean@andThenRelocateWithValue[R&lt;:au.com.cba.omnia.grimlock.framework.position.Position](locate:au.com.cba.omnia.grimlock.framework.Locate.FromCellWithValue[Q,R,AggregatorWithValue.this.V])(implicitev:au.com.cba.omnia.grimlock.framework.position.PosIncDep[Q,R]):au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue[P,S,R]{typeT=AggregatorWithValue.this.T;typeV=AggregatorWithValue.this.V}" title="Permalink" target="_top">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.aggregate.Mean@andThenRelocateWithValue[R&lt;:au.com.cba.omnia.grimlock.framework.position.Position](locate:au.com.cba.omnia.grimlock.framework.Locate.FromCellWithValue[Q,R,AggregatorWithValue.this.V])(implicitev:au.com.cba.omnia.grimlock.framework.position.PosIncDep[Q,R]):au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue[P,S,R]{typeT=AggregatorWithValue.this.T;typeV=AggregatorWithValue.this.V;typeO[A]=AggregatorWithValue.this.O[A]}" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -297,7 +314,7 @@
         <img src="../../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean">Mean</a> → StrictAggregator</dd></dl></div>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean">Mean</a> → PresentDouble</dd></dl></div>
     </li><li name="scala.Any#asInstanceOf" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="asInstanceOf[T0]:T0"></a>
       <a id="asInstanceOf[T0]:T0"></a>
@@ -324,7 +341,7 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">clone</span><span class="params">()</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.7/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a></span>
+        <span class="name">clone</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.AnyRef">AnyRef</span></span>
       </span>
       </h4><span class="permalink">
       <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.aggregate.Mean@clone():Object" title="Permalink" target="_top">
@@ -347,7 +364,7 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">eq</span><span class="params">(<span name="arg0">arg0: <a href="http://www.scala-lang.org/api/2.11.7/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.7/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
+        <span class="name">eq</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.AnyRef">AnyRef</span></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.7/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
       </h4><span class="permalink">
       <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.aggregate.Mean@eq(x$1:AnyRef):Boolean" title="Permalink" target="_top">
@@ -372,7 +389,7 @@
       </a>
     </span>
       <p class="shortcomment cmt">Indicates if only numerical types should be aggregated.</p><div class="fullcomment"><div class="comment cmt"><p>Indicates if only numerical types should be aggregated. Is set then all categorical values are
-              filtered prior to aggregation.</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean">Mean</a> → FilterAggregator</dd></dl></div>
+              filtered prior to aggregation.</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean">Mean</a> → PrepareDouble</dd></dl></div>
     </li><li name="scala.AnyRef#finalize" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="finalize():Unit"></a>
       <a id="finalize():Unit"></a>
@@ -413,8 +430,8 @@
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.library.aggregate.MomentsAggregator#invalid" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="invalid(t:MomentsAggregator.this.T):Boolean"></a>
+    </li><li name="au.com.cba.omnia.grimlock.library.aggregate.MomentsPrepareReduce#invalid" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="invalid(t:MomentsPrepareReduce.this.T):Boolean"></a>
       <a id="invalid(T):Boolean"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -425,11 +442,11 @@
         <span class="name">invalid</span><span class="params">(<span name="t">t: <a href="#T=com.twitter.algebird.Moments" class="extmbr" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.T">T</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.7/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.aggregate.Mean@invalid(t:MomentsAggregator.this.T):Boolean" title="Permalink" target="_top">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.aggregate.Mean@invalid(t:MomentsPrepareReduce.this.T):Boolean" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd>MomentsAggregator → StrictAggregator</dd></dl></div>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd>MomentsPrepareReduce → StrictReduce</dd></dl></div>
     </li><li name="scala.Any#isInstanceOf" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="isInstanceOf[T0]:Boolean"></a>
       <a id="isInstanceOf[T0]:Boolean"></a>
@@ -447,6 +464,23 @@
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
+    </li><li name="au.com.cba.omnia.grimlock.library.aggregate.MomentsPresent#missing" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="missing(t:MomentsPresent.this.T):Boolean"></a>
+      <a id="missing(T):Boolean"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">missing</span><span class="params">(<span name="t">t: <a href="#T=com.twitter.algebird.Moments" class="extmbr" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.T">T</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.7/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.aggregate.Mean@missing(t:MomentsPresent.this.T):Boolean" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd>MomentsPresent → PresentDouble</dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.library.aggregate.Mean#nan" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="nan:Boolean"></a>
       <a id="nan:Boolean"></a>
@@ -465,7 +499,7 @@
     </span>
       <p class="shortcomment cmt">Indicator if 'NaN' string should be output if the reduction failed (for example due to non-numeric
               data).</p><div class="fullcomment"><div class="comment cmt"><p>Indicator if 'NaN' string should be output if the reduction failed (for example due to non-numeric
-              data).</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean">Mean</a> → StrictAggregator</dd></dl></div>
+              data).</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean">Mean</a> → PresentDouble</dd></dl></div>
     </li><li name="scala.AnyRef#ne" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="ne(x$1:AnyRef):Boolean"></a>
       <a id="ne(AnyRef):Boolean"></a>
@@ -475,7 +509,7 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">ne</span><span class="params">(<span name="arg0">arg0: <a href="http://www.scala-lang.org/api/2.11.7/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.7/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
+        <span class="name">ne</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.AnyRef">AnyRef</span></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.7/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
       </h4><span class="permalink">
       <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.aggregate.Mean@ne(x$1:AnyRef):Boolean" title="Permalink" target="_top">
@@ -517,8 +551,8 @@
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.library.aggregate.MomentsAggregator#prepare" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="prepare(cell:au.com.cba.omnia.grimlock.framework.Cell[P]):Option[MomentsAggregator.this.T]"></a>
+    </li><li name="au.com.cba.omnia.grimlock.library.aggregate.MomentsPrepareReduce#prepare" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="prepare(cell:au.com.cba.omnia.grimlock.framework.Cell[P]):Option[MomentsPrepareReduce.this.T]"></a>
       <a id="prepare(Cell[P]):Option[T]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -529,13 +563,13 @@
         <span class="name">prepare</span><span class="params">(<span name="cell">cell: <a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.P">P</span>]</span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.7/index.html#scala.Option" class="extype" target="_top">Option</a>[<a href="#T=com.twitter.algebird.Moments" class="extmbr" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.T">T</a>]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.aggregate.Mean@prepare(cell:au.com.cba.omnia.grimlock.framework.Cell[P]):Option[MomentsAggregator.this.T]" title="Permalink" target="_top">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.aggregate.Mean@prepare(cell:au.com.cba.omnia.grimlock.framework.Cell[P]):Option[MomentsPrepareReduce.this.T]" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <p class="shortcomment cmt">Prepare for reduction.</p><div class="fullcomment"><div class="comment cmt"><p>Prepare for reduction.
-</p></div><dl class="paramcmts block"><dt class="param">cell</dt><dd class="cmt"><p>Cell which is to be aggregated. Note that its position is prior to <code>slice.selected</code> being applied.</p></dd><dt>returns</dt><dd class="cmt"><p>State to reduce.</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd>MomentsAggregator</dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.library.aggregate.FilterAggregator#prepareDouble" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+</p></div><dl class="paramcmts block"><dt class="param">cell</dt><dd class="cmt"><p>Cell which is to be aggregated. Note that its position is prior to <code>slice.selected</code> being applied.</p></dd><dt>returns</dt><dd class="cmt"><p>State to reduce.</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd>MomentsPrepareReduce</dd></dl></div>
+    </li><li name="au.com.cba.omnia.grimlock.library.aggregate.PrepareDouble#prepareDouble" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="prepareDouble(cell:au.com.cba.omnia.grimlock.framework.Cell[P]):Option[Double]"></a>
       <a id="prepareDouble(Cell[P]):Option[Double]"></a>
       <h4 class="signature">
@@ -551,7 +585,7 @@
         <img src="../../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>FilterAggregator</dd></dl></div>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>PrepareDouble</dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregator#prepareWithValue" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="prepareWithValue(cell:au.com.cba.omnia.grimlock.framework.Cell[P],ext:Aggregator.this.V):Option[Aggregator.this.T]"></a>
       <a id="prepareWithValue(Cell[P],V):Option[T]"></a>
@@ -570,40 +604,40 @@
     </span>
       <p class="shortcomment cmt">Prepare for reduction.</p><div class="fullcomment"><div class="comment cmt"><p>Prepare for reduction.
 </p></div><dl class="paramcmts block"><dt class="param">cell</dt><dd class="cmt"><p>Cell which is to be aggregated. Note that its position is prior to <code>slice.selected</code> being applied.</p></dd><dt class="param">ext</dt><dd class="cmt"><p>User provided data required for preparation.</p></dd><dt>returns</dt><dd class="cmt"><p>Optional state to reduce (allow for filtering).</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../../framework/aggregate/Aggregator.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregator">Aggregator</a> → <a href="../../framework/aggregate/AggregatorWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue">AggregatorWithValue</a></dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.library.aggregate.StrictAggregator#present" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="present(pos:S,t:StrictAggregator.this.T):Option[au.com.cba.omnia.grimlock.framework.Cell[S]]"></a>
-      <a id="present(S,T):Option[Cell[S]]"></a>
+    </li><li name="au.com.cba.omnia.grimlock.library.aggregate.PresentDouble#present" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="present(pos:S,t:PresentDouble.this.T):PresentDouble.this.O[au.com.cba.omnia.grimlock.framework.Cell[S]]"></a>
+      <a id="present(S,T):O[Cell[S]]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">present</span><span class="params">(<span name="pos">pos: <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.S">S</span></span>, <span name="t">t: <a href="#T=com.twitter.algebird.Moments" class="extmbr" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.T">T</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.7/index.html#scala.Option" class="extype" target="_top">Option</a>[<a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.S">S</span>]]</span>
+        <span class="name">present</span><span class="params">(<span name="pos">pos: <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.S">S</span></span>, <span name="t">t: <a href="#T=com.twitter.algebird.Moments" class="extmbr" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.T">T</a></span>)</span><span class="result">: <a href="#O[A]=au.com.cba.omnia.grimlock.framework.aggregate.Single[A]" class="extmbr" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.O">O</a>[<a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.S">S</span>]]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.aggregate.Mean@present(pos:S,t:StrictAggregator.this.T):Option[au.com.cba.omnia.grimlock.framework.Cell[S]]" title="Permalink" target="_top">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.aggregate.Mean@present(pos:S,t:PresentDouble.this.T):PresentDouble.this.O[au.com.cba.omnia.grimlock.framework.Cell[S]]" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <p class="shortcomment cmt">Present the reduced content.</p><div class="fullcomment"><div class="comment cmt"><p>Present the reduced content.
-</p></div><dl class="paramcmts block"><dt class="param">pos</dt><dd class="cmt"><p>The reduced position. That is, the position returned by <code>Slice.selected</code>.</p></dd><dt class="param">t</dt><dd class="cmt"><p>The reduced state.</p></dd><dt>returns</dt><dd class="cmt"><p>Optional cell where the position is <code>pos</code> and the content is derived from <code>t</code>.</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd>StrictAggregator</dd><dt>Note</dt><dd><span class="cmt"><p>An <code>Option</code> is used in the return type to allow aggregators to be selective in what content they apply to.
+</p></div><dl class="paramcmts block"><dt class="param">pos</dt><dd class="cmt"><p>The reduced position. That is, the position returned by <code>Slice.selected</code>.</p></dd><dt class="param">t</dt><dd class="cmt"><p>The reduced state.</p></dd><dt>returns</dt><dd class="cmt"><p>Optional cell where the position is <code>pos</code> and the content is derived from <code>t</code>.</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd>PresentDouble</dd><dt>Note</dt><dd><span class="cmt"><p>An <code>Option</code> is used in the return type to allow aggregators to be selective in what content they apply to.
       For example, computing the mean is undefined for categorical variables. The aggregator now has the option to
       return <code>None</code>. This in turn permits an external API, for simple cases, where the user need not know about
       the types of variables of their data.</p></span></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregator#presentWithValue" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="presentWithValue(pos:S,t:Aggregator.this.T,ext:Aggregator.this.V):Option[au.com.cba.omnia.grimlock.framework.Cell[Q]]"></a>
-      <a id="presentWithValue(S,T,V):Option[Cell[S]]"></a>
+      <a id="presentWithValue(pos:S,t:Aggregator.this.T,ext:Aggregator.this.V):Aggregator.this.O[au.com.cba.omnia.grimlock.framework.Cell[Q]]"></a>
+      <a id="presentWithValue(S,T,V):O[Cell[S]]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">presentWithValue</span><span class="params">(<span name="pos">pos: <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.S">S</span></span>, <span name="t">t: <a href="#T=com.twitter.algebird.Moments" class="extmbr" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.T">T</a></span>, <span name="ext">ext: <a href="#V=Any" class="extmbr" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.V">V</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.7/index.html#scala.Option" class="extype" target="_top">Option</a>[<a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.S">S</span>]]</span>
+        <span class="name">presentWithValue</span><span class="params">(<span name="pos">pos: <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.S">S</span></span>, <span name="t">t: <a href="#T=com.twitter.algebird.Moments" class="extmbr" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.T">T</a></span>, <span name="ext">ext: <a href="#V=Any" class="extmbr" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.V">V</a></span>)</span><span class="result">: <a href="#O[A]=au.com.cba.omnia.grimlock.framework.aggregate.Single[A]" class="extmbr" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.O">O</a>[<a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.S">S</span>]]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.aggregate.Mean@presentWithValue(pos:S,t:Aggregator.this.T,ext:Aggregator.this.V):Option[au.com.cba.omnia.grimlock.framework.Cell[Q]]" title="Permalink" target="_top">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.aggregate.Mean@presentWithValue(pos:S,t:Aggregator.this.T,ext:Aggregator.this.V):Aggregator.this.O[au.com.cba.omnia.grimlock.framework.Cell[Q]]" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -612,8 +646,8 @@
       For example, computing the mean is undefined for categorical variables. The aggregator now has the option to
       return <code>None</code>. This in turn permits an external API, for simple cases, where the user need not know about
       the types of variables of their data.</p></span></dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.library.aggregate.StrictAggregator#reduce" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="reduce(lt:StrictAggregator.this.T,rt:StrictAggregator.this.T):StrictAggregator.this.T"></a>
+    </li><li name="au.com.cba.omnia.grimlock.library.aggregate.StrictReduce#reduce" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="reduce(lt:StrictReduce.this.T,rt:StrictReduce.this.T):StrictReduce.this.T"></a>
       <a id="reduce(T,T):T"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -624,14 +658,14 @@
         <span class="name">reduce</span><span class="params">(<span name="lt">lt: <a href="#T=com.twitter.algebird.Moments" class="extmbr" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.T">T</a></span>, <span name="rt">rt: <a href="#T=com.twitter.algebird.Moments" class="extmbr" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.T">T</a></span>)</span><span class="result">: <a href="#T=com.twitter.algebird.Moments" class="extmbr" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.T">T</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.aggregate.Mean@reduce(lt:StrictAggregator.this.T,rt:StrictAggregator.this.T):StrictAggregator.this.T" title="Permalink" target="_top">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.aggregate.Mean@reduce(lt:StrictReduce.this.T,rt:StrictReduce.this.T):StrictReduce.this.T" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <p class="shortcomment cmt">Standard reduce method.</p><div class="fullcomment"><div class="comment cmt"><p>Standard reduce method.
-</p></div><dl class="paramcmts block"><dt class="param">lt</dt><dd class="cmt"><p>Left state to reduce.</p></dd><dt class="param">rt</dt><dd class="cmt"><p>Right state to reduce.</p></dd><dt>returns</dt><dd class="cmt"><p>Reduced state</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd>StrictAggregator</dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.library.aggregate.MomentsAggregator#reduction" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="reduction(lt:MomentsAggregator.this.T,rt:MomentsAggregator.this.T):MomentsAggregator.this.T"></a>
+</p></div><dl class="paramcmts block"><dt class="param">lt</dt><dd class="cmt"><p>Left state to reduce.</p></dd><dt class="param">rt</dt><dd class="cmt"><p>Right state to reduce.</p></dd><dt>returns</dt><dd class="cmt"><p>Reduced state</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd>StrictReduce</dd></dl></div>
+    </li><li name="au.com.cba.omnia.grimlock.library.aggregate.MomentsPrepareReduce#reduction" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="reduction(lt:MomentsPrepareReduce.this.T,rt:MomentsPrepareReduce.this.T):MomentsPrepareReduce.this.T"></a>
       <a id="reduction(T,T):T"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -642,11 +676,11 @@
         <span class="name">reduction</span><span class="params">(<span name="lt">lt: <a href="#T=com.twitter.algebird.Moments" class="extmbr" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.T">T</a></span>, <span name="rt">rt: <a href="#T=com.twitter.algebird.Moments" class="extmbr" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.T">T</a></span>)</span><span class="result">: <a href="#T=com.twitter.algebird.Moments" class="extmbr" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.T">T</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.aggregate.Mean@reduction(lt:MomentsAggregator.this.T,rt:MomentsAggregator.this.T):MomentsAggregator.this.T" title="Permalink" target="_top">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.aggregate.Mean@reduction(lt:MomentsPrepareReduce.this.T,rt:MomentsPrepareReduce.this.T):MomentsPrepareReduce.this.T" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd>MomentsAggregator → StrictAggregator</dd></dl></div>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd>MomentsPrepareReduce → StrictReduce</dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.library.aggregate.Mean#strict" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="strict:Boolean"></a>
       <a id="strict:Boolean"></a>
@@ -664,7 +698,7 @@
       </a>
     </span>
       <p class="shortcomment cmt">Indicates if strict data handling is required.</p><div class="fullcomment"><div class="comment cmt"><p>Indicates if strict data handling is required. If so then any non-numeric value fails the reduction.
-              If not then non-numeric values are silently ignored.</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean">Mean</a> → StrictAggregator</dd></dl></div>
+              If not then non-numeric values are silently ignored.</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean">Mean</a> → StrictReduce</dd></dl></div>
     </li><li name="scala.AnyRef#synchronized" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="synchronized[T0](x$1:=&gt;T0):T0"></a>
       <a id="synchronized[T0](⇒T0):T0"></a>
@@ -752,36 +786,36 @@
               
         </dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregator#withPrepare" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="withPrepare(prep:au.com.cba.omnia.grimlock.framework.Cell[P]=&gt;au.com.cba.omnia.grimlock.framework.content.Content):au.com.cba.omnia.grimlock.framework.aggregate.Aggregator[P,S,Q]{typeT=Aggregator.this.T}"></a>
-      <a id="withPrepare((Cell[P])⇒Content):Aggregator[P,S,S]{typeT=Mean.this.T}"></a>
+      <a id="withPrepare(prep:au.com.cba.omnia.grimlock.framework.Cell[P]=&gt;au.com.cba.omnia.grimlock.framework.content.Content):au.com.cba.omnia.grimlock.framework.aggregate.Aggregator[P,S,Q]{typeT=Aggregator.this.T;typeO[A]=Aggregator.this.O[A]}"></a>
+      <a id="withPrepare((Cell[P])⇒Content):Aggregator[P,S,S]{.../*2definitionsintyperefinement*/}"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">withPrepare</span><span class="params">(<span name="prep">prep: (<a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.P">P</span>]) ⇒ <a href="../../framework/content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.framework.content.Content">Content</a></span>)</span><span class="result">: <a href="../../framework/aggregate/Aggregator.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregator">Aggregator</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.S">S</span>] { type T = Mean.this.T }</span>
+        <span class="name">withPrepare</span><span class="params">(<span name="prep">prep: (<a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.P">P</span>]) ⇒ <a href="../../framework/content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.framework.content.Content">Content</a></span>)</span><span class="result">: <a href="../../framework/aggregate/Aggregator.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregator">Aggregator</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.S">S</span>] { ... /* 2 definitions in type refinement */ }</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.aggregate.Mean@withPrepare(prep:au.com.cba.omnia.grimlock.framework.Cell[P]=&gt;au.com.cba.omnia.grimlock.framework.content.Content):au.com.cba.omnia.grimlock.framework.aggregate.Aggregator[P,S,Q]{typeT=Aggregator.this.T}" title="Permalink" target="_top">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.aggregate.Mean@withPrepare(prep:au.com.cba.omnia.grimlock.framework.Cell[P]=&gt;au.com.cba.omnia.grimlock.framework.content.Content):au.com.cba.omnia.grimlock.framework.aggregate.Aggregator[P,S,Q]{typeT=Aggregator.this.T;typeO[A]=Aggregator.this.O[A]}" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <p class="shortcomment cmt">Operator for preparing content prior to aggregating.</p><div class="fullcomment"><div class="comment cmt"><p>Operator for preparing content prior to aggregating.
 </p></div><dl class="paramcmts block"><dt class="param">prep</dt><dd class="cmt"><p>The function to apply prior to aggregation.</p></dd><dt>returns</dt><dd class="cmt"><p>An aggregator that prepares the content and then runs <code>this</code>.</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../../framework/aggregate/Aggregator.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregator">Aggregator</a> → <a href="../../framework/aggregate/AggregatorWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue">AggregatorWithValue</a></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue#withPrepareWithValue" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="withPrepareWithValue(prep:(au.com.cba.omnia.grimlock.framework.Cell[P],AggregatorWithValue.this.V)=&gt;au.com.cba.omnia.grimlock.framework.content.Content):au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue[P,S,Q]{typeT=AggregatorWithValue.this.T;typeV=AggregatorWithValue.this.V}"></a>
-      <a id="withPrepareWithValue((Cell[P],V)⇒Content):AggregatorWithValue[P,S,S]{.../*2definitionsintyperefinement*/}"></a>
+      <a id="withPrepareWithValue(prep:(au.com.cba.omnia.grimlock.framework.Cell[P],AggregatorWithValue.this.V)=&gt;au.com.cba.omnia.grimlock.framework.content.Content):au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue[P,S,Q]{typeT=AggregatorWithValue.this.T;typeV=AggregatorWithValue.this.V;typeO[A]=AggregatorWithValue.this.O[A]}"></a>
+      <a id="withPrepareWithValue((Cell[P],V)⇒Content):AggregatorWithValue[P,S,S]{.../*3definitionsintyperefinement*/}"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">withPrepareWithValue</span><span class="params">(<span name="prep">prep: (<a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.P">P</span>], <a href="#V=Any" class="extmbr" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.V">V</a>) ⇒ <a href="../../framework/content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.framework.content.Content">Content</a></span>)</span><span class="result">: <a href="../../framework/aggregate/AggregatorWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue">AggregatorWithValue</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.S">S</span>] { ... /* 2 definitions in type refinement */ }</span>
+        <span class="name">withPrepareWithValue</span><span class="params">(<span name="prep">prep: (<a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.P">P</span>], <a href="#V=Any" class="extmbr" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.V">V</a>) ⇒ <a href="../../framework/content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.framework.content.Content">Content</a></span>)</span><span class="result">: <a href="../../framework/aggregate/AggregatorWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue">AggregatorWithValue</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.S">S</span>] { ... /* 3 definitions in type refinement */ }</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.aggregate.Mean@withPrepareWithValue(prep:(au.com.cba.omnia.grimlock.framework.Cell[P],AggregatorWithValue.this.V)=&gt;au.com.cba.omnia.grimlock.framework.content.Content):au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue[P,S,Q]{typeT=AggregatorWithValue.this.T;typeV=AggregatorWithValue.this.V}" title="Permalink" target="_top">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.aggregate.Mean@withPrepareWithValue(prep:(au.com.cba.omnia.grimlock.framework.Cell[P],AggregatorWithValue.this.V)=&gt;au.com.cba.omnia.grimlock.framework.content.Content):au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue[P,S,Q]{typeT=AggregatorWithValue.this.T;typeV=AggregatorWithValue.this.V;typeO[A]=AggregatorWithValue.this.O[A]}" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -802,12 +836,16 @@
               <h3>Inherited from <a href="http://www.scala-lang.org/api/2.11.7/index.html#scala.Product" class="extype" target="_top">Product</a></h3>
             </div><div class="parent" name="scala.Equals">
               <h3>Inherited from <a href="http://www.scala-lang.org/api/2.11.7/index.html#scala.Equals" class="extype" target="_top">Equals</a></h3>
-            </div><div class="parent" name="au.com.cba.omnia.grimlock.library.aggregate.MomentsAggregator">
-              <h3>Inherited from <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.MomentsAggregator">MomentsAggregator</span>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.S">S</span>]</h3>
-            </div><div class="parent" name="au.com.cba.omnia.grimlock.library.aggregate.StrictAggregator">
-              <h3>Inherited from <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.StrictAggregator">StrictAggregator</span>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.S">S</span>]</h3>
-            </div><div class="parent" name="au.com.cba.omnia.grimlock.library.aggregate.FilterAggregator">
-              <h3>Inherited from <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.FilterAggregator">FilterAggregator</span>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.P">P</span>]</h3>
+            </div><div class="parent" name="au.com.cba.omnia.grimlock.library.aggregate.MomentsPresent">
+              <h3>Inherited from <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.MomentsPresent">MomentsPresent</span>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.S">S</span>]</h3>
+            </div><div class="parent" name="au.com.cba.omnia.grimlock.library.aggregate.PresentDouble">
+              <h3>Inherited from <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.PresentDouble">PresentDouble</span>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.S">S</span>]</h3>
+            </div><div class="parent" name="au.com.cba.omnia.grimlock.library.aggregate.MomentsPrepareReduce">
+              <h3>Inherited from <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.MomentsPrepareReduce">MomentsPrepareReduce</span>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.S">S</span>]</h3>
+            </div><div class="parent" name="au.com.cba.omnia.grimlock.library.aggregate.StrictReduce">
+              <h3>Inherited from <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.StrictReduce">StrictReduce</span>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.S">S</span>]</h3>
+            </div><div class="parent" name="au.com.cba.omnia.grimlock.library.aggregate.PrepareDouble">
+              <h3>Inherited from <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.PrepareDouble">PrepareDouble</span>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.P">P</span>]</h3>
             </div><div class="parent" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregator">
               <h3>Inherited from <a href="../../framework/aggregate/Aggregator.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregator">Aggregator</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Mean.S">S</span>]</h3>
             </div><div class="parent" name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue">
@@ -815,9 +853,9 @@
             </div><div class="parent" name="java.io.Serializable">
               <h3>Inherited from <span class="extype" name="java.io.Serializable">Serializable</span></h3>
             </div><div class="parent" name="scala.AnyRef">
-              <h3>Inherited from <a href="http://www.scala-lang.org/api/2.11.7/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a></h3>
+              <h3>Inherited from <span class="extype" name="scala.AnyRef">AnyRef</span></h3>
             </div><div class="parent" name="scala.Any">
-              <h3>Inherited from <a href="http://www.scala-lang.org/api/2.11.7/index.html#scala.Any" class="extype" target="_top">Any</a></h3>
+              <h3>Inherited from <span class="extype" name="scala.Any">Any</span></h3>
             </div>
         
         </div>
