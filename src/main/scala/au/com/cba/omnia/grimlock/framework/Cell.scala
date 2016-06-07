@@ -438,7 +438,7 @@ object Cell {
    */
   def toString[P <: Position](descriptive: Boolean = false, separator: String = "|",
     codec: Boolean = true, schema: Boolean = true): (Cell[P]) => TraversableOnce[String] = {
-    (t: Cell[P]) => Some(if (descriptive) t.toString else t.toShortString(separator, codec, schema))
+    (t: Cell[P]) => List(if (descriptive) { t.toString } else { t.toShortString(separator, codec, schema) })
   }
 
   private def parseXD[R <: Position, P <: Product](split: Int, separator: String = "|", codecs: P, line: String)(

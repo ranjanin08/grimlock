@@ -123,7 +123,7 @@ object Content {
    */
   def toString(descriptive: Boolean = false, separator: String = "|", codec: Boolean = true,
     schema: Boolean = true): (Content) => TraversableOnce[String] = {
-    (t: Content) => Some(if (descriptive) { t.toString } else { t.toShortString(separator, codec, schema) })
+    (t: Content) => List(if (descriptive) { t.toString } else { t.toShortString(separator, codec, schema) })
   }
 }
 
@@ -169,7 +169,7 @@ object IndexedContent {
    */
   def toString[P <: Position](descriptive: Boolean = false, separator: String = "|", codec: Boolean = true,
     schema: Boolean = true): ((P, Content)) => TraversableOnce[String] = {
-    (t: (P, Content)) => Some(
+    (t: (P, Content)) => List(
       if (descriptive) {
         t.toString
       } else {

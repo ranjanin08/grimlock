@@ -81,7 +81,7 @@ object Type {
    */
   def toString[P <: Position](descriptive: Boolean = false,
     separator: String = "|"): ((P, Type)) => TraversableOnce[String] = {
-    (t: (P, Type)) => Some(
+    (t: (P, Type)) => List(
       if (descriptive) {
         t._1.toString + separator + t._2.toString
       } else {

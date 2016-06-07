@@ -469,20 +469,14 @@ private[grimlock] object TDigest {
     name: Locate.FromSelectedAndOutput[S, Double, Q], nan: Boolean)(implicit ev: PosExpDep[S, Q]): List[Cell[Q]] = {
     val td = deserialise(t)
 
-    probs
-      .flatMap {
-        case q => name(pos, q)
-          .flatMap {
-            case p =>
-              val result = td.quantile(q)
+    for {
+      q <- probs
+      p <- name(pos, q)
 
-              if (result.isNaN && !nan) {
-                None
-              } else {
-                Some(Cell(p, Content(ContinuousSchema[Double](), result)))
-              }
-          }
-      }
+      result = td.quantile(q)
+
+      if (result.isNaN && !nan)
+    } yield Cell(p, Content(ContinuousSchema[Double](), result))
   }
 
   // TDigest doesn't extend Serializable yet - so do it the hard way for now

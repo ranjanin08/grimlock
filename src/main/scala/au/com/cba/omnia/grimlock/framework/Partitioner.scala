@@ -152,7 +152,7 @@ object Partition {
    */
   def toString[I, P <: Position](descriptive: Boolean = false, separator: String = "|", codec: Boolean = true,
     schema: Boolean = true): ((I, Cell[P])) => TraversableOnce[String] = {
-    (p: (I, Cell[P])) => Some(p._1.toString + separator +
+    (p: (I, Cell[P])) => List(p._1.toString + separator +
       (if (descriptive) { p._2.toString } else { p._2.toShortString(separator, codec, schema) }))
   }
 }

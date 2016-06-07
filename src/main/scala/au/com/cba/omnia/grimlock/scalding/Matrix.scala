@@ -605,7 +605,7 @@ trait Matrix[P <: Position with CompactablePosition with ReduceablePosition] ext
       }
       .flatMap {
         case (p, t) => (aggregator, t).zipped.flatMap {
-          case (a, Some(s)) => a.present(p, s.asInstanceOf[a.T]).toTraversableOnce
+          case (a, Some(s)) => a.present(p, s.asInstanceOf[a.T])
           case _ => None
         }
       }
@@ -630,7 +630,7 @@ trait Matrix[P <: Position with CompactablePosition with ReduceablePosition] ext
       }
       .flatMapWithValue(value) {
         case ((p, t), vo) => (aggregator, t).zipped.flatMap {
-          case (a, Some(s)) => a.presentWithValue(p, s.asInstanceOf[a.T], vo.get).toTraversableOnce
+          case (a, Some(s)) => a.presentWithValue(p, s.asInstanceOf[a.T], vo.get)
           case _ => None
         }
       }

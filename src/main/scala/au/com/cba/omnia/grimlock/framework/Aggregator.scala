@@ -30,6 +30,20 @@ trait Result[A, T[X] <: Result[X, T]] {
   def toTraversableOnce: TraversableOnce[A]
 }
 
+/** Companion object to `Result`. */
+object Result {
+  /**
+   * Implicit conversion from `Result` to `TraversableOnce`.
+   *
+   * @param result The `Result` to convert.
+   *
+   * @return A `TraversableOnce` for this result.
+   */
+  implicit def result2TraversableOnce[T, R[X] <: Result[X, R]](result: R[T]): TraversableOnce[T] = {
+    result.toTraversableOnce
+  }
+}
+
 /**
  * Aggregation result that consists of at most 1 value.
  *

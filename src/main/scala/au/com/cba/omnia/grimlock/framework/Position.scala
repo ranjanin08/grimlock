@@ -112,7 +112,7 @@ object Position {
    */
   def toString[P <: Position](descriptive: Boolean = false,
     separator: String = "|"): (P) => TraversableOnce[String] = {
-    (t: P) => if (descriptive) { Some(t.toString) } else { Some(t.toShortString(separator)) }
+    (t: P) => List(if (descriptive) { t.toString } else { t.toShortString(separator) })
   }
 
   /** Define dependency between expansion from `Position0D` to `Position1D`. */
