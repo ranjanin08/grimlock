@@ -27,7 +27,7 @@ trait TestSample extends TestGrimlock {
 
   val con = Content(ContinuousSchema[Double](), 3.14)
 
-  def toCell[P <: Position](pos: P): Cell[P] = Cell(pos, con)
+  def toCell[P <: Position[P]](pos: P): Cell[P] = Cell(pos, con)
 }
 
 class TestRandomSample extends TestSample {

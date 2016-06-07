@@ -55,7 +55,7 @@ class TestSimpleMovingAverage extends TestBatchMovingAverage {
       .initialise(rem, in) shouldBe ((List(second), List()))
     SimpleMovingAverage(1, Locate.AppendRemainderDimension[Position1D, Position2D, Position2D](Second), true)
       .initialise(rem, in) shouldBe ((List(second), List((rem, 1.0))))
-    SimpleMovingAverage(5, Locate.AppendRemainderDimension[Position1D, Position2D](First), false, Position2D)
+    SimpleMovingAverage(5, Locate.AppendRemainderDimension[Position1D, Position2D, Position2D](First), false)
       .initialise(rem, in) shouldBe ((List(first), List()))
     SimpleMovingAverage(5, Locate.AppendRemainderDimension[Position1D, Position2D, Position2D](First), true)
       .initialise(rem, in) shouldBe ((List(first), List((rem, 1.0))))

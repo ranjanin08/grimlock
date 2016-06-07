@@ -36,12 +36,10 @@ import au.com.cba.omnia.grimlock.scalding._
 import au.com.cba.omnia.grimlock.scalding.Matrix._
 import au.com.cba.omnia.grimlock.scalding.Matrixable._
 import au.com.cba.omnia.grimlock.scalding.position.PositionDistributable._
-import au.com.cba.omnia.grimlock.scalding.position.Positions._
 
 import au.com.cba.omnia.grimlock.spark.Matrix._
 import au.com.cba.omnia.grimlock.spark.Matrixable._
 import au.com.cba.omnia.grimlock.spark.position.PositionDistributable._
-import au.com.cba.omnia.grimlock.spark.position.Positions._
 
 import com.twitter.scalding.typed.{ TypedPipe, ValuePipe }
 
@@ -8495,20 +8493,20 @@ object TestMatrixExpand {
   ](cell: Cell[P]): Option[M] = Some(cell.position.append("abc"))
   def expander2D[
     P <: Position[P] with ExpandablePosition[P, Q],
-    Q <: Position[Q] with ExpandablePosition[Q, M],
+    Q <: Position[Q] with ExpandablePosition[Q, M] with ReduceablePosition[Q, P],
     M <: Position[M] with ReduceablePosition[M, Q]
   ](cell: Cell[P]): Option[M] = Some(cell.position.append("abc").append("def"))
   def expander3D[
     P <: Position[P] with ExpandablePosition[P, Q],
-    Q <: Position[Q] with ExpandablePosition[Q, R],
-    R <: Position[R] with ExpandablePosition[R, M],
+    Q <: Position[Q] with ExpandablePosition[Q, R] with ReduceablePosition[Q, P],
+    R <: Position[R] with ExpandablePosition[R, M] with ReduceablePosition[R, Q],
     M <: Position[M] with ReduceablePosition[M, R]
   ](cell: Cell[P]): Option[M] = Some(cell.position.append("abc").append("def").append("ghi"))
   def expander4D[
     P <: Position[P] with ExpandablePosition[P, Q],
-    Q <: Position[Q] with ExpandablePosition[Q, R],
-    R <: Position[R] with ExpandablePosition[R, S],
-    S <: Position[S] with ExpandablePosition[S, M],
+    Q <: Position[Q] with ExpandablePosition[Q, R] with ReduceablePosition[Q, P],
+    R <: Position[R] with ExpandablePosition[R, S] with ReduceablePosition[R, Q],
+    S <: Position[S] with ExpandablePosition[S, M] with ReduceablePosition[S, R],
     M <: Position[M] with ReduceablePosition[M, S]
   ](cell: Cell[P]): Option[M] = Some(cell.position.append("abc").append("def").append("ghi").append("jkl"))
 
@@ -8530,20 +8528,20 @@ object TestMatrixExpand {
   ](cell: Cell[P], ext: String): Option[M] = Some(cell.position.append(ext))
   def expander2DWithValue[
     P <: Position[P] with ExpandablePosition[P, Q],
-    Q <: Position[Q] with ExpandablePosition[Q, M],
+    Q <: Position[Q] with ExpandablePosition[Q, M] with ReduceablePosition[Q, P],
     M <: Position[M] with ReduceablePosition[M, Q]
   ](cell: Cell[P], ext: String): Option[M] = Some(cell.position.append(ext).append("def"))
   def expander3DWithValue[
     P <: Position[P] with ExpandablePosition[P, Q],
-    Q <: Position[Q] with ExpandablePosition[Q, R],
-    R <: Position[R] with ExpandablePosition[R, M],
+    Q <: Position[Q] with ExpandablePosition[Q, R] with ReduceablePosition[Q, P],
+    R <: Position[R] with ExpandablePosition[R, M] with ReduceablePosition[R, Q],
     M <: Position[M] with ReduceablePosition[M, R]
   ](cell: Cell[P], ext: String): Option[M] = Some(cell.position.append(ext).append("def").append("ghi"))
   def expander4DWithValue[
     P <: Position[P] with ExpandablePosition[P, Q],
-    Q <: Position[Q] with ExpandablePosition[Q, R],
-    R <: Position[R] with ExpandablePosition[R, S],
-    S <: Position[S] with ExpandablePosition[S, M],
+    Q <: Position[Q] with ExpandablePosition[Q, R] with ReduceablePosition[Q, P],
+    R <: Position[R] with ExpandablePosition[R, S] with ReduceablePosition[R, Q],
+    S <: Position[S] with ExpandablePosition[S, M] with ReduceablePosition[S, R],
     M <: Position[M] with ReduceablePosition[M, S]
   ](cell: Cell[P], ext: String): Option[M] = Some(cell.position.append(ext).append("def").append("ghi").append("jkl"))
 

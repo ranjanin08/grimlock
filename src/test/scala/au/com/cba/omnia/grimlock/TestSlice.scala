@@ -32,7 +32,7 @@ trait TestSlicePosition1D extends TestSlice {
 
 class TestOverPosition1D extends TestSlicePosition1D {
 
-  val over = Over[Position1D](First)
+  val over = Over[Position0D, Position1D](First)
 
   "A Over[Position1D]" should "return a Position1D for the selected dimension" in {
     over.selected(pos1) shouldBe Position1D(pos1(First))
@@ -45,7 +45,7 @@ class TestOverPosition1D extends TestSlicePosition1D {
 
 class TestAlongPosition1D extends TestSlicePosition1D {
 
-  val along = Along[Position1D](First)
+  val along = Along[Position0D, Position1D](First)
 
   "A Along[Position1D]" should "return a Position0D for the selected dimension" in {
     along.selected(pos1) shouldBe pos1.remove(First)
@@ -63,7 +63,7 @@ trait TestSlicePosition2D extends TestSlice {
 
 class TestOverPosition2D extends TestSlicePosition2D {
 
-  val list = List((Over[Position2D](First), First), (Over[Position2D](Second), Second))
+  val list = List((Over[Position1D, Position2D](First), First), (Over[Position1D, Position2D](Second), Second))
 
   "A Over[Position2D]" should "return a Position1D for the selected dimension" in {
     list.foreach { case (o, d) => o.selected(pos1) shouldBe Position1D(pos1(d)) }
@@ -76,7 +76,7 @@ class TestOverPosition2D extends TestSlicePosition2D {
 
 class TestAlongPosition2D extends TestSlicePosition2D {
 
-  val list = List((Along[Position2D](First), First), (Along[Position2D](Second), Second))
+  val list = List((Along[Position1D, Position2D](First), First), (Along[Position1D, Position2D](Second), Second))
 
   "A Along[Position2D]" should "return a Position1D for the selected dimension" in {
     list.foreach { case (a, d) => a.selected(pos1) shouldBe pos1.remove(d) }
@@ -94,8 +94,8 @@ trait TestSlicePosition3D extends TestSlice {
 
 class TestOverPosition3D extends TestSlicePosition3D {
 
-  val list = List((Over[Position3D](First), First), (Over[Position3D](Second), Second),
-    (Over[Position3D](Third), Third))
+  val list = List((Over[Position2D, Position3D](First), First), (Over[Position2D, Position3D](Second), Second),
+    (Over[Position2D, Position3D](Third), Third))
 
   "A Over[Position3D]" should "return a Position1D for the selected dimension" in {
     list.foreach { case (o, d) => o.selected(pos1) shouldBe Position1D(pos1(d)) }
@@ -108,8 +108,8 @@ class TestOverPosition3D extends TestSlicePosition3D {
 
 class TestAlongPosition3D extends TestSlicePosition3D {
 
-  val list = List((Along[Position3D](First), First), (Along[Position3D](Second), Second),
-    (Along[Position3D](Third), Third))
+  val list = List((Along[Position2D, Position3D](First), First), (Along[Position2D, Position3D](Second), Second),
+    (Along[Position2D, Position3D](Third), Third))
 
   "A Along[Position3D]" should "return a Position2D for the selected dimension" in {
     list.foreach { case (a, d) => a.selected(pos1) shouldBe pos1.remove(d) }
@@ -127,8 +127,8 @@ trait TestSlicePosition4D extends TestSlice {
 
 class TestOverPosition4D extends TestSlicePosition4D {
 
-  val list = List((Over[Position4D](First), First), (Over[Position4D](Second), Second),
-    (Over[Position4D](Third), Third), (Over[Position4D](Fourth), Fourth))
+  val list = List((Over[Position3D, Position4D](First), First), (Over[Position3D, Position4D](Second), Second),
+    (Over[Position3D, Position4D](Third), Third), (Over[Position3D, Position4D](Fourth), Fourth))
 
   "A Over[Position4D]" should "return a Position1D for the selected dimension" in {
     list.foreach { case (o, d) => o.selected(pos1) shouldBe Position1D(pos1(d)) }
@@ -141,8 +141,8 @@ class TestOverPosition4D extends TestSlicePosition4D {
 
 class TestAlongPosition4D extends TestSlicePosition4D {
 
-  val list = List((Along[Position4D](First), First), (Along[Position4D](Second), Second),
-    (Along[Position4D](Third), Third), (Along[Position4D](Fourth), Fourth))
+  val list = List((Along[Position3D, Position4D](First), First), (Along[Position3D, Position4D](Second), Second),
+    (Along[Position3D, Position4D](Third), Third), (Along[Position3D, Position4D](Fourth), Fourth))
 
   "A Along[Position4D]" should "return a Position3D for the selected dimension" in {
     list.foreach { case (a, d) => a.selected(pos1) shouldBe pos1.remove(d) }
@@ -160,8 +160,9 @@ trait TestSlicePosition5D extends TestSlice {
 
 class TestOverPosition5D extends TestSlicePosition5D {
 
-  val list = List((Over[Position5D](First), First), (Over[Position5D](Second), Second),
-    (Over[Position5D](Third), Third), (Over[Position5D](Fourth), Fourth), (Over[Position5D](Fifth), Fifth))
+  val list = List((Over[Position4D, Position5D](First), First), (Over[Position4D, Position5D](Second), Second),
+    (Over[Position4D, Position5D](Third), Third), (Over[Position4D, Position5D](Fourth), Fourth),
+    (Over[Position4D, Position5D](Fifth), Fifth))
 
   "A Over[Position5D]" should "return a Position1D for the selected dimension" in {
     list.foreach { case (o, d) => o.selected(pos1) shouldBe Position1D(pos1(d)) }
@@ -174,8 +175,9 @@ class TestOverPosition5D extends TestSlicePosition5D {
 
 class TestAlongPosition5D extends TestSlicePosition5D {
 
-  val list = List((Along[Position5D](First), First), (Along[Position5D](Second), Second),
-    (Along[Position5D](Third), Third), (Along[Position5D](Fourth), Fourth), (Along[Position5D](Fifth), Fifth))
+  val list = List((Along[Position4D, Position5D](First), First), (Along[Position4D, Position5D](Second), Second),
+    (Along[Position4D, Position5D](Third), Third), (Along[Position4D, Position5D](Fourth), Fourth),
+    (Along[Position4D, Position5D](Fifth), Fifth))
 
   "A Along[Position5D]" should "return a Position4D for the selected dimension" in {
     list.foreach { case (a, d) => a.selected(pos1) shouldBe pos1.remove(d) }
