@@ -251,34 +251,40 @@ case class PredicateCount[
  */
 case class Moments[
   P <: Position[P],
-  S <: Position[S] with ExpandablePosition[S, M],
-  M <: Position[M] with ReduceablePosition[M, S]
+  S <: Position[S] with ExpandablePosition[S, _],
+  Q <: Position[Q]
 ](
-  mean: String,
-  sd: String,
-  skewness: String,
-  kurtosis: String,
+  mean: Locate.FromPosition[S, Q],
+  sd: Locate.FromPosition[S, Q],
+  skewness: Locate.FromPosition[S, Q],
+  kurtosis: Locate.FromPosition[S, Q],
   biased: Boolean = false,
   excess: Boolean = false,
   filter: Boolean = true,
   strict: Boolean = true,
   nan: Boolean = false
-) extends Aggregator[P, S, M] with MomentsPrepareReduce[P, S, M] {
+)(implicit
+  ev: PosExpDep[S, Q]
+) extends Aggregator[P, S, Q] with MomentsPrepareReduce[P, S, Q] {
   type O[A] = Multiple[A]
 
-  def present(pos: S, t: T): O[Cell[M]] = {
+  def present(pos: S, t: T): O[Cell[Q]] = {
     if (invalid(t) && !nan) {
       Multiple()
     } else if (invalid(t)) {
-      Multiple(List(Cell(pos.append(mean), Content(ContinuousSchema[Double](), Double.NaN)),
-        Cell(pos.append(sd), Content(ContinuousSchema[Double](), Double.NaN)),
-        Cell(pos.append(skewness), Content(ContinuousSchema[Double](), Double.NaN)),
-        Cell(pos.append(kurtosis), Content(ContinuousSchema[Double](), Double.NaN))))
+      Multiple(List(
+        mean(pos).map(Cell(_, Content(ContinuousSchema[Double](), Double.NaN))),
+        sd(pos).map(Cell(_, Content(ContinuousSchema[Double](), Double.NaN))),
+        skewness(pos).map(Cell(_, Content(ContinuousSchema[Double](), Double.NaN))),
+        kurtosis(pos).map(Cell(_, Content(ContinuousSchema[Double](), Double.NaN)))
+      ).flatten)
     } else {
-      Multiple(List(Cell(pos.append(mean), Content(ContinuousSchema[Double](), t.mean)),
-        Cell(pos.append(sd), Content(ContinuousSchema[Double](), MomentsPresent.sd(t, biased))),
-        Cell(pos.append(skewness), Content(ContinuousSchema[Double](), t.skewness)),
-        Cell(pos.append(kurtosis), Content(ContinuousSchema[Double](), MomentsPresent.kurtosis(t, excess)))))
+      Multiple(List(
+        mean(pos).map(Cell(_, Content(ContinuousSchema[Double](), t.mean))),
+        sd(pos).map(Cell(_, Content(ContinuousSchema[Double](), MomentsPresent.sd(t, biased)))),
+        skewness(pos).map(Cell(_, Content(ContinuousSchema[Double](), t.skewness))),
+        kurtosis(pos).map(Cell(_, Content(ContinuousSchema[Double](), MomentsPresent.kurtosis(t, excess))))
+      ).flatten)
     }
   }
 }
@@ -385,29 +391,35 @@ case class Kurtosis[
  */
 case class Limits[
   P <: Position[P],
-  S <: Position[S] with ExpandablePosition[S, M],
-  M <: Position[M] with ReduceablePosition[M, S]
+  S <: Position[S] with ExpandablePosition[S, _],
+  Q <: Position[Q]
 ](
-  min: String,
-  max: String,
+  min: Locate.FromPosition[S, Q],
+  max: Locate.FromPosition[S, Q],
   filter: Boolean = true,
   strict: Boolean = true,
   nan: Boolean = false
-) extends Aggregator[P, S, M] with PrepareDouble[P] with StrictReduce[P, S, M] {
+)(implicit
+  ev: PosExpDep[S, Q]
+) extends Aggregator[P, S, Q] with PrepareDouble[P] with StrictReduce[P, S, Q] {
   type T = (Double, Double)
   type O[A] = Multiple[A]
 
   def prepare(cell: Cell[P]): Option[T] = prepareDouble(cell).map(d => (d, d))
 
-  def present(pos: S, t: T): O[Cell[M]] = {
+  def present(pos: S, t: T): O[Cell[Q]] = {
     if (invalid(t) && !nan) {
       Multiple()
     } else if (invalid(t)) {
-      Multiple(List(Cell(pos.append(min), Content(ContinuousSchema[Double](), Double.NaN)),
-        Cell(pos.append(max), Content(ContinuousSchema[Double](), Double.NaN))))
+      Multiple(List(
+        min(pos).map(Cell(_, Content(ContinuousSchema[Double](), Double.NaN))),
+        max(pos).map(Cell(_, Content(ContinuousSchema[Double](), Double.NaN)))
+      ).flatten)
     } else {
-      Multiple(List(Cell(pos.append(min), Content(ContinuousSchema[Double](), t._1)),
-        Cell(pos.append(max), Content(ContinuousSchema[Double](), t._2))))
+      Multiple(List(
+        min(pos).map(Cell(_, Content(ContinuousSchema[Double](), t._1))),
+        max(pos).map(Cell(_, Content(ContinuousSchema[Double](), t._2)))
+      ).flatten)
     }
   }
 

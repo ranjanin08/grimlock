@@ -15,11 +15,12 @@
 package au.com.cba.omnia.grimlock.framework.position
 
 /** Base trait that encapsulates dimension on which to operate. */
-sealed trait Slice[L <: Position[L] with ExpandablePosition[L, P],
-                   P <: Position[P] with ReduceablePosition[P, L],
-                   S <: Position[S] with ExpandablePosition[S, _],
-                   R <: Position[R] with ExpandablePosition[R, _]] {
-
+sealed trait Slice[
+  L <: Position[L] with ExpandablePosition[L, P],
+  P <: Position[P] with ReduceablePosition[P, L],
+  S <: Position[S] with ExpandablePosition[S, _],
+  R <: Position[R] with ExpandablePosition[R, _]
+] {
   /** The dimension of this slice. */
   val dimension: Dimension
 
@@ -38,8 +39,10 @@ sealed trait Slice[L <: Position[L] with ExpandablePosition[L, P],
  *
  * @param dimension Dimension of the selected coordinate.
  */
-trait Over[L <: Position[L] with ExpandablePosition[L, P],
-           P <: Position[P] with ReduceablePosition[P, L]] extends Slice[L, P, Position1D, L] {
+trait Over[
+  L <: Position[L] with ExpandablePosition[L, P],
+  P <: Position[P] with ReduceablePosition[P, L]
+] extends Slice[L, P, Position1D, L] {
   def selected(pos: P): Position1D = single(pos)
   def remainder(pos: P): L = remove(pos)
 }
@@ -77,8 +80,10 @@ private[position] case class OverImpl[
  * groupBy is performed, it is performed using a `Position` (type `ReduceablePosition.L`) consisting of all coordinates
  * except that at index `dimension`.
  */
-trait Along[L <: Position[L] with ExpandablePosition[L, P],
-            P <: Position[P] with ReduceablePosition[P, L]] extends Slice[L, P, L, Position1D] {
+trait Along[
+  L <: Position[L] with ExpandablePosition[L, P],
+  P <: Position[P] with ReduceablePosition[P, L]
+] extends Slice[L, P, L, Position1D] {
   def selected(pos: P): L = remove(pos)
   def remainder(pos: P): Position1D = single(pos)
 }

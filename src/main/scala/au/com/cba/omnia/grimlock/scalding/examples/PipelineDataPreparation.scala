@@ -67,8 +67,9 @@ class PipelineDataPreparation(args: Args) extends Job(args) {
 
   // Define descriptive statistics to be computed on the training data.
   val dstats = List(Count[Position2D, Position1D]().andThenRelocate(_.position.append("count").toOption),
-    Moments[Position2D, Position1D, Position2D]("mean", "sd", "skewness", "kurtosis"),
-    Limits[Position2D, Position1D, Position2D]("min", "max"),
+    Moments[Position2D, Position1D, Position2D](_.append("mean").toOption, _.append("sd").toOption,
+      _.append("skewness").toOption, _.append("kurtosis").toOption),
+    Limits[Position2D, Position1D, Position2D](_.append("min").toOption, _.append("max").toOption),
     MaxAbs[Position2D, Position1D]().andThenRelocate(_.position.append("max.abs").toOption))
 
   // Compute descriptive statistics on the training data.

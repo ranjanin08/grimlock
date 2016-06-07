@@ -45,7 +45,8 @@ object DataAnalysis {
     data
       .summarise(Over(First), Count[Position2D, Position1D]())
       .saveAsText(s"./demo.${output}/feature_count.out")
-      .summarise(Along(First), Moments[Position1D, Position0D, Position1D]("mean", "sd", "skewness", "kurtosis"))
+      .summarise(Along(First), Moments[Position1D, Position0D, Position1D](_.append("mean").toOption,
+        _.append("sd").toOption, _.append("skewness").toOption, _.append("kurtosis").toOption))
       .saveAsText(s"./demo.${output}/feature_density.out")
       .toUnit
 
@@ -57,7 +58,8 @@ object DataAnalysis {
     data
       .summarise(Over(Second), Count[Position2D, Position1D]())
       .saveAsText(s"./demo.${output}/instance_count.out")
-      .summarise(Along(First), Moments[Position1D, Position0D, Position1D]("mean", "sd", "skewness", "kurtosis"))
+      .summarise(Along(First), Moments[Position1D, Position0D, Position1D](_.append("mean").toOption,
+        _.append("sd").toOption, _.append("skewness").toOption, _.append("kurtosis").toOption))
       .saveAsText(s"./demo.${output}/instance_density.out")
       .toUnit
   }
