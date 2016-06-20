@@ -15,7 +15,7 @@
 package au.com.cba.omnia.grimlock.spark.partition
 
 import au.com.cba.omnia.grimlock.framework.{ Cell, Default, NoParameters, Reducers, Tuner }
-import au.com.cba.omnia.grimlock.framework.partition.{ Partition, Partitions => FwPartitions }
+import au.com.cba.omnia.grimlock.framework.partition.{ Partitions => FwPartitions }
 import au.com.cba.omnia.grimlock.framework.position._
 import au.com.cba.omnia.grimlock.framework.utility.UnionTypes._
 

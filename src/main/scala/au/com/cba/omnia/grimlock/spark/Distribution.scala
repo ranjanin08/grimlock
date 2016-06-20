@@ -17,7 +17,6 @@ package au.com.cba.omnia.grimlock.spark.distribution
 import au.com.cba.omnia.grimlock.framework.{
   Cell,
   Default,
-  Extract,
   Locate,
   Tuner,
   Type

@@ -26,8 +26,6 @@ import au.com.cba.omnia.grimlock.scalding.Matrix._
 
 import au.com.cba.omnia.grimlock.spark.Matrix._
 
-import com.twitter.scalding.typed.{ TypedPipe, ValuePipe }
-
 trait TestDistribution extends TestGrimlock {
 
   val data1 = List(Cell(Position1D("foo"), Content(OrdinalSchema[String](), "3.14")),

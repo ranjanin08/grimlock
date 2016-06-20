@@ -17,7 +17,6 @@ package au.com.cba.omnia.grimlock.scalding.distribution
 import au.com.cba.omnia.grimlock.framework.{
   Cell,
   Default,
-  Extract,
   InMemory,
   Locate,
   NoParameters,

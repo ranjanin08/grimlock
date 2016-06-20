@@ -24,8 +24,6 @@ import au.com.cba.omnia.grimlock.scalding.position.Positions._
 
 import au.com.cba.omnia.grimlock.spark.position.Positions._
 
-import com.twitter.scalding.typed.TypedPipe
-
 class TestPosition0D extends TestGrimlock {
 
   val pos = Position0D()

@@ -22,8 +22,6 @@ import au.com.cba.omnia.grimlock.framework.position._
 
 import au.com.cba.omnia.grimlock.library.aggregate._
 
-import scala.collection.immutable.TreeMap
-
 trait TestAggregators extends TestGrimlock {
   def getLongContent(value: Long): Content = Content(DiscreteSchema[Long](), value)
   def getDoubleContent(value: Double): Content = Content(ContinuousSchema[Double](), value)

@@ -15,7 +15,6 @@
 package au.com.cba.omnia.grimlock.framework.content.metadata
 
 import au.com.cba.omnia.grimlock.framework.content.Content
-import au.com.cba.omnia.grimlock.framework.encoding.Codec
 
 import java.util.regex.Pattern
 

@@ -28,7 +28,6 @@ import au.com.cba.omnia.grimlock.framework.transform._
 import au.com.cba.omnia.grimlock.framework.utility._
 import au.com.cba.omnia.grimlock.framework.window._
 
-import com.twitter.scalding.typed.TypedPipe
 import com.twitter.scrooge.ThriftStruct
 
 import org.apache.hadoop.io.Writable
@@ -712,7 +711,7 @@ trait Matrix2D extends Matrix[Position2D] with ReduceableMatrix[Position2D] with
    * @param writeRowId  Indicator if row names should be written.
    * @param rowId       Column name of row names.
    *
-   * @return A `TypedPipe[Cell[Position2D]]`; that is it returns `data`.
+   * @return A `U[Cell[Position2D]]`; that is it returns `data`.
    */
   def saveAsCSV(slice: Slice[Position2D], file: String, separator: String = "|", escapee: Escape = Quote("|"),
     writeHeader: Boolean = true, header: String = "%s.header", writeRowId: Boolean = true, rowId: String = "id")(
@@ -727,7 +726,7 @@ trait Matrix2D extends Matrix[Position2D] with ReduceableMatrix[Position2D] with
    * @param tag        Indicator if the selected position should be added as a tag.
    * @param separator  Separator to use in dictionary.
    *
-   * @return A `TypedPipe[Cell[Position2D]]`; that is it returns `data`.
+   * @return A `U[Cell[Position2D]]`; that is it returns `data`.
    */
   def saveAsVW(slice: Slice[Position2D], file: String, dictionary: String = "%s.dict", tag: Boolean = false,
     separator: String = "|")(implicit ctx: C, ct: ClassTag[slice.S]): U[Cell[Position2D]]
@@ -742,7 +741,7 @@ trait Matrix2D extends Matrix[Position2D] with ReduceableMatrix[Position2D] with
    * @param tag        Indicator if the selected position should be added as a tag.
    * @param separator  Separator to use in dictionary.
    *
-   * @return A `TypedPipe[Cell[Position2D]]`; that is it returns `data`.
+   * @return A `U[Cell[Position2D]]`; that is it returns `data`.
    *
    * @note The labels are joined to the data keeping only those examples for which data and a label are available.
    */
@@ -760,7 +759,7 @@ trait Matrix2D extends Matrix[Position2D] with ReduceableMatrix[Position2D] with
    * @param tag        Indicator if the selected position should be added as a tag.
    * @param separator  Separator to use in dictionary.
    *
-   * @return A `TypedPipe[Cell[Position2D]]`; that is it returns `data`.
+   * @return A `U[Cell[Position2D]]`; that is it returns `data`.
    *
    * @note The weights are joined to the data keeping only those examples for which data and a weight are available.
    */
@@ -779,7 +778,7 @@ trait Matrix2D extends Matrix[Position2D] with ReduceableMatrix[Position2D] with
    * @param tag        Indicator if the selected position should be added as a tag.
    * @param separator  Separator to use in dictionary.
    *
-   * @return A `TypedPipe[Cell[Position2D]]`; that is it returns `data`.
+   * @return A `U[Cell[Position2D]]`; that is it returns `data`.
    *
    * @note The labels and weights are joined to the data keeping only those examples for which data and a label
    *       and weight are available.

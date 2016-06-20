@@ -14,7 +14,7 @@
 
 package au.com.cba.omnia.grimlock.spark
 
-import au.com.cba.omnia.ebenezer.scrooge.{ ScroogeReadSupport, ParquetScroogeSource }
+import au.com.cba.omnia.ebenezer.scrooge.ScroogeReadSupport
 
 import au.com.cba.omnia.grimlock.framework.{
   Cell,

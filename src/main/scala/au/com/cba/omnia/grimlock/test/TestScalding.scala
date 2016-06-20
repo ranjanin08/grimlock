@@ -51,7 +51,7 @@ import au.com.cba.omnia.grimlock.test.TestScaldingReader._
 import cascading.flow.FlowDef
 import com.twitter.scalding.{ Args, Job, Mode, TextLine, TypedPsv }
 import com.twitter.scalding.TDsl.sourceToTypedPipe
-import com.twitter.scalding.typed.{ IterablePipe, TypedPipe, TypedSink, ValuePipe }
+import com.twitter.scalding.typed.{ IterablePipe, TypedPipe, TypedSink }
 
 import scala.io.Source
 
