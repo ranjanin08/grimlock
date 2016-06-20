@@ -43,10 +43,10 @@ object build extends Build {
      (depend.hadoopClasspath
         ++ depend.scalding()
         ++ depend.parquet()
-        ++ depend.omnia("ebenezer", "0.18.5-20150814060245-db099a2")
+        ++ depend.omnia("ebenezer", "0.22.2-20160619063420-4eb964f")
         ++ depend.shapeless("2.3.0")
         ++ Seq(
-            noHadoop("org.apache.spark"   %% "spark-core"         % "1.5.0")
+            noHadoop("org.apache.spark" %% "spark-core" % "1.6.0")
               exclude("com.twitter", "chill-java")
               exclude("com.twitter", "chill_2.11"),
             "com.tdunning"                %  "t-digest"           % "3.1",
@@ -55,8 +55,9 @@ object build extends Build {
      )
     }),
     dependencyOverrides ++= Set(
-      "org.scala-lang.modules" %% "scala-parser-combinators"      % "1.0.3",
-      "org.scala-lang.modules" %% "scala-xml"                     % "1.0.3"
+      "org.scala-lang.modules" %% "scala-parser-combinators" % "1.0.3",
+      "org.scala-lang.modules" %% "scala-xml"                % "1.0.3",
+      "org.apache.commons"     %  "commons-lang3"            % "3.3.2"
     )
   )
 }
