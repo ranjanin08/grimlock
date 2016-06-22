@@ -15,8 +15,7 @@
 resolvers ++= Seq(
   Resolver.url("commbank-releases-ivy", new URL("http://commbank.artifactoryonline.com/commbank/ext-releases-local-ivy"))(Patterns("[organization]/[module]_[scalaVersion]_[sbtVersion]/[revision]/[artifact](-[classifier])-[revision].[ext]")),
     "commbank-releases" at "http://commbank.artifactoryonline.com/commbank/ext-releases-local",
-    "cloudera" at "https://repository.cloudera.com/artifactory/cloudera-repos/",
-    Resolver.mavenLocal
+    "cloudera" at "https://repository.cloudera.com/artifactory/cloudera-repos/"
 )
 
 val uniformVersion = "1.11.0-20160606065816-8e595be"
