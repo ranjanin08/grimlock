@@ -28,5 +28,3 @@ addSbtPlugin("au.com.cba.omnia" % "uniform-assembly"   % uniformVersion)
 
 addSbtPlugin("au.com.cba.omnia" % "uniform-thrift"     % uniformVersion)
 
-scalacOptions ++= Seq("-deprecation","-unchecked","-Ywarn-all","-Xlint","-feature","-language:_")
-

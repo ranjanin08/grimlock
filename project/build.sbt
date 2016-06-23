@@ -1,4 +1,4 @@
-//   Copyright 2014,2015,2016 Commonwealth Bank of Australia
+//   Copyright 2016 Commonwealth Bank of Australia
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
@@ -12,9 +12,5 @@
 //   See the License for the specific language governing permissions and
 //   limitations under the License.
 
-version in ThisBuild := "0.1.0"
-
-localVersionSettings
-
-licenses := Seq("Apache License, Version 2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0.txt"))
+scalacOptions ++= Seq("-deprecation","-unchecked","-Ywarn-all","-Xlint","-feature","-language:_")
 

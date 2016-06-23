@@ -12,7 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import sbt._, Keys._
+import sbt._
+import sbt.Keys._
 import sbtassembly.AssemblyKeys._
 
 import au.com.cba.omnia.uniform.assembly.UniformAssemblyPlugin._
@@ -21,39 +22,56 @@ import au.com.cba.omnia.uniform.dependency.UniformDependencyPlugin._
 import au.com.cba.omnia.uniform.thrift.UniformThriftPlugin._
 
 object build extends Build {
-  lazy val grimlock = Project(
-                              id       = "grimlock",
-                              base     = file("."),
-                              settings = uniform.project("grimlock", "au.com.cba.omnia.grimlock")
-                                          ++ uniformDependencySettings
-                                          ++ uniformThriftSettings
-                                          ++ strictDependencySettings
-                                          ++ dependencies
-                                          ++ uniformAssemblySettings
-                                          ++ uniform.docSettings("https://github.com/CommBank/grimlock")
-                                          ++ uniform.ghsettings
-                                          ++ Seq(
-                                              test in assembly          :=  {},
-                                              parallelExecution in Test := false
-                                            )
-                              )
+  lazy val all = Project(
+    id = "all",
+    base = file("."),
+    settings = uniform.project("grimlock-all", "commbank.grimlock.all") ++
+      Seq(assembly := file(""), publishArtifact := false),
+    aggregate = Seq(core, examples)
+  )
+
+  lazy val core = Project(
+    id = "core",
+    base = file("core"),
+    settings = uniform.project("grimlock-core", "commbank.grimlock") ++
+      uniformDependencySettings ++
+      strictDependencySettings ++
+      dependencies ++
+      overrides ++
+      uniformAssemblySettings ++
+      uniform.docSettings("https://github.com/CommBank/grimlock") ++
+      uniform.ghsettings ++
+      Seq(test in assembly := {}, parallelExecution in Test := false)
+   )
+
+  lazy val examples = Project(
+    id = "examples",
+    base = file("examples"),
+    settings = uniform.project("grimlock-examples", "commbank.grimlock.examples") ++
+      uniformDependencySettings ++
+      strictDependencySettings ++
+      overrides ++
+      uniformAssemblySettings ++
+      Seq(libraryDependencies ++= depend.hadoopClasspath)
+  ).dependsOn(core % "test->test;compile->compile")
 
   lazy val dependencies: List[Setting[_]] = List(libraryDependencies <++=
-    scalaVersion.apply(scalaVersion => {
-     (depend.hadoopClasspath
-        ++ depend.scalding()
-        ++ depend.parquet()
-        ++ depend.omnia("ebenezer", "0.22.2-20160619063420-4eb964f")
-        ++ depend.shapeless("2.3.0")
-        ++ Seq(
-            noHadoop("org.apache.spark" %% "spark-core" % "1.6.0")
-              exclude("com.twitter", "chill-java")
-              exclude("com.twitter", "chill_2.11"),
-            "com.tdunning"                %  "t-digest"           % "3.1",
-            "org.scalatest"               %% "scalatest"          % "2.2.4" % "test"
-           )
-     )
-    }),
+    scalaVersion.apply(scalaVersion => depend.hadoopClasspath ++
+      depend.scalding() ++
+      depend.parquet() ++
+      depend.omnia("ebenezer", "0.22.2-20160619063420-4eb964f") ++
+      depend.shapeless("2.3.0") ++
+      Seq(
+        noHadoop("org.apache.spark" %% "spark-core" % "1.6.2")
+          exclude("com.twitter", "chill-java")
+          exclude("com.twitter", "chill_2.11"),
+        "com.tdunning"  %  "t-digest"  % "3.2-20160726-OMNIA",
+        "org.scalatest" %% "scalatest" % "2.2.4" % "test"
+      )
+    )
+  )
+
+  lazy val overrides: List[Setting[_]] = List(
     dependencyOverrides ++= Set(
       "org.scala-lang.modules" %% "scala-parser-combinators" % "1.0.3",
       "org.scala-lang.modules" %% "scala-xml"                % "1.0.3",

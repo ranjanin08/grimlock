@@ -16,4 +16,4 @@ The latest version is `{{ site.releaseVersion }}`.
 Usage
 -----
 
-Add `"au.com.cba.omnia" %% "grimlock" % "{{ site.releaseVersion }}"` to your sbt file.
+Add `"commbank.grimlock" %% "grimlock-core" % "{{ site.releaseVersion }}"` to your sbt file.
