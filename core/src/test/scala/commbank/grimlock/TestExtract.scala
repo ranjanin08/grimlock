@@ -44,11 +44,11 @@ class TestExtractWithDimension extends TestGrimlock {
   val cell = Cell(Position("abc", "def"), Content(ContinuousSchema[Double](), 1.0))
   val ext = Map(Position("abc") -> 3.14)
 
-  "A ExtractWithDimension" should "extract with First" in {
+  "A ExtractWithDimension" should "extract with _1" in {
     ExtractWithDimension[_2, Double](_1).extract(cell, ext) shouldBe Option(3.14)
   }
 
-  it should "extract with Second" in {
+  it should "extract with _2" in {
     ExtractWithDimension[_2, Double](_2).extract(cell, ext) shouldBe None
   }
 
@@ -62,7 +62,7 @@ class TestExtractWithDimensionAndKey extends TestGrimlock {
   val cell = Cell(Position("abc", "def"), Content(ContinuousSchema[Double](), 1.0))
   val ext = Map(Position("abc") -> Map(Position(123) -> 3.14))
 
-  "A ExtractWithDimensionAndKey" should "extract with First" in {
+  "A ExtractWithDimensionAndKey" should "extract with _1" in {
     ExtractWithDimensionAndKey[_2, Double](_1, 123).extract(cell, ext) shouldBe Option(3.14)
   }
 
@@ -70,11 +70,11 @@ class TestExtractWithDimensionAndKey extends TestGrimlock {
     ExtractWithDimensionAndKey[_2, Double](_1, 456).extract(cell, ext) shouldBe None
   }
 
-  it should "extract with Second" in {
+  it should "extract with _2" in {
     ExtractWithDimensionAndKey[_2, Double](_2, 123).extract(cell, ext) shouldBe None
   }
 
-  it should "extract with Second and missing key" in {
+  it should "extract with _2 and missing key" in {
     ExtractWithDimensionAndKey[_2, Double](_2, 456).extract(cell, ext) shouldBe None
   }
 

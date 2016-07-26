@@ -76,7 +76,7 @@ Lastly, a __Codec__ can be used to parse and write the basic data types used in 
 Grimlock supports performing operations along all directions of the matrix. This is realised through a __Slice__. There are two realisations of Slice: __Along__ and __Over__. Both are constructed with a single dimension (__shapeless.Nat__), but differ in how the dimension is interpreted. When using Over, all data in the matrix is grouped by the dimension and operations, such as aggregation, are applied to the resulting groups. When using Along, the data is group by all dimensions *except* the dimension used when constructing the Slice. The differences between Over and Along are graphically presented below for a three dimensional matrix. Note that in 2 dimensions, Along and Over are each other's inverse.
 
 ```
-      Over(Second)       Along(Third)
+        Over(_2)          Along(_3)
 
      +----+------+      +-----------+
     /    /|     /|     /     _     /|
