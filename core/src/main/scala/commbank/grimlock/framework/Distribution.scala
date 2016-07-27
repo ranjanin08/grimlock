@@ -209,6 +209,7 @@ trait ApproximateDistribution[L <: Nat, P <: Nat] { self: Matrix[L, P] =>
   ): U[Cell[Q]]
 }
 
+/** Contains implementations for the quantisers as per R's quantile function. */
 object Quantile {
   /** Type of quantiser function. */
   type Quantiser = (Double, Long) => (Long, Double)

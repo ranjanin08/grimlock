@@ -46,11 +46,10 @@ object Conditional {
     val (data, _) = loadText(ctx, s"${path}/exampleConditional.txt", Cell.parse2D())
 
     // Define function that appends the value as a string, or "missing" if no value is available
-    def cast[P <: Nat](cell: Cell[P], value: Option[Value]): Option[Position[Succ[P]]] = {
-      val coordinate = value.map(_.toShortString).getOrElse("missing")
-
-      cell.position.append(coordinate).toOption
-    }
+    def cast[P <: Nat](cell: Cell[P], value: Option[Value]): Option[Position[Succ[P]]] = cell
+      .position
+      .append(value.map(_.toShortString).getOrElse("missing").toString)
+      .toOption
 
     // Generate 3D matrix (hair color x eye color x gender)
     // 1/ Reshape matrix expanding it with hair color.

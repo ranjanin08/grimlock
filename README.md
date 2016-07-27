@@ -19,7 +19,7 @@ Grimlock is a library for performing data-science and machine learning related d
 * Text analysis (tf-idf/LDA);
 * Computing pairwise distances.
 
-Grimlock has default implementations for many of the above tasks. It also has a number of useful properties:
+The library contains default implementations for many of the above tasks. It also has a number of useful properties:
 
 * Supports wide variety of variable types;
 * Is easily extensible;
@@ -160,7 +160,7 @@ The examples below are executed in the Scalding REPL. Note that the Scalding REP
     ```
     resolvers ++= Seq(
       "jgit-repo" at "http://download.eclipse.org/jgit/maven",
-      "sonatype-releases"  at "https://oss.sonatype.org/content/repositories/releases"
+      "sonatype-releases"  at "https://oss.sonatype.org/content/repositories/releases",
       "commbank-ext" at "http://commbank.artifactoryonline.com/commbank/ext-releases-local-ivy"
     )
     ```
@@ -215,7 +215,11 @@ scala> implicit val context = Context()
 The next step is to read in data (be sure to change <path to> to the correct path to the grimlock repo):
 
 ```
-scala> val (data, _) = loadText(context, "<path to>/grimlock/examples/src/main/scala/commbank/grimlock/data/exampleInput.txt", Cell.parse2D())
+scala> val (data, _) = loadText(
+  context,
+  "<path to>/grimlock/examples/src/main/scala/commbank/grimlock/data/exampleInput.txt",
+  Cell.parse2D()
+)
 ```
 
 The returned `data` is a 2 dimensional matrix. To investigate it's content Scalding's `dump` command can be used in the REPL, use grimlock's `saveAsText` API for writing to disk:
@@ -274,10 +278,10 @@ Cell(Position(StringValue(iid:0444510,StringCodec)),Content(DiscreteSchema[Long]
 Cell(Position(StringValue(iid:1004305,StringCodec)),Content(DiscreteSchema[Long](),LongValue(2,LongCodec)))
 
 scala> val aggregators: List[Aggregator[_1, _0, _1]] = List(
-     | Mean().andThenRelocate(_.position.append("mean").toOption),
-     | StandardDeviation().andThenRelocate(_.position.append("sd").toOption),
-     | Skewness().andThenRelocate(_.position.append("skewness").toOption),
-     | Kurtosis().andThenRelocate(_.position.append("kurtosis").toOption))
+  Mean().andThenRelocate(_.position.append("mean").toOption),
+  StandardDeviation().andThenRelocate(_.position.append("sd").toOption),
+  Skewness().andThenRelocate(_.position.append("skewness").toOption),
+  Kurtosis().andThenRelocate(_.position.append("kurtosis").toOption))
 
 scala> counts.summarise(Along(_1))(aggregators).dump
 Cell(Position(StringValue(mean,StringCodec)),Content(ContinuousSchema[Double](),DoubleValue(4.0,DoubleCodec)))
@@ -290,10 +294,10 @@ Computing the moments can also be achieved more concisely as follows:
 
 ```
 scala> counts.summarise(Along(_1))(Moments(
-     | _.append("mean").toOption,
-     | _.append("sd").toOption,
-     | _.append("skewness").toOption,
-     | _.append("kurtosis").toOption)).dump
+  _.append("mean").toOption,
+  _.append("sd").toOption,
+  _.append("skewness").toOption,
+  _.append("kurtosis").toOption)).dump
 
 ```
 
@@ -364,7 +368,11 @@ scala> implicit val context = Context(sc)
 The next step is to read in data (be sure to change <path to> to the correct path to the grimlock repo):
 
 ```
-scala> val (data, _) = loadText(context, "<path to>/grimlock/examples/src/main/scala/commbank/grimlock/data/exampleInput.txt", Cell.parse2D())
+scala> val (data, _) = loadText(
+  context,
+  "<path to>/grimlock/examples/src/main/scala/commbank/grimlock/data/exampleInput.txt",
+  Cell.parse2D()
+)
 ```
 
 The returned `data` is a 2 dimensional matrix. To investigate it's content Spark's `foreach` command can be used in the REPL, use the grimlock's `saveAsText` API for writing to disk:
@@ -423,10 +431,10 @@ Cell(Position(StringValue(iid:0444510,StringCodec)),Content(DiscreteSchema[Long]
 Cell(Position(StringValue(iid:1004305,StringCodec)),Content(DiscreteSchema[Long](),LongValue(2,LongCodec)))
 
 scala> val aggregators: List[Aggregator[_1, _0, _1]] = List(
-     | Mean().andThenRelocate(_.position.append("mean").toOption),
-     | StandardDeviation().andThenRelocate(_.position.append("sd").toOption),
-     | Skewness().andThenRelocate(_.position.append("skewness").toOption),
-     | Kurtosis().andThenRelocate(_.position.append("kurtosis").toOption))
+  Mean().andThenRelocate(_.position.append("mean").toOption),
+  StandardDeviation().andThenRelocate(_.position.append("sd").toOption),
+  Skewness().andThenRelocate(_.position.append("skewness").toOption),
+  Kurtosis().andThenRelocate(_.position.append("kurtosis").toOption))
 
 scala> counts.summarise(Along(_1))(aggregators).foreach(println)
 Cell(Position(StringValue(mean,StringCodec)),Content(ContinuousSchema[Double](),DoubleValue(4.0,DoubleCodec)))
@@ -439,10 +447,10 @@ Computing the moments can also be achieved more concisely as follows:
 
 ```
 scala> counts.summarise(Along(_1))(Moments(
-     | _.append("mean").toOption,
-     | _.append("sd").toOption,
-     | _.append("skewness").toOption,
-     | _.append("kurtosis").toOption)).foreach(println)
+  _.append("mean").toOption,
+  _.append("sd").toOption,
+  _.append("skewness").toOption,
+  _.append("kurtosis").toOption)).foreach(println)
 ```
 
 For more examples see [BasicOperations.scala](https://github.com/CommBank/grimlock/blob/master/examples/src/main/scala/commbank/grimlock/spark/BasicOperations.scala), [Conditional.scala](https://github.com/CommBank/grimlock/blob/master/examples/src/main/scala/commbank/grimlock/spark/Conditional.scala), [DataAnalysis.scala](https://github.com/CommBank/grimlock/blob/master/examples/src/main/scala/commbank/grimlock/spark/DataAnalysis.scala), [DerivedData.scala](https://github.com/CommBank/grimlock/blob/master/examples/src/main/scala/commbank/grimlock/spark/DerivedData.scala), [Ensemble.scala](https://github.com/CommBank/grimlock/blob/master/examples/src/main/scala/commbank/grimlock/spark/Ensemble.scala), [Event.scala](https://github.com/CommBank/grimlock/blob/master/examples/src/main/scala/commbank/grimlock/spark/Event.scala), [LabelWeighting.scala](https://github.com/CommBank/grimlock/blob/master/examples/src/main/scala/commbank/grimlock/spark/LabelWeighting.scala), [MutualInformation.scala](https://github.com/CommBank/grimlock/blob/master/examples/src/main/scala/commbank/grimlock/spark/MutualInformation.scala), [PipelineDataPreparation.scala](https://github.com/CommBank/grimlock/blob/master/examples/src/main/scala/commbank/grimlock/spark/PipelineDataPreparation.scala) or [Scoring.scala](https://github.com/CommBank/grimlock/blob/master/examples/src/main/scala/commbank/grimlock/spark/Scoring.scala).
